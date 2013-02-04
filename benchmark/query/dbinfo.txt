@@ -1,0 +1,17 @@
+Join Query:
+
+DB: pais
+Tables: markup_polygon,
+Fields: tilename, pais_uid, polygon, markup_id
+
+Containment Query:
+DB: pais,
+Tables: markup_polygon, markup_polygon_human
+Fields: tilename, pais_uid, polygon, markup_id
+
+Aggregation Query:
+DB: pais,
+Tables: markup_polygon, markup_polygon_human, calcualtion_flat
+Fields: tilename, pais_uid, polygon, markup_id
+
+

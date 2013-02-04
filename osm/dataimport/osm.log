@@ -1,0 +1,4 @@
+Importing osm file with osm2pgsql
+osm2pgsql -v --latlong --exclude-invalid-polygon --cache 50000 --style /home/aaji/softs/osm2pgsql/share/osm2pgsql/default.style --database osm --host node37 --port 5432 --number-processes 12 /data2/ablimit/Data/spatialdata/osm/planet-latest.osm.bz2 
+Fri Feb  1 10:28:22 EST 2013
+Sat Feb  2 05:53:08 EST 2013
