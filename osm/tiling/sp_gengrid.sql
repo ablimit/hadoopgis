@@ -65,6 +65,9 @@ FOR i IN 1.._lat LOOP
     END LOOP;
 END LOOP;
 
+-- create spatial index for bounding boxes 
+EXECUTE 'CREATE INDEX ' || quote_ident(tname) || '_sp_mbb_index ON ' || quote_ident(tname) || ' USING GIST (mbb) ' ;
+
 RETURN 1;
 
 END;
