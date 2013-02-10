@@ -2,6 +2,8 @@
 -- tile level 
 BEGIN ;
 
+DROP TABLE  osm_polygon; 
+
 CREATE TABLE osm_polygon ( 
     id		integer,
     tilename	varchar(20),
@@ -9,10 +11,10 @@ CREATE TABLE osm_polygon (
     z_order        integer) 
 DISTRIBUTED BY (tilename);
 
-SELECT AddGeometryColumn('public','osm_polygon', 'way', 4326, 'POLYGON', 2);
+SELECT AddGeometryColumn('public','osm_polygon', 'way', -1, 'POLYGON', 2);
 
---COPY osm_polygon FROM '/data2/ablimit/Data/spatialdata/osmout/clean_osm.dat' WITH HEADER DELIMITER '|' ;
-COPY osm_polygon FROM '/tmp/temp.dat' WITH HEADER DELIMITER '|' ;
+COPY osm_polygon FROM '/data2/ablimit/Data/spatialdata/osmout/clean_osm.dat' WITH HEADER DELIMITER '|' ;
+-- COPY osm_polygon FROM '/tmp/temp.dat' WITH DELIMITER AS '|' CSV HEADER ;
 
 COMMIT ;
 
