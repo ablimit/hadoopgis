@@ -13,7 +13,8 @@ DISTRIBUTED BY (tilename);
 
 SELECT AddGeometryColumn('public','osm_polygon', 'way', -1, 'POLYGON', 2);
 
-COPY osm_polygon FROM '/data2/ablimit/Data/spatialdata/osmout/clean_osm.dat' WITH HEADER DELIMITER '|' ;
+COPY osm_polygon FROM '/data2/ablimit/Data/spatialdata/osmout/planet_osm_polygon.dat' WITH HEADER DELIMITER '|' ;
+
 -- COPY osm_polygon FROM '/tmp/temp.dat' WITH DELIMITER AS '|' CSV HEADER ;
 
 COMMIT ;
