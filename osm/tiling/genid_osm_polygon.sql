@@ -1,5 +1,5 @@
-
 -- this script is used to generate a sequence id for clean_osm 
+
 ALTER TABLE clean_osm ADD COLUMN "id" INTEGER;
 
 CREATE SEQUENCE clean_osm_id_seq ;
