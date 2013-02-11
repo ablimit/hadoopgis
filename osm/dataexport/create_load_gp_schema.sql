@@ -25,3 +25,4 @@ CREATE INDEX osm_polygon_fidx ON osm_polygon (tilename);
 
 VACUUM VERBOSE ANALYZE osm_polygon;
 
+COMMIT ;
