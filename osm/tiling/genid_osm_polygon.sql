@@ -1,17 +1,17 @@
--- this script is used to generate a sequence id for clean_osm 
+-- this script is used to generate a sequence id for planet_osm_polygon 
 
-ALTER TABLE clean_osm ADD COLUMN "id" INTEGER;
+ALTER TABLE planet_osm_polygon ADD COLUMN "id" INTEGER;
 
-CREATE SEQUENCE clean_osm_id_seq ;
+CREATE SEQUENCE planet_osm_polygon_id_seq ;
 
-UPDATE clean_osm SET id = nextval('clean_osm_id_seq');
+UPDATE planet_osm_polygon SET id = nextval('planet_osm_polygon_id_seq');
 
-ALTER TABLE clean_osm ALTER COLUMN "id" SET DEFAULT nextval('clean_osm_id_seq');
+ALTER TABLE planet_osm_polygon ALTER COLUMN "id" SET DEFAULT nextval('planet_osm_polygon_id_seq');
 
-ALTER TABLE clean_osm ALTER COLUMN "id" SET NOT NULL;
+ALTER TABLE planet_osm_polygon ALTER COLUMN "id" SET NOT NULL;
 
-ALTER TABLE clean_osm ADD UNIQUE ("id");
+ALTER TABLE planet_osm_polygon ADD UNIQUE ("id");
 
-ALTER TABLE clean_osm DROP CONSTRAINT "clean_osm_id_key" RESTRICT;
+ALTER TABLE planet_osm_polygon DROP CONSTRAINT "planet_osm_polygon_id_key" RESTRICT;
 
-ALTER TABLE clean_osm ADD PRIMARY KEY ("id");
+ALTER TABLE planet_osm_polygon ADD PRIMARY KEY ("id");
