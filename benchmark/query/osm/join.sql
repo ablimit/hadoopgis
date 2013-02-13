@@ -7,5 +7,5 @@ SELECT count(*) from (
     ST_DISTANCE(ST_Centroid(A.way), ST_Centroid(B.way)) AS centroid_distance
     FROM osm.osm_polygon_planet A, osm.osm_polygon_europe B
     WHERE  A.tilename = B.tilename AND ST_Equals(A.polygon, B.polygon) = FALSE;
-); 
+) AS temp ; 
 
