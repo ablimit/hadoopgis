@@ -21,9 +21,18 @@ WHERE  ST_Contains( ST_PolygonFromText('POLYGON((40960 40960, 41984 40960,  4198
 SELECT 	polygon
 FROM   	pais.markup_polygon  
 WHERE  	pais_uid = 'gbm1.1_40x_20x_NS-MORPH_1'  AND 
-ST_Contains( ST_PolygonFromText('POLYGON((40960 40960, 41984 40960,  41984 41984, 40960 41984, 40960 40960))', 100), polygon ) = TRUE ;
+ST_Contains( ST_PolygonFromText('POLYGON((22528 8192,67584 8192,67584 24576,22528 24576,22528 8192))', 100), polygon ) = TRUE ;
 
+-- Selection with field filtering 
+SELECT 	polygon
+FROM   	pais.markup_polygon  
+WHERE  	pais_uid = 'gbm1.1_40x_20x_NS-MORPH_1'  AND ST_Area(polygon) > 10 AND 
+ST_Contains( ST_PolygonFromText('POLYGON((22528 8192,67584 8192,67584 24576,22528 24576,22528 8192))', 100), polygon ) = TRUE ;
 
+-- Selection with field filtering 
+SELECT 	polygon
+FROM   	pais.markup_polygon  
+WHERE  	pais_uid = 'gbm1.1_40x_20x_NS-MORPH_1'  AND ST_Area(polygon) > 10 ;
 
 -- b) Given a human-marked region in a single tile, which is stored in the MARKUP_POLYGON_HUMAN table.
 
