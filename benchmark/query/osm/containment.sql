@@ -2,13 +2,13 @@
 
 -- Selection with field filtering (small region)
 SELECT 	way 
-FROM   	osm_planet_polygon 
-WHERE  	pais_uid = 'gbm1.1_40x_20x_NS-MORPH_1'  AND tilename ='gbm1.1-0000040960-0000040960' AND
-ST_Contains( ST_PolygonFromText('POLYGON((40960 40960, 41984 40960,  41984 41984, 40960 41984, 40960 40960))', 100), polygon ) = TRUE ;
+FROM   	osm_polygon_planet
+WHERE  	tilename ='497_763' AND
+ST_Contains( ST_PolygonFromText('POLYGON((-1.43999 47.16,-1.07999 47.16,-1.07999 47.34,-1.43999 47.34,-1.43999 47.16))', -1), way ) = TRUE ;
 
 -- Selection without field filtering (small region)
-SELECT 	polygon
-FROM   	pais.markup_polygon  
+SELECT 	way
+FROM   	osm_polygon_planet 
 WHERE  ST_Contains( ST_PolygonFromText('POLYGON((40960 40960, 41984 40960,  41984 41984, 40960 41984, 40960 40960))', 100), polygon ) = TRUE ;
 
 
