@@ -17,13 +17,13 @@ FROM   	pais.markup_polygon
 WHERE  ST_Contains( ST_PolygonFromText('POLYGON((40960 40960, 41984 40960,  41984 41984, 40960 41984, 40960 40960))', 100), polygon ) = TRUE ;
 
 
--- Selection with field filtering (large region)
+-- Selection without tile-field filtering (large region)
 SELECT 	polygon
 FROM   	pais.markup_polygon  
 WHERE  	pais_uid = 'gbm1.1_40x_20x_NS-MORPH_1'  AND 
 ST_Contains( ST_PolygonFromText('POLYGON((22528 8192,67584 8192,67584 24576,22528 24576,22528 8192))', 100), polygon ) = TRUE ;
 
--- Selection with field filtering 
+-- Selection with field spatial filtering 
 SELECT 	polygon
 FROM   	pais.markup_polygon  
 WHERE  	pais_uid = 'gbm1.1_40x_20x_NS-MORPH_1'  AND ST_Area(polygon) > 10 AND 
