@@ -54,5 +54,5 @@ SELECT
     ST_ConvexHull(polygon) AS CONVHULL,
     ST_Perimeter(polygon) AS PERIMETER
 FROM   	pais.markup_polygon 
-WHERE ST_Area(polygon) > 0 ;
+WHERE ST_Area(polygon) > 125.0;
 
