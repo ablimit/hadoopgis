@@ -3,6 +3,7 @@
 #include <string>
 
 using namespace std;
+
 const string shapebegin = "POLYGON((";
 const string shapeend = "))";
 
@@ -43,10 +44,11 @@ int main(int argc, char **argv) {
 
 	key = input_line.substr(0,pos);
 	pos=input_line.find_first_of(comma,pos+1);
-	value= input_line.substr(pos+2,input_line.size-3);
+	value= input_line.substr(pos+2,input_line.length()-pos-3);
 	// cout << index << key<< tab << value << endl;
-	cout << key<< tab << index<< tab << value << endl;
+	cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
     }
+    cout.flush();
 
     return 0; // success
 }
