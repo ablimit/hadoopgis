@@ -35,8 +35,6 @@ const string bar= "|";
 const string tab = "\t";
 const char comma = ',';
 const char offset = '1';
-const string shapebegin = "POLYGON((";
-const string shapeend = "))";
 
 polymap polydata;
 box mbb;
