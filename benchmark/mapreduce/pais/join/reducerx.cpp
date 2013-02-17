@@ -8,6 +8,8 @@
 using namespace SpatialIndex;
 using namespace std;
 
+const char offset = '1';
+
 
 //map<string,map<int,vector<string> > > data;
 
@@ -22,13 +24,13 @@ bool readSpatialInput() {
 	key = input_line.substr(0,pos);
 	index = input_line[pos+1] - offset;   // the very first character denotes join index
 	pos = input_line.find_first_of(tab, pos+1);
-	value = input_line.substr(pos+2,input_line.size()- pos - 3); // ignore the double quote both at the beginning and at the end.
+	value = input_line.substr(pos+1); 
 
 	//cerr<< "Key: " << key << endl;
 	//cerr<< ""Value: " <<value << endl;
 	//data[key][index].push_back(value);
 
-	boost::geometry::read_wkt(shapebegin+value+shapeend, shape);
+	boost::geometry::read_wkt(value, shape);
 	boost::geometry::correct(shape);
 	polydata[key][index].push_back(shape);
     }
@@ -59,6 +61,7 @@ int main(int argc, char** argv)
     if (! readSpatialInput()) 
     {
 	cerr << "Reduce input parsing error...." << endl;
+	cerr.flush();
 	return 1;
     }
 

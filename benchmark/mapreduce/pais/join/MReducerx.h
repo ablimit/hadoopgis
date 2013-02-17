@@ -34,7 +34,6 @@ typedef map<string,map<int,vector<box> > > boxmap;
 const string bar= "|";
 const string tab = "\t";
 const char comma = ',';
-const char offset = '1';
 
 polymap polydata;
 box mbb;
