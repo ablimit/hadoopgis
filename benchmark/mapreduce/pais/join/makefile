@@ -4,11 +4,11 @@ spatial=/home/aaji/softs
 all: mapper reducer
     
 mapper:	mapper.cpp
-	g++44 -m64 -O3 mapper.cpp -o mapper -I${dir}/include -L${dir}/lib
+	g++ -m64 -O3 mapper.cpp -o mapper -I${dir}/include -L${dir}/lib
 
 reducer: reducerx.cpp IndexParam.h MReducerx.h
-	g++44 -O3 -m64 -lspatialindex reducerx.cpp -o reducer3 -I${dir}/include -L${dir}/lib -I${spatial}/include -L${spatial}/lib
+	g++ -m64 -O3 -lspatialindex reducerx.cpp -o reducer -I${dir}/include -L${dir}/lib -I${spatial}/include -L${spatial}/lib
 clean:
 	rm mapper
-	rm reducer3
+	rm reducer
 

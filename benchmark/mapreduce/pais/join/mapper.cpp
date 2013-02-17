@@ -4,28 +4,23 @@
 
 using namespace std;
 
-int getJoinIndex (char * filename)
+int getJoinIndex ()
 {
+    char * filename = getenv("map_input_file");
     //char * filename = "astroII.1.1";
     if ( NULL == filename ){
 	cerr << "map.input.file is NULL." << endl;
 	return 1 ;
     }
-    int index = filename[0] - '0' ;
+    int len= strlen(filename);
+    int index = filename[len-1] - '0' ;
     return index;
 }
 
 int main(int argc, char **argv) {
 
-    if (argc < 2)
-    {
-	cerr << "Missing the dataset id as param." << endl;
-	return 0;
-    }
-
-    int index = getJoinIndex(argv[1]);
-    cerr << "Dataset id: " << index << endl; 
-
+    int index = getJoinIndex();
+    // cerr << "Index: " << index << endl; 
     if (index <1)
     {
 	cerr << "InputFileName index is corrupted.. " << endl;
