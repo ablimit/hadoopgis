@@ -14,7 +14,9 @@ if [ "$HOSTNAME" = ${gpdb} ] ; then
     for query in containment.sql aggregation.sql # join.sql
     do
 	echo "EXEC ${query}"
-	psql --dbname=pais --echo-queries  --output=$2  --file=$query  >> $1
+	echo "EXEC ${query}" >> $1
+
+	psql --dbname=pais --output=$2  --file=$query  >> $1
     done
 
     echo -e "\n\n\n" >> $1
