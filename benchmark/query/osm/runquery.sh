@@ -16,7 +16,7 @@ if [ "$HOSTNAME" = ${gpdb} ] ; then
 	echo "EXEC ${query}"
 	echo "EXEC ${query}" >> $1
 
-	psql --dbname=pais --output=$2  --file=$query  >> $1
+	psql --dbname=osm --output=$2  --file=$query  >> $1
     done
 
     echo -e "\n\n\n" >> $1
