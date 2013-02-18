@@ -27,5 +27,5 @@ SELECT
     ST_ConvexHull(way) AS CONVHULL,
     ST_Perimeter(way) AS PERIMETER
 FROM osm_polygon_planet
-WHERE ST_Area(way) > 1.0 ;
+WHERE ST_Area(way) > 0.5 ;
 
