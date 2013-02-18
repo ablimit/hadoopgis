@@ -9,6 +9,9 @@
 #include <string.h>
 #include <string>
 
+#include <vector>
+#include <map>
+
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/geometry.hpp>
@@ -18,20 +21,20 @@
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/domains/gis/io/wkt/wkt.hpp>
 
-//#include <spatialindex/SpatialIndex.h>
+#include <spatialindex/SpatialIndex.h>
 //#include "IndexParam.h"
 
 
-//using namespace SpatialIndex;
+using namespace std;
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
 
+//using namespace SpatialIndex;
+
 typedef boost::geometry::model::d2::point_xy<int> point;
 typedef boost::geometry::model::polygon<point> polygon;
-typedef boost::geometry::model::box<point> box;
 
-typedef map<string,map<int,vector<polygon> > > polymap;
-typedef map<string,map<int,vector<box> > > boxmap;
+typedef map<string,map<int,vector<polygon> > > polygonmap;
 
 
 const string bar= "|";

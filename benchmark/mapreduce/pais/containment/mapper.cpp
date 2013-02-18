@@ -1,6 +1,5 @@
 #include "hadoopgis.h"
 
-using namespace std;
 
 const string paisUID = "gbm1.1";
 const string tileID = "gbm1.1-0000040960-0000040960";
@@ -16,14 +15,13 @@ bool paisUIDMatch(string pais_uid)
     if (pais_uid.compare(filename) ==0)
 	return true;
     else 
-	return false
+	return false;
 }
 
 int main(int argc, char **argv) {
     string input_line;
     string tile_id ;
-    string polygon;
-    string 
+    string poly;
 
     if (paisUIDMatch(paisUID))
     {
@@ -37,7 +35,7 @@ int main(int argc, char **argv) {
 	    if (tileID.compare(tile_id)==0) // if tile ID matches, continue searching 
 	    {
 		pos=input_line.find_first_of(comma,pos+1);
-		polygon = shapebegin + input_line.substr(pos+2,input_line.length()-pos-3) + shapeend;
+		poly = shapebegin + input_line.substr(pos+2,input_line.length()-pos-3) + shapeend;
 
 		//cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
 	    }
