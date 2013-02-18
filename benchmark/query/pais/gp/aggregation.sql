@@ -25,7 +25,7 @@ SELECT
     ST_Centroid(polygon) AS CENTROID,
     ST_ConvexHull(polygon) AS CONVHULL,
     ST_Perimeter(polygon) AS PERIMETER
-FROM   	pais.markup_polygon
+FROM   	markup_polygon
 WHERE  	pais_uid = 'gbm1.1_40x_20x_NS-MORPH_1'  AND tilename ='gbm1.1-0000040960-0000040960' ;
 
 
@@ -35,7 +35,7 @@ SELECT
     ST_Centroid(polygon) AS CENTROID,
     ST_ConvexHull(polygon) AS CONVHULL,
     ST_Perimeter(polygon) AS PERIMETER
-FROM   	pais.markup_polygon
+FROM   	markup_polygon
 WHERE  	pais_uid = 'gbm1.1_40x_20x_NS-MORPH_1'; 
 
 --d) spatial feature aggregation (collection)
@@ -44,7 +44,7 @@ SELECT
     ST_Centroid(polygon) AS CENTROID,
     ST_ConvexHull(polygon) AS CONVHULL,
     ST_Perimeter(polygon) AS PERIMETER
-FROM   	pais.markup_polygon ;
+FROM   	markup_polygon ;
 
 
 --e) spatial feature aggregation with spatial predicate (collection)
@@ -53,6 +53,6 @@ SELECT
     ST_Centroid(polygon) AS CENTROID,
     ST_ConvexHull(polygon) AS CONVHULL,
     ST_Perimeter(polygon) AS PERIMETER
-FROM   	pais.markup_polygon 
+FROM	markup_polygon 
 WHERE ST_Area(polygon) > 125.0;
 
