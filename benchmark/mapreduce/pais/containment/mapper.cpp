@@ -3,6 +3,18 @@
 
 const string paisUID = "gbm1.1";
 const string tileID = "gbm1.1-0000040960-0000040960";
+const string region ="POLYGON((40960 40960, 41984 40960,  41984 41984, 40960 41984, 40960 40960))" ;
+vector<string> geometry_collction ; 
+
+void containmentQuery()
+{
+    IStorageManager * storages = StorageManager::createNewMemoryStorageManager();
+	ContainmentDataStream stream(geometry_collction);
+    ISpatialIndex * forest = = RTree::createAndBulkLoadNewRTree( 
+			RTree::BLM_STR, stream, *storages[i], FillFactor, IndexCapacity, LeafCapacity, 2, 
+			SpatialIndex::RTree::RV_RSTAR, indexIdentifier[i]);
+    id_type  indexIdentifier ;
+}
 
 bool paisUIDMatch(string pais_uid)
 {
@@ -12,6 +24,7 @@ bool paisUIDMatch(string pais_uid)
 	cerr << "map.input.file is NULL." << endl;
 	return false;
     }
+
     if (pais_uid.compare(filename) ==0)
 	return true;
     else 
@@ -25,21 +38,20 @@ int main(int argc, char **argv) {
 
     if (paisUIDMatch(paisUID))
     {
-	while(cin && getline(cin, input_line) && !cin.eof()){
+        while(cin && getline(cin, input_line) && !cin.eof()){
 
-	    size_t pos=input_line.find_first_of(comma,0);
-	    if (pos == string::npos)
-		return 1; // failure
+            size_t pos=input_line.find_first_of(comma,0);
+            if (pos == string::npos)
+                return 1; // failure
 
-	    tile_id = input_line.substr(0,pos);
-	    if (tileID.compare(tile_id)==0) // if tile ID matches, continue searching 
-	    {
-		pos=input_line.find_first_of(comma,pos+1);
-		poly = shapebegin + input_line.substr(pos+2,input_line.length()-pos-3) + shapeend;
-
-		//cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
-	    }
-	}
+            tile_id = input_line.substr(0,pos);
+            if (tileID.compare(tile_id)==0) // if tile ID matches, continue searching 
+            {
+                pos=input_line.find_first_of(comma,pos+1);
+                geometry_collction.push_back(shapebegin + input_line.substr(pos+2,input_line.length()- pos - 3) + shapeend);
+                //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
+            }
+        }
     }
 
     cout.flush();
@@ -47,3 +59,89 @@ int main(int argc, char **argv) {
     return 0; // success
 }
 
+class ContainmentDataStream : public IDataStream
+{
+    public:
+	ContainmentDataStream(vector<string> * invec ) : m_pNext(0), index(0), len(0),m_id(0)
+    {
+	if ( invec->empty())
+	    throw Tools::IllegalArgumentException("Input size is ZERO.");
+	vec = invec;
+	len = vec->size();
+	readNextEntry();
+	tagg= tag;
+    }
+
+	virtual ~ContainmentDataStream()
+	{
+	    if (m_pNext != 0) delete m_pNext;
+    }
+    RTree::Data* parseInputPolygon(string strPolygon,id_type m_id) {
+        boost::geometry::read_wkt(strPolygon, nuclei);
+        boost::geometry::envelope(nuclei, mbb);
+        low [0] = boost::geometry::get<boost::geometry::min_corner, 0>(mbb);
+        low [1] = boost::geometry::get<boost::geometry::min_corner, 1>(mbb);
+
+        high [0] = boost::geometry::get<boost::geometry::max_corner, 0>(mbb);
+        high [1] = boost::geometry::get<boost::geometry::max_corner, 1>(mbb);
+
+        Region r(low, high, 2);
+
+        //std::cerr << " parseInputPolygon m_id: "  << m_id << std::endl;
+        return new RTree::Data(0, 0 , r, m_id);// store a zero size null poiter.
+    }
+
+    virtual IData* getNext()
+    {
+        if (m_pNext == 0) return 0;
+
+        RTree::Data* ret = m_pNext;
+        m_pNext = 0;
+        readNextEntry();
+        return ret;
+    }
+
+    virtual bool hasNext()
+    {
+        return (m_pNext != 0);
+    }
+
+    virtual uint32_t size()
+    {
+        return vec->size();
+        //throw Tools::NotSupportedException("Operation not supported.");
+    }
+
+    virtual void rewind()
+    {
+        if (m_pNext != 0)
+        {
+            delete m_pNext;
+            m_pNext = 0;
+        }
+
+        index =0 ;
+        readNextEntry();
+    }
+
+    void readNextEntry()
+    {
+        if (index < len)
+        {
+            //std::cout << "readNextEntry m_id == " << m_id << std::endl;
+            m_pNext = parseInputPolygon((*vec)[index], m_id);
+            index++;
+            m_id++;
+        }
+    }
+
+    RTree::Data* m_pNext;
+    vector<string> * vec; 
+    int len;
+    int index ;
+    id_type m_id;
+    
+    double low[2], high[2];
+    polygon nuclei;
+    box mbb
+};

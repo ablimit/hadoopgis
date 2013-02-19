@@ -24,6 +24,11 @@
 #include <spatialindex/SpatialIndex.h>
 //#include "IndexParam.h"
 
+#define FillFactor 0.7
+#define IndexCapacity 100
+#define LeafCapacity 50
+#define COMPRESS true
+
 
 using namespace std;
 using boost::lexical_cast;
@@ -33,6 +38,7 @@ using boost::bad_lexical_cast;
 
 typedef boost::geometry::model::d2::point_xy<int> point;
 typedef boost::geometry::model::polygon<point> polygon;
+typedef boost::geometry::model::box<point> box;
 
 typedef map<string,map<int,vector<polygon> > > polygonmap;
 
@@ -43,4 +49,5 @@ const char comma = ',';
 
 const string shapebegin = "POLYGON((";
 const string shapeend = "))";
+
 
