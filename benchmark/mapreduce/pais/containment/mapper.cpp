@@ -97,6 +97,7 @@ class MyVisitor : public IVisitor
 {
     public:
 	void visitNode(const INode& n) {}
+	void visitData(std::string &s) {}
 
 	void visitData(const IData& d)
 	{
@@ -104,6 +105,7 @@ class MyVisitor : public IVisitor
 	}
 
 	void visitData(std::vector<const IData*>& v) {}
+	void visitData(std::vector<uint32_t>& v){}
 };
 
 
@@ -115,7 +117,7 @@ void processQuery()
 	id_type  indexIdentifier ;
 	IStorageManager * storage = StorageManager::createNewMemoryStorageManager();
 	ContainmentDataStream stream(&geometry_collction);
-	ISpatialIndex * spidx = RTree::createAndBulkLoadNewRTree(RTree::BLM_STR, stream, storage, 
+	ISpatialIndex * spidx = RTree::createAndBulkLoadNewRTree(RTree::BLM_STR, stream, *storage, 
 		FillFactor, IndexCapacity, LeafCapacity, 2, 
 		RTree::RV_RSTAR, indexIdentifier);
 
