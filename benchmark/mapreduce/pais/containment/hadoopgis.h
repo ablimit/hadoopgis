@@ -22,7 +22,6 @@
 #include <boost/geometry/domains/gis/io/wkt/wkt.hpp>
 
 #include <spatialindex/SpatialIndex.h>
-//#include "IndexParam.h"
 
 #define FillFactor 0.7
 #define IndexCapacity 100
@@ -31,10 +30,10 @@
 
 
 using namespace std;
+using namespace SpatialIndex;
+
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
-
-//using namespace SpatialIndex;
 
 typedef boost::geometry::model::d2::point_xy<int> point;
 typedef boost::geometry::model::polygon<point> polygon;
