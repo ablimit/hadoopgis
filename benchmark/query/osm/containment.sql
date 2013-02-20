@@ -1,5 +1,6 @@
 -- Type 1: Containment Query
 
+\timing on 
 -- Selection with field filtering (small region = tile)
 SELECT 	ST_AsText(way) 
 FROM   	osm_polygon_planet

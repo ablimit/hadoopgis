@@ -1,15 +1,27 @@
 -- 1) create colum tilename varchar 
 -- 2) update 
 
-ALTER TABLE planet_osm_polygon ADD COLUMN "tilename" varchar(32);
-
-EXPLAIN UPDATE planet_osm_polygon
-SET tilename = tile.tilename
-FROM tile
-WHERE ST_Contains(tile.mbb,planet_osm_polygon.way) = TRUE ;
+EXPLAIN UPDATE osm_polygon_planet 
+SET tilenameb = tileb.tilename
+FROM tileb
+WHERE ST_Contains(tile.mbb,osm_polygon_planet.way) = TRUE;
 
 
-UPDATE planet_osm_polygon 
-SET tilename = tile.tilename
-FROM tile
-WHERE ST_Contains(tile.mbb,planet_osm_polygon.way) = TRUE ;
+BEGIN;
+ALTER TABLE osm_polygon_planet ADD COLUMN "tilenameb" varchar(32);
+
+UPDATE osm_polygon_planet 
+SET tilenameb = tileb.tilename
+FROM tileb
+WHERE ST_Contains(tileb.mbb,osm_polygon_planet.way) = TRUE;
+COMMIT;
+
+BEGIN;
+ALTER TABLE osm_polygon_europe ADD COLUMN "tilenameb" varchar(32);
+
+UPDATE osm_polygon_europe
+SET tilenameb = tileb.tilename
+FROM tileb
+WHERE ST_Contains(tileb.mbb,osm_polygon_europe.way) = TRUE;
+COMMIT;
+

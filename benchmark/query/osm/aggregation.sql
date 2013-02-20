@@ -1,5 +1,5 @@
 -- feature aggreagation
-
+\timing on 
 -- b) spatial feature aggregation (single tile)
 SELECT 
     ST_Area(way) AS AREA,
