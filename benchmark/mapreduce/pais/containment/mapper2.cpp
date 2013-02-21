@@ -1,6 +1,7 @@
 #include "hadoopgis.h"
 
 
+const int tile_size  = 4096;
 const string paisUID = "gbm1.1";
 const string tileID = "gbm1.1-0000040960-0000040960";
 const string region ="POLYGON((40960 40960, 41984 40960,  41984 41984, 40960 41984, 40960 40960))" ;
