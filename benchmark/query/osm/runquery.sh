@@ -1,6 +1,5 @@
 #! /bin/bash
 
-
 if [ ! $# == 2 ]; then
     echo "Usage: $0 [log file] [output file]"
     exit
