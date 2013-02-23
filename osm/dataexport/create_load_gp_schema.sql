@@ -13,18 +13,19 @@ DISTRIBUTED BY (tilename);
 
 SELECT AddGeometryColumn('public','osm_polygon_planet_tile4k4k', 'way', -1, 'POLYGON', 2);
 
-COPY osm_polygon_planet_tile4k4k FROM '/data2/ablimit/Data/spatialdata/osmout/europe_tile4k4k_osm_planet_tile4k4k.dat' WITH HEADER DELIMITER '|' ;
+COPY osm_polygon_planet_tile4k4k FROM '/data2/ablimit/Data/spatialdata/osmout/osm_polygon_planet.dat' WITH HEADER DELIMITER '|' ;
 
 COMMIT ;
 
 
-CREATE INDEX osm_polygon_planet_tile4k4k_sp_idx ON osm_planet_tile4k4k_europe_tile4k4k USING GIST (way);
+CREATE INDEX osm_polygon_planet_tile4k4k_sp_idx ON osm_polygon_planet_tile4k4k USING GIST (way);
 
 CREATE INDEX osm_polygon_planet_tile4k4k_fidx ON osm_polygon_planet_tile4k4k (tilename);
 
 VACUUM VERBOSE ANALYZE osm_polygon_planet_tile4k4k;
 
 
+-- europe_tile4k4k data
 -- tile level 
 BEGIN ;
 
@@ -39,7 +40,7 @@ DISTRIBUTED BY (tilename);
 
 SELECT AddGeometryColumn('public','osm_polygon_europe_tile4k4k', 'way', -1, 'POLYGON', 2);
 
-COPY osm_polygon_europe_tile4k4k FROM '/data2/ablimit/Data/spatialdata/osmout/europe_tile4k4k_osm_polygon.dat' WITH HEADER DELIMITER '|' ;
+COPY osm_polygon_europe_tile4k4k FROM '/data2/ablimit/Data/spatialdata/osmout/osm_polygon_europe.dat' WITH HEADER DELIMITER '|' ;
 
 -- COPY osm_polygon_europe_tile4k4k FROM '/tmp/temp.dat' WITH DELIMITER AS '|' CSV HEADER ;
 
@@ -51,4 +52,5 @@ CREATE INDEX osm_polygon_europe_tile4k4k_sp_idx ON osm_polygon_europe_tile4k4k U
 CREATE INDEX osm_polygon_europe_tile4k4k_fidx ON osm_polygon_europe_tile4k4k (tilename);
 
 VACUUM VERBOSE ANALYZE osm_polygon_europe_tile4k4k;
+
 
