@@ -15,12 +15,11 @@ SELECT AddGeometryColumn('public','osm_polygon_planet_fourxfour', 'way', -1, 'PO
 
 COPY osm_polygon_planet_fourxfour FROM '/data2/ablimit/Data/spatialdata/osmout/osm_polygon_planet.dat' WITH HEADER DELIMITER '|' ;
 
-COMMIT ;
-
-
 CREATE INDEX osm_polygon_planet_fourxfour_sp_idx ON osm_polygon_planet_fourxfour USING GIST (way);
 
 CREATE INDEX osm_polygon_planet_fourxfour_fidx ON osm_polygon_planet_fourxfour (tilename);
+
+COMMIT ;
 
 VACUUM VERBOSE ANALYZE osm_polygon_planet_fourxfour;
 
@@ -44,13 +43,11 @@ COPY osm_polygon_europe_fourxfour FROM '/data2/ablimit/Data/spatialdata/osmout/o
 
 -- COPY osm_polygon_europe_fourxfour FROM '/tmp/temp.dat' WITH DELIMITER AS '|' CSV HEADER ;
 
-COMMIT;
-
-
 CREATE INDEX osm_polygon_europe_fourxfour_sp_idx ON osm_polygon_europe_fourxfour USING GIST (way);
 
 CREATE INDEX osm_polygon_europe_fourxfour_fidx ON osm_polygon_europe_fourxfour (tilename);
 
-VACUUM VERBOSE ANALYZE osm_polygon_europe_fourxfour;
+COMMIT;
 
+VACUUM VERBOSE ANALYZE osm_polygon_europe_fourxfour;
 
