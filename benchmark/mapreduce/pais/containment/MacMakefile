@@ -1,0 +1,17 @@
+
+dir=/usr
+spatial=/usr/local
+
+all: mapper
+    
+mapper: mapper1.cpp mapper2.cpp mapper3.cpp mapper4.cpp hadoopgis.h
+	g++ -m64 -O3 -lspatialindex mapper1.cpp -o mapper1 
+	g++ -m64 -O3 -lspatialindex mapper2.cpp -o mapper2 
+	g++ -m64 -O3 -lspatialindex mapper3.cpp -o mapper3
+	g++ -m64 -O3 -lspatialindex mapper4.cpp -o mapper4
+clean:
+	rm mapper1
+	rm mapper2
+	rm mapper3
+	rm mapper4
+
