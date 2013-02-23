@@ -2,7 +2,7 @@
 -- planet_tile4k4k data
 BEGIN ;
 
-DROP TABLE  osm_polygon_europe_tile4k4k; 
+--DROP TABLE  osm_polygon_europe_tile4k4k; 
 
 CREATE TABLE osm_polygon_planet_tile4k4k ( 
     id		integer,
