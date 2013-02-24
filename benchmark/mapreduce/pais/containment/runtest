@@ -40,9 +40,9 @@ echo -n "TEST: Query 1 --- "
 
 if diff q1.out.db q1.out.mr
 then
-    echo "failed."
-else
     echo "passed."
+else
+    echo "failed"
 fi
 
 # test 2 
@@ -52,9 +52,9 @@ echo -n "TEST: Query 2 --- "
 
 if diff q2.out.db q2.out.mr
 then
-    echo "failed."
-else
     echo "passed."
+else
+    echo "failed."
 fi
 
 # test 3
@@ -64,9 +64,9 @@ gzip -dc paismarkup.dat.gz | ./q3 | sort > q3.out.mr
 
 if diff q3.out.db q3.out.mr
 then
-    echo "failed."
-else
     echo "passed."
+else
+    echo "failed."
 fi
 
 
@@ -77,9 +77,9 @@ echo -n "TEST: Query 4 --- "
 
 if diff q4.out.db q4.out.mr
 then
-    echo "failed."
-else
     echo "passed."
+else
+    echo "failed."
 fi
 
 
