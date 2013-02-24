@@ -2,16 +2,17 @@
 dir=/home/aaji/softs/boost
 spatial=/home/aaji/softs
 
-all: mapper
-    
-mapper: mapper1.cpp mapper2.cpp mapper3.cpp mapper4.cpp hadoopgis.h
-	g++ -m64 -O3 -lspatialindex mapper1.cpp -o mapper1 -I${dir}/include -L${dir}/lib -I${spatial}/include -L${spatial}/lib
-	g++ -m64 -O3 -lspatialindex mapper2.cpp -o mapper2 -I${dir}/include -L${dir}/lib -I${spatial}/include -L${spatial}/lib
-	g++ -m64 -O3 -lspatialindex mapper3.cpp -o mapper3 -I${dir}/include -L${dir}/lib -I${spatial}/include -L${spatial}/lib
-	g++ -m64 -O3 -lspatialindex mapper4.cpp -o mapper4 -I${dir}/include -L${dir}/lib -I${spatial}/include -L${spatial}/lib
+all: q1 q2 q3 q4
+
+q1: query1.cpp hadoopgis.h vecstream.h
+	g++ -m64 -O3 -lspatialindex query1.cpp -o q1 -I${dir}/include -L${dir}/lib -I${spatial}/include -L${spatial}/lib
+q2: query2.cpp hadoopgis.h vecstream.h
+	g++ -m64 -O3 -lspatialindex query2.cpp -o q2 -I${dir}/include -L${dir}/lib -I${spatial}/include -L${spatial}/lib
+q3: query3.cpp hadoopgis.h vecstream.h
+	g++ -m64 -O3 -lspatialindex query3.cpp -o q3 -I${dir}/include -L${dir}/lib -I${spatial}/include -L${spatial}/lib
+q4: query4.cpp hadoopgis.h vecstream.h
+	g++ -m64 -O3 -lspatialindex query4.cpp -o q4 -I${dir}/include -L${dir}/lib -I${spatial}/include -L${spatial}/lib
+
 clean:
-	rm mapper1
-	rm mapper2
-	rm mapper3
-	rm mapper4
+	@rm -f q1 q2 q3 q4
 

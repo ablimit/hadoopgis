@@ -1,17 +1,15 @@
 
-dir=/usr
-spatial=/usr/local
+all: q1 q2 q3 q4
 
-all: mapper
-    
-mapper: mapper1.cpp mapper2.cpp mapper3.cpp mapper4.cpp hadoopgis.h
-	g++ -m64 -O3 -lspatialindex mapper1.cpp -o mapper1 
-	g++ -m64 -O3 -lspatialindex mapper2.cpp -o mapper2 
-	g++ -m64 -O3 -lspatialindex mapper3.cpp -o mapper3
-	g++ -m64 -O3 -lspatialindex mapper4.cpp -o mapper4
+q1: query1.cpp hadoopgis.h vecstream.h
+	g++ -m64 -O3 -lspatialindex query1.cpp -o q1 
+q2: query2.cpp hadoopgis.h vecstream.h
+	g++ -m64 -O3 -lspatialindex query2.cpp -o q2
+q3: query3.cpp hadoopgis.h vecstream.h
+	g++ -m64 -O3 -lspatialindex query3.cpp -o q3 
+q4: query4.cpp hadoopgis.h vecstream.h
+	g++ -m64 -O3 -lspatialindex query4.cpp -o q4 
+
 clean:
-	rm mapper1
-	rm mapper2
-	rm mapper3
-	rm mapper4
+	@rm -f q1 q2 q3 q4
 

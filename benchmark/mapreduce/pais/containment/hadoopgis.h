@@ -27,6 +27,7 @@
 #define IndexCapacity 100
 #define LeafCapacity 50
 #define COMPRESS true
+#define TILE_SIZE 4096
 
 
 using namespace std;
@@ -41,10 +42,10 @@ typedef boost::geometry::model::box<point> box;
 
 typedef map<string,map<int,vector<polygon> > > polygonmap;
 
-
 const string bar= "|";
 const string tab = "\t";
-const char comma = ',';
+const string comma = ",";
+const string space = " ";
 
 const string shapebegin = "POLYGON((";
 const string shapeend = "))";

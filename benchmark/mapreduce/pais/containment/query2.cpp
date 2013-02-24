@@ -1,113 +1,58 @@
 #include "hadoopgis.h"
-
+#include "vecstream.h"
 
 const int tile_size  = 4096;
 const string paisUID = "gbm1.1";
 const string tileID = "gbm1.1-0000040960-0000040960";
-const string region ="POLYGON((40960 40960, 41984 40960,  41984 41984, 40960 41984, 40960 40960))" ;
+const string region ="POLYGON((22528 8192,67584 8192,67584 24576,22528 24576,22528 8192))";
+
 vector<string> geometry_collction ; 
 double plow[2], phigh[2];
 
-class ContainmentDataStream : public IDataStream
+bool paisUIDMatch(string pais_uid)
 {
-    public:
-	ContainmentDataStream(vector<string> * invec ) : m_pNext(0), len(0),m_id(0)
-    {
-	if ( invec->empty())
-	    throw Tools::IllegalArgumentException("Input size is ZERO.");
-	vec = invec;
-	len = vec->size();
-	readNextEntry();
+    char * filename = getenv("map_input_file");
+    //char * filename = "astroII.1.1";
+    if ( NULL == filename ){
+	cerr << "map.input.file is NULL." << endl;
+	return false;
     }
 
-	virtual ~ContainmentDataStream()
-	{
-	    if (m_pNext != 0) delete m_pNext;
-	}
-	RTree::Data* parseInputPolygon(string strPolygon,id_type m_id) {
-	    boost::geometry::read_wkt(strPolygon, nuclei);
-	    boost::geometry::envelope(nuclei, mbb);
-	    low [0] = boost::geometry::get<boost::geometry::min_corner, 0>(mbb);
-	    low [1] = boost::geometry::get<boost::geometry::min_corner, 1>(mbb);
+    if (pais_uid.compare(filename) ==0)
+	return true;
+    else 
+	return false;
+}
+string constructBoundary(string tile_id){
+    vector<string> strs;
+    boost::split(strs, tile_id, boost::is_any_of("-"));
+    if (strs.size()<3 ) {
+	cerr << "ERROR: Ill formatted tile id." <<endl;
+	return "" ;
+    }
+    stringstream ss;
+    int x = boost::lexical_cast< int >( strs[1] );
+    int y = boost::lexical_cast< int >( strs[2] );
 
-	    high [0] = boost::geometry::get<boost::geometry::max_corner, 0>(mbb);
-	    high [1] = boost::geometry::get<boost::geometry::max_corner, 1>(mbb);
+    // construct a WKT polygon 
+    ss << shapebegin ;
+    ss << x ;             ss << space ; ss << y ;             ss << comma;
+    ss << x ;             ss << space ; ss << y + TILE_SIZE ; ss << comma;
+    ss << x + TILE_SIZE ; ss << space ; ss << y + TILE_SIZE ; ss << comma;
+    ss << x + TILE_SIZE ; ss << space ; ss << y ;             ss << comma;
+    ss << x ;             ss << space ; ss << y ;             ss << comma;
+    ss << shapeend ;
 
-	    Region r(low, high, 2);
+    return ss.str();
+}
 
-	    //std::cerr << " parseInputPolygon m_id: "  << m_id << std::endl;
-	    return new RTree::Data(0, 0 , r, m_id);// store a zero size null poiter.
-	}
-
-	virtual IData* getNext()
-	{
-	    if (m_pNext == 0) return 0;
-
-	    RTree::Data* ret = m_pNext;
-	    m_pNext = 0;
-	    readNextEntry();
-	    return ret;
-	}
-
-	virtual bool hasNext()
-	{
-	    return (m_pNext != 0);
-	}
-
-	virtual uint32_t size()
-	{
-	    return vec->size();
-	    //throw Tools::NotSupportedException("Operation not supported.");
-	}
-
-	virtual void rewind()
-	{
-	    if (m_pNext != 0)
-	    {
-		delete m_pNext;
-		m_pNext = 0;
-	    }
-	    --m_id;
-
-	    readNextEntry();
-	}
-
-	void readNextEntry()
-	{
-	    if (m_id< len)
-	    {
-		//std::cout << "readNextEntry m_id == " << m_id << std::endl;
-		m_pNext = parseInputPolygon((*vec)[m_id], m_id);
-		m_id++;
-	    }
-	}
-
-	RTree::Data* m_pNext;
-	vector<string> * vec; 
-	int len;
-	id_type m_id;
-
-	double low[2], high[2];
-	polygon nuclei;
-	box mbb;
-};
-
-class MyVisitor : public IVisitor
-{
-    public:
-	void visitNode(const INode& n) {}
-	void visitData(std::string &s) {}
-
-	void visitData(const IData& d)
-	{
-	    std::cout << geometry_collction[d.getIdentifier()] << std::endl;
-	}
-
-	void visitData(std::vector<const IData*>& v) {}
-	void visitData(std::vector<uint32_t>& v){}
-};
-
-
+bool isTileRelevant(string tile_id){
+    string wkt= constructBoundary(tile_id);
+    polygon poly1,poly2; 
+    boost::geometry::read_wkt(wkt, poly1);
+    boost::geometry::read_wkt(region, poly2);
+    return boost::geometry::intersects(poly1,poly2); 
+}
 
 void processQuery()
 {
@@ -138,33 +83,12 @@ void processQuery()
 	MyVisitor vis ; 
 	spidx->containsWhatQuery(r, vis);
 
-
 	// garbage collection 
 	delete spidx;
 	delete storage;
     }
 }
 
-bool paisUIDMatch(string pais_uid)
-{
-    char * filename = getenv("map_input_file");
-    //char * filename = "astroII.1.1";
-    if ( NULL == filename ){
-	cerr << "map.input.file is NULL." << endl;
-	return false;
-    }
-
-    if (pais_uid.compare(filename) ==0)
-	return true;
-    else 
-	return false;
-}
-
-bool isTileRelevant(string tile_id){
-    // parse tile ID
-    // if there is no overlap, filter out.
-    return true; 
-}
 
 int main(int argc, char **argv) {
     string input_line;
