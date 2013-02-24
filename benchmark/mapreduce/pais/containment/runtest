@@ -1,0 +1,95 @@
+#! /bin/bash
+
+if [ ! $# == 1 ]; then
+    echo "Usage: $0 [desktop | cluster | imac]"
+    exit
+fi
+
+if [ -e q1.out.db ] && [ -e q2.out.db ] && [ -e q3.out.db ] && [ -e q4.out.db ] && [ -e gbm1.1 ] && [ -e paismarkup.dat.gz ]
+then
+    echo "All testing infrastructure is present."
+else 
+    echo "Test cases are missing... Can't do test without them."
+    exit 1
+fi
+
+
+testcase="gbm1.1"
+case "$1" in
+    desktop) echo "Test begin in $1"
+        mymakefile="Makefile"
+        ;;
+    cluster) echo "Test begin in $1"
+        mymakefile="makefile"
+        ;;
+    imac) echo "Test begin in $1"
+        mymakefile="MacMakefile"
+        ;;
+    *) echo "[$1] -- Unknown environment. "
+        exit 1
+esac
+
+# create the test files.
+make -f ${mymakefile}
+export map_input_file="gbm1.1"
+
+# test 1 
+echo -n "TEST: Query 1 --- "
+
+./q1 < ${testcase} | sort > q1.out.mr
+
+if diff q1.out.db q1.out.mr
+then
+    echo "failed."
+else
+    echo "passed."
+fi
+
+# test 2 
+echo -n "TEST: Query 2 --- "
+
+./q2 < ${testcase} | sort > q2.out.mr
+
+if diff q2.out.db q2.out.mr
+then
+    echo "failed."
+else
+    echo "passed."
+fi
+
+# test 3
+echo -n "TEST: Query 3 --- "
+
+gzip -dc paismarkup.dat.gz | ./q3 | sort > q3.out.mr
+
+if diff q3.out.db q3.out.mr
+then
+    echo "failed."
+else
+    echo "passed."
+fi
+
+
+# test 4
+echo -n "TEST: Query 4 --- "
+
+./q4 < ${testcase} | sort > q4.out.mr
+
+if diff q4.out.db q4.out.mr
+then
+    echo "failed."
+else
+    echo "passed."
+fi
+
+
+# clean up the trash.
+make clean
+
+for i in 1 2 3 4
+do
+    if [ -e q${i}.out.mr ]
+        rm -f q${i}.out.mr
+    fi
+done
+
