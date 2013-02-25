@@ -5,7 +5,7 @@ if [ ! $# == 1 ]; then
     exit
 fi
 
-if [ -e q1.out.db ] && [ -e q2.out.db ] && [ -e q3.out.db ] && [ -e q4.out.db ] && [ -e gbm1.1 ] && [ -e paismarkup.dat.gz ]
+if [ -e q1.out.db ] && [ -e q2.out.db ] && [ -e q3.out.db ] && [ -e q4.out.db ] && [ -e gbm1.1.markup.ablet.1 ] && [ -e gbm1.1.markup.ablet.2 ]
 then
     echo "All testing infrastructure is present."
 else 
@@ -14,7 +14,7 @@ else
 fi
 
 
-testcase="gbm1.1"
+testcase="gbm1.1.markup.ablet.1"
 case "$1" in
     desktop) echo "Test begin in $1"
     mymakefile="Makefile"
@@ -66,8 +66,8 @@ fi
 # test 3
 echo -n "TEST: Query 3 --- "
 
-# gzip -dc paismarkup.dat.gz | ./q3 | sort > q3.out.mr
-./q3 < ${testcase} | sort > q3.out.mr
+gzip -dc /dev/shm/paismarkup.dat.gz | ./q3 | sort > q3.out.mr
+# ./q3 < ${testcase} | sort > q3.out.mr
 
 diff q3.out.db q3.out.mr >/dev/null 2>&1
 
@@ -83,7 +83,7 @@ fi
 # test 4
 echo -n "TEST: Query 4 --- "
 
-./q4 < ${testcase} | sort > q4.out.mr
+cat ${testcase} gbm1.1.markup.ablet.2 | q4 | sort > q4.out.mr
 
 diff q4.out.db q4.out.mr >/dev/null 2>&1
 
