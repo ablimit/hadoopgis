@@ -17,16 +17,16 @@ fi
 testcase="gbm1.1"
 case "$1" in
     desktop) echo "Test begin in $1"
-        mymakefile="Makefile"
-        ;;
+    mymakefile="Makefile"
+    ;;
     cluster) echo "Test begin in $1"
-        mymakefile="makefile"
-        ;;
+    mymakefile="makefile"
+    ;;
     imac) echo "Test begin in $1"
-        mymakefile="MacMakefile"
-        ;;
+    mymakefile="MacMakefile"
+    ;;
     *) echo "[$1] -- Unknown environment. "
-        exit 1
+    exit 1
 esac
 
 # create the test files.
@@ -38,11 +38,14 @@ echo -n "TEST: Query 1 --- "
 
 ./q1 < ${testcase} | sort > q1.out.mr
 
-if diff q1.out.db q1.out.mr
+diff q1.out.db q1.out.mr >/dev/null 2>&1
+
+if [ $? -ne 0 ]
 then
-    echo "passed."
+    echo "failed."
 else
-    echo "failed"
+    echo "passed."
+    rm q1.out.mr
 fi
 
 # test 2 
@@ -50,23 +53,30 @@ echo -n "TEST: Query 2 --- "
 
 ./q2 < ${testcase} | sort > q2.out.mr
 
-if diff q2.out.db q2.out.mr
+diff q2.out.db q2.out.mr >/dev/null 2>&1
+
+if [ $? -ne 0 ]
 then
-    echo "passed."
-else
     echo "failed."
+else
+    echo "passed."
+    rm q2.out.mr
 fi
 
 # test 3
 echo -n "TEST: Query 3 --- "
 
-gzip -dc paismarkup.dat.gz | ./q3 | sort > q3.out.mr
+# gzip -dc paismarkup.dat.gz | ./q3 | sort > q3.out.mr
+./q3 < ${testcase} | sort > q3.out.mr
 
-if diff q3.out.db q3.out.mr
+diff q3.out.db q3.out.mr >/dev/null 2>&1
+
+if [ $? -ne 0 ]
 then
-    echo "passed."
-else
     echo "failed."
+else
+    echo "passed."
+    rm q3.out.mr
 fi
 
 
@@ -75,11 +85,14 @@ echo -n "TEST: Query 4 --- "
 
 ./q4 < ${testcase} | sort > q4.out.mr
 
-if diff q4.out.db q4.out.mr
+diff q4.out.db q4.out.mr >/dev/null 2>&1
+
+if [ $? -ne 0 ]
 then
-    echo "passed."
-else
     echo "failed."
+else
+    echo "passed."
+    rm q4.out.mr
 fi
 
 
@@ -88,8 +101,10 @@ make clean
 
 for i in 1 2 3 4
 do
-    if [ -e q${i}.out.mr ]
-        rm -f q${i}.out.mr
-    fi
+    #if [ -e q${i}.out.mr ]
+    #then
+    #	rm q${i}.out.mr
+    #fi
+   sleep 1;
 done
 
