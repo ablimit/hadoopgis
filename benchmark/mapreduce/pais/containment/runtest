@@ -5,7 +5,10 @@ if [ ! $# == 1 ]; then
     exit
 fi
 
-if [ -e q1.out.db ] && [ -e q2.out.db ] && [ -e q3.out.db ] && [ -e q4.out.db ] && [ -e gbm1.1.markup.ablet.1 ] && [ -e gbm1.1.markup.ablet.2 ]
+dir=testdir
+testcase="gbm1.1.markup.ablet.1"
+
+if [ -e ${dir}/q1.out.db ] && [ -e ${dir}/q2.out.db ] && [ -e ${dir}/q3.out.db ] && [ -e ${dir}/q4.out.db ] && [ -e ${dir}/gbm1.1.markup.ablet.1 ] && [ -e ${dir}/gbm1.1.markup.ablet.2 ]
 then
     echo "All testing infrastructure is present."
 else 
@@ -13,8 +16,6 @@ else
     exit 1
 fi
 
-
-testcase="gbm1.1.markup.ablet.1"
 case "$1" in
     desktop) echo "Test begin in $1"
     mymakefile="Makefile"
@@ -36,75 +37,64 @@ export map_input_file="gbm1.1"
 # test 1 
 echo -n "TEST: Query 1 --- "
 
-./q1 < ${testcase} | sort > q1.out.mr
+./q1 < ${dir}/${testcase} | sort > ${dir}/q1.out.mr
 
-diff q1.out.db q1.out.mr >/dev/null 2>&1
+diff ${dir}/q1.out.db ${dir}/q1.out.mr >/dev/null 2>&1
 
 if [ $? -ne 0 ]
 then
     echo "failed."
 else
     echo "passed."
-    rm q1.out.mr
+    rm ${dir}/q1.out.mr
 fi
 
 # test 2 
 echo -n "TEST: Query 2 --- "
 
-./q2 < ${testcase} | sort > q2.out.mr
+./q2 < ${dir}/${testcase} | sort > ${dir}/q2.out.mr
 
-diff q2.out.db q2.out.mr >/dev/null 2>&1
+diff ${dir}/q2.out.db ${dir}/q2.out.mr >/dev/null 2>&1
 
 if [ $? -ne 0 ]
 then
     echo "failed."
 else
     echo "passed."
-    rm q2.out.mr
+    rm ${dir}/q2.out.mr
 fi
 
 # test 3
 echo -n "TEST: Query 3 --- "
 
-gzip -dc /dev/shm/paismarkup.dat.gz | ./q3 | sort > q3.out.mr
-# ./q3 < ${testcase} | sort > q3.out.mr
+gzip -dc /dev/shm/q3.dat.gz | ./q3 | sort > ${dir}/q3.out.mr
+# ./q3 < ${testcase} | sort > ${dir}/q3.out.mr
 
-diff q3.out.db q3.out.mr >/dev/null 2>&1
+diff ${dir}/q3.out.db ${dir}/q3.out.mr >/dev/null 2>&1
 
 if [ $? -ne 0 ]
 then
     echo "failed."
 else
     echo "passed."
-    rm q3.out.mr
+    rm ${dir}/q3.out.mr
 fi
-
 
 # test 4
 echo -n "TEST: Query 4 --- "
 
-cat ${testcase} gbm1.1.markup.ablet.2 | q4 | sort > q4.out.mr
+cat ${dir}/*.markup.ablet.* | ./q4 | sort > ${dir}/q4.out.mr
 
-diff q4.out.db q4.out.mr >/dev/null 2>&1
+diff ${dir}/q4.out.db ${dir}/q4.out.mr >/dev/null 2>&1
 
 if [ $? -ne 0 ]
 then
     echo "failed."
 else
     echo "passed."
-    rm q4.out.mr
+    rm ${dir}/q4.out.mr
 fi
-
 
 # clean up the trash.
 make clean
-
-for i in 1 2 3 4
-do
-    #if [ -e q${i}.out.mr ]
-    #then
-    #	rm q${i}.out.mr
-    #fi
-   sleep 1;
-done
 
