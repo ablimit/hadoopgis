@@ -21,6 +21,8 @@ CREATE INDEX osm_polygon_planet_fourxfour_fidx ON osm_polygon_planet_fourxfour (
 
 COMMIT ;
 
+SELECT UpdateGeometrySRID('osm_polygon_planet_fourxfour','way',4326);
+
 VACUUM VERBOSE ANALYZE osm_polygon_planet_fourxfour;
 
 
@@ -48,6 +50,8 @@ CREATE INDEX osm_polygon_europe_fourxfour_sp_idx ON osm_polygon_europe_fourxfour
 CREATE INDEX osm_polygon_europe_fourxfour_fidx ON osm_polygon_europe_fourxfour (tilename);
 
 COMMIT;
+
+SELECT UpdateGeometrySRID('osm_polygon_europe_fourxfour','way',4326);
 
 VACUUM VERBOSE ANALYZE osm_polygon_europe_fourxfour;
 
