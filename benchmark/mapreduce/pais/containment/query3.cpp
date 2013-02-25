@@ -2,7 +2,7 @@
 #include "vecstream.h"
 
 const int tile_size  = 4096;
-const string region ="POLYGON((22528 8192,67584 8192,67584 24576,22528 24576,22528 8192))";
+const string region ="POLYGON((40960 40960, 41984 40960,  41984 41984, 40960 41984, 40960 40960))" ;
 
 vector<string> geometry_collction ; 
 double plow[2], phigh[2];

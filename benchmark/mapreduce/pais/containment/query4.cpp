@@ -2,11 +2,11 @@
 #include "vecstream.h"
 
 const int tile_size  = 4096;
-const float area = 125.0;
+const float AVG_AREA = 125.0;
 const string paisUID = "gbm1.1";
-const string tileID = "gbm1.1-0000040960-0000040960";
 const string region ="POLYGON((22528 8192,67584 8192,67584 24576,22528 24576,22528 8192))";
 polygon poly;
+map<string,bool> tileIDSet;
 vector<string> geometry_collction ; 
 double plow[2], phigh[2];
 
@@ -48,10 +48,16 @@ string constructBoundary(string tile_id){
 }
 
 bool isTileRelevant(string tile_id){
+    if (tileIDSet.find(tile_id)== tileIDSet.end())
+    {
     string wkt= constructBoundary(tile_id);
     polygon poly1; 
     boost::geometry::read_wkt(wkt, poly1);
-    return boost::geometry::intersects(poly,poly1); 
+    bool res = boost::geometry::intersects(poly,poly1);
+    tileIDSet[tile_id] = res;
+    }
+
+    return tileIDSet[tile_id] ;
 }
 
 void processQuery()
@@ -111,9 +117,9 @@ int main(int argc, char **argv) {
                 pos=input_line.find_first_of(comma,pos+1);
                 string sobject = shapebegin + input_line.substr(pos+2,input_line.length()- pos - 3) + shapeend;
                 boost::geometry::read_wkt(sobject, polygon_object);  // spatial filtering
-                if (boost::geometry::area(polygon_object)>area)
+                if (boost::geometry::area(polygon_object)>AVG_AREA)
                     geometry_collction.push_back(sobject);
-                //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
+                //cout << key<< tab << index << tab << shapebegin <<value <<shapeend<< endl;
             }
         }
     }
