@@ -94,7 +94,8 @@ int main(int argc, char **argv) {
             //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
         }
     }
-
+    cerr << "Number of objects contained in the candidate list: " << geometry_collction.size() << endl;
+    cerr.flush();
     processQuery();
 
     cout.flush();
