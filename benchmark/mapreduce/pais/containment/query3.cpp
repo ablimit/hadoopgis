@@ -2,7 +2,7 @@
 #include "vecstream.h"
 
 const int tile_size  = 4096;
-const string region ="POLYGON((40960 40960, 41984 40960,  41984 41984, 40960 41984, 40960 40960))" ;
+const string region ="POLYGON((40960 40960, 40960 41984, 41984 41984, 41984 40960, 40960 40960))" ;
 
 vector<string> geometry_collction ; 
 double plow[2], phigh[2];
@@ -53,10 +53,8 @@ void processQuery()
         bool ret = spidx->isIndexValid();
         if (ret == false) std::cerr << "ERROR: Structure is invalid!" << std::endl;
         // else std::cerr << "The stucture seems O.K." << std::endl;
-        polygon container ; 
         box container_mbb;
-        boost::geometry::read_wkt(region, container);
-        boost::geometry::envelope(container,container_mbb);
+        boost::geometry::envelope(poly,container_mbb);
         plow [0] = boost::geometry::get<boost::geometry::min_corner, 0>(container_mbb);
         plow [1] = boost::geometry::get<boost::geometry::min_corner, 1>(container_mbb);
 
@@ -77,6 +75,7 @@ void processQuery()
 int main(int argc, char **argv) {
     string input_line;
     string tile_id ;
+    string oid ;
 
     boost::geometry::read_wkt(region, poly);
 
@@ -91,11 +90,12 @@ int main(int argc, char **argv) {
         {
             pos=input_line.find_first_of(comma,pos+1);
             geometry_collction.push_back(shapebegin + input_line.substr(pos+2,input_line.length()- pos - 3) + shapeend);
+            //geometry_collction.push_back(input_line.substr(pos+1,string::npos));
             //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
         }
     }
-    cerr << "Number of objects contained in the candidate list: " << geometry_collction.size() << endl;
-    cerr.flush();
+    //cerr << "Number of objects contained in the candidate list: " << geometry_collction.size() << endl;
+    //cerr.flush();
     processQuery();
 
     cout.flush();

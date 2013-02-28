@@ -1,14 +1,14 @@
 #! /bin/bash
 
-if [ ! $# == 1 ]; then
-    echo "Usage: $0 [desktop | cluster | imac]"
-    exit
-fi
+#if [ ! $# == 1 ]; then
+    # echo "Usage: $0 [desktop | cluster | imac]"
+    # exit
+#fi
 
 dir=testdir
 testcase="gbm1.1.markup.ablet.1"
 
-if [ -e ${dir}/q1.out.db ] && [ -e ${dir}/q2.out.db ] && [ -e ${dir}/q3.out.db ] && [ -e ${dir}/q4.out.db ] && [ -e ${dir}/gbm1.1.markup.ablet.1 ] && [ -e ${dir}/gbm1.1.markup.ablet.2 ]
+if [ -e ${dir}/q1.out.db ] && [ -e ${dir}/q2.out.db ] && [ -e ${dir}/q3.out.db ] && [ -e ${dir}/q4.out.db ] && [ -e ${dir}/gbm1.1.markup.ablet.1 ]
 then
     echo "All testing infrastructure is present."
 else 
@@ -16,22 +16,22 @@ else
     exit 1
 fi
 
-case "$1" in
-    desktop) echo "Test begin in $1"
-    mymakefile="Makefile"
-    ;;
-    cluster) echo "Test begin in $1"
-    mymakefile="makefile"
-    ;;
-    imac) echo "Test begin in $1"
-    mymakefile="MacMakefile"
-    ;;
-    *) echo "[$1] -- Unknown environment. "
-    exit 1
-esac
+#case "$1" in
+#    desktop) echo "Test begin in $1"
+#    mymakefile="Makefile"
+#    ;;
+#    cluster) echo "Test begin in $1"
+#    mymakefile="makefile"
+#    ;;
+#    imac) echo "Test begin in $1"
+#    mymakefile="MacMakefile"
+#    ;;
+#    *) echo "[$1] -- Unknown environment. "
+#    exit 1
+#esac
 
 # create the test files.
-make -f ${mymakefile}
+make -f Makefile
 export map_input_file="gbm1.1"
 
 # test 1 
@@ -67,8 +67,7 @@ fi
 # test 3
 echo -n "TEST: Query 3 --- "
 
-gzip -dc /dev/shm/q3.dat.gz | ./q3 | sort > ${dir}/q3.out.mr
-# ./q3 < ${testcase} | sort > ${dir}/q3.out.mr
+./q3 < ${dir}/q3.dat | sort > ${dir}/q3.out.mr
 
 diff ${dir}/q3.out.db ${dir}/q3.out.mr >/dev/null 2>&1
 
@@ -83,7 +82,7 @@ fi
 # test 4
 echo -n "TEST: Query 4 --- "
 
-cat ${dir}/*.markup.ablet.* | ./q4 | sort > ${dir}/q4.out.mr
+./q4 < ${dir}/gbm1.1.markup.ablet.1 | sort > ${dir}/q4.out.mr
 
 diff ${dir}/q4.out.db ${dir}/q4.out.mr >/dev/null 2>&1
 
