@@ -1,0 +1,60 @@
+#! /bin/bash
+
+#if [ ! $# == 1 ]; then
+    # echo "Usage: $0 [desktop | cluster | imac]"
+    # exit
+#fi
+
+dir=testdir
+
+if [ -e ${dir}/osm_polygon_europe.snapshot.txt ] && [ -e ${dir}/osm_polygon_planet.snapshot.txt ] 
+then
+    echo "All testing infrastructure is present."
+else 
+    echo "Test cases are missing... Can't do test without them."
+    exit 1
+fi
+
+
+# create the test files.
+make -f Makefile
+
+# test 1 
+echo -n "TEST: Map --- "
+
+export map_input_file="planet.1"
+./mapper < ${dir}/osm_polygon_planet.snapshot.txt  > ${dir}/map.planet.mr
+
+export map_input_file="planet.2"
+./mapper < ${dir}/osm_polygon_europe.snapshot.txt  > ${dir}/map.europe.mr
+
+echo "done."
+# diff ${dir}/q1.out.db ${dir}/q1.out.mr >/dev/null 2>&1
+
+#if [ $? -ne 0 ]
+#then
+#    echo "failed."
+#else
+#    echo "passed."
+#    rm ${dir}/q1.out.mr
+#fi
+
+# test 2
+
+echo -n "TEST: Reduce --- "
+
+cat ${dir}/map.planet.mr ${dir}/map.europe.mr > ${dir}/reduce.in
+./reducer< ${dir}/reduce.in > ${dir}/reduce.out.mr
+
+# diff ${dir}/q1.out.db ${dir}/q1.out.mr >/dev/null 2>&1
+
+#if [ $? -ne 0 ]
+#then
+#    echo "failed."
+#else
+#    echo "passed."
+#    rm ${dir}/q1.out.mr
+#fi
+
+make clean
+
