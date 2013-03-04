@@ -28,33 +28,37 @@ export map_input_file="planet.1"
 export map_input_file="planet.2"
 ./mapper < ${dir}/osm_polygon_europe.snapshot.txt  > ${dir}/map.europe.mr
 
-echo "done."
-# diff ${dir}/q1.out.db ${dir}/q1.out.mr >/dev/null 2>&1
+diff ${dir}/map.planet.db ${dir}/map.planet.mr >/dev/null 2>&1
 
-#if [ $? -ne 0 ]
-#then
-#    echo "failed."
-#else
-#    echo "passed."
-#    rm ${dir}/q1.out.mr
-#fi
+if [ $? -ne 0 ]
+then
+    echo "failed."
+else
+    echo "passed."
+    cat ${dir}/map.planet.mr ${dir}/map.europe.mr > ${dir}/reduce.in
+    rm ${dir}/map.planet.mr
+    rm ${dir}/map.europe.mr
+fi
 
 # test 2
 
 echo -n "TEST: Reduce --- "
 
-cat ${dir}/map.planet.mr ${dir}/map.europe.mr > ${dir}/reduce.in
-./reducer< ${dir}/reduce.in > ${dir}/reduce.out.mr
 
-# diff ${dir}/q1.out.db ${dir}/q1.out.mr >/dev/null 2>&1
+./reducer< ${dir}/reduce.in 2>/tmp/serr.txt | cut -f2 | sort -n > ${dir}/reduce.out.mr
 
-#if [ $? -ne 0 ]
-#then
-#    echo "failed."
-#else
-#    echo "passed."
-#    rm ${dir}/q1.out.mr
-#fi
+diff ${dir}/reduce.out.db ${dir}/reduce.out.mr >/dev/null 2>&1
+
+if [ $? -ne 0 ]
+then
+    echo "failed."
+else
+    echo "passed."
+    cat /tmp/serr.txt
+    rm /tmp/serr.txt
+    rm ${dir}/reduce.in
+    rm ${dir}/reduce.out.mr
+fi
 
 make clean
 

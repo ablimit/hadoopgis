@@ -5,7 +5,7 @@ spatial=/home/aaji/softs
 UNAME		= $(shell uname)
 OPTFLAGS	= -O3
 INCBASE		= -I.
-LIBBASE		= -lspatialindex 
+LIBBASE		= -lspatialindex -lgeos
 
 ifneq (,$(findstring emory,$(shell uname -a)))
     INCFLAGS = -I$(boost)/include -I$(spatial)/include
@@ -13,7 +13,7 @@ ifneq (,$(findstring emory,$(shell uname -a)))
 else 
     ifeq ($(UNAME), Darwin)
     INCFLAGS = -I /Library/Frameworks/GEOS.framework/Headers
-    LIBS = -lgeos -L /Library/Frameworks/GEOS.framework/unix/lib
+    LIBS = -L /Library/Frameworks/GEOS.framework/unix/lib
 endif
 endif
 
@@ -21,7 +21,7 @@ CFLAGS      = $(OPTFLAGS) $(INCBASE) $(INCFLAGS)
 LDFLAGS     = $(LIBBASE) $(LIBS)
 
 ifeq ($(UNAME), Darwin)
-    CC = g++
+    CC = g++ -arch x86_64
 else 
     CC = g++
 endif
