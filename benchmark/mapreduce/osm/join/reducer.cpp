@@ -58,6 +58,7 @@ int main(int argc, char** argv)
 	if (polydata[iter->first].size() > joincar){
 	    joincar=polydata[iter->first].size();
 	    cerr << "|join|=" << joincar << endl;
+	    cerr << "|T|=" << polydata.size() << endl;
 	    // cerr << "  Note: if this prints more than once then probably there is a bug." << endl;
 	}
 	//cerr << "size=" <<polydata[iter->first].size() << endl;

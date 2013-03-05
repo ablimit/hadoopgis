@@ -29,7 +29,8 @@ int main(int argc, char **argv) {
     while(cin && getline(cin, input_line) && !cin.eof()){
 	
 	boost::split(fields, input_line, boost::is_any_of(BAR));
-	cout << fields[OSM_TILEID]<< TAB << index<< BAR << fields[OSM_ID] << BAR <<fields[OSM_POLYGON]<< endl;
+	if (fields[OSM_TILEID].size()> 2 )
+	    cout << fields[OSM_TILEID]<< TAB << index<< BAR << fields[OSM_ID] << BAR <<fields[OSM_POLYGON]<< endl;
 	fields.clear();
     }
     cout.flush();
