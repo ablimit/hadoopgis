@@ -1,18 +1,28 @@
 #include "hadoopgis.h"
-#include "vecstream.h"
+#include "england.h"
 
-const int tile_size  = 4096;
-const string region ="POLYGON((40960 40960, 40960 41984, 41984 41984, 41984 40960, 40960 40960))" ;
+/* local vars  */
 
-vector<string> geometry_collction ; 
+const double width  = 0.09;
+const double height   = 0.045;
+const double origin_x = -180.00 ;
+const double origin_y = -90.00 ;
 double plow[2], phigh[2];
-polygon poly;
+    
+vector<string> exact_hits ; 
+vector<string> candidate_hits;
+
+GeometryFactory *gf = NULL;
+WKTReader *wkt_reader = NULL;
+Geometry *england_poly = NULL; 
+
+/* functions */
 
 string constructBoundary(string tile_id){
     vector<string> strs;
-    boost::split(strs, tile_id, boost::is_any_of("-"));
-    if (strs.size()<3 ) {
-        cerr << "ERROR: Ill formatted tile id." <<endl;
+    boost::split(strs, tile_id, boost::is_any_of(UNDERSCORE));
+    if (strs.size()<2) {
+        cerr << "ERROR: ill formatted tile id." <<endl;
         return "" ;
     }
     stringstream ss;
@@ -21,84 +31,88 @@ string constructBoundary(string tile_id){
 
     // construct a WKT polygon 
     ss << shapebegin ;
-    ss << x ;             ss << space ; ss << y ;             ss << comma;
-    ss << x ;             ss << space ; ss << y + TILE_SIZE ; ss << comma;
-    ss << x + TILE_SIZE ; ss << space ; ss << y + TILE_SIZE ; ss << comma;
-    ss << x + TILE_SIZE ; ss << space ; ss << y ;             ss << comma;
-    ss << x ;             ss << space ; ss << y ;             ss << comma;
+    ss << origin_x + (x-1) * width ; ss << SPACE ; ss << origin_y + (y-1) * height ; ss << COMMA;
+    ss << origin_x + x     * width ; ss << SPACE ; ss << origin_y + (y-1) * height ; ss << COMMA;
+    ss << origin_x + x     * width ; ss << SPACE ; ss << origin_y + y     * height ; ss << COMMA;
+    ss << origin_x + (x-1) * width ; ss << SPACE ; ss << origin_y + y     * height ; ss << COMMA;
+    ss << origin_x + (x-1) * width ; ss << SPACE ; ss << origin_y + (y-1) * height ; ss << COMMA;
     ss << shapeend ;
 
     return ss.str();
 }
 
-bool isTileRelevant(string tile_id){
-    string wkt= constructBoundary(tile_id);
-    polygon poly1; 
-    boost::geometry::read_wkt(wkt, poly1);
-    return boost::geometry::intersects(poly,poly1); 
+int isTileRelevant(string tile_id){
+    if (tile_id.size()<3)
+	return 2;
+
+    int val = -1; 
+    string wkt = constructBoundary(tile_id);
+
+    Geometry *tile_boundary = wkt_reader->read(wkt);
+    
+    if (england_poly->intersects(tile_boundary))
+    {
+	if (england_poly->contains(tile_boundary))
+	    val = 0;
+	else 
+	    val = 1;
+    }
+    val =2;
+
+    delete tile_boundary ;
+    return val;
 }
 
 void processQuery()
 {
-    if (geometry_collction.size()>0)
+    Geometry * way = NULL; 
+    // polygons which are definitly contained in the boundary
+    for (vector<string>::iterator it = exact_hits.begin() ; it != exact_hits.end(); ++it)
+	cout << *it<< endl;
+
+    // polygons which may be contained in the boundary
+    for (vector<string>::iterator it = candidate_hits.begin() ; it != candidate_hits.end(); ++it)
     {
-        id_type  indexIdentifier ;
-        IStorageManager * storage = StorageManager::createNewMemoryStorageManager();
-        ContainmentDataStream stream(&geometry_collction);
-        ISpatialIndex * spidx = RTree::createAndBulkLoadNewRTree(RTree::BLM_STR, stream, *storage, 
-                FillFactor, IndexCapacity, LeafCapacity, 2, 
-                RTree::RV_RSTAR, indexIdentifier);
+	way = wkt_reader->read(*it);
 
-        // Error checking 
-        bool ret = spidx->isIndexValid();
-        if (ret == false) std::cerr << "ERROR: Structure is invalid!" << std::endl;
-        // else std::cerr << "The stucture seems O.K." << std::endl;
-        box container_mbb;
-        boost::geometry::envelope(poly,container_mbb);
-        plow [0] = boost::geometry::get<boost::geometry::min_corner, 0>(container_mbb);
-        plow [1] = boost::geometry::get<boost::geometry::min_corner, 1>(container_mbb);
-
-        phigh [0] = boost::geometry::get<boost::geometry::max_corner, 0>(container_mbb);
-        phigh [1] = boost::geometry::get<boost::geometry::max_corner, 1>(container_mbb);
-
-        Region r = Region(plow, phigh, 2);
-        MyVisitor vis ; 
-        spidx->containsWhatQuery(r, vis);
-
-        // garbage collection 
-        delete spidx;
-        delete storage;
+	if (england_poly->contains(way))
+	    cout << *it <<endl;
+	delete way;
     }
+    cout.flush();
 }
 
 
 int main(int argc, char **argv) {
     string input_line;
-    string tile_id ;
-    string oid ;
+    vector<string> fields;
 
-    boost::geometry::read_wkt(region, poly);
-
+    gf = new GeometryFactory(new PrecisionModel(),PAIS_SRID);
+    wkt_reader= new WKTReader(gf);
+    england_poly = wkt_reader->read(england);
+    
     while(cin && getline(cin, input_line) && !cin.eof()){
+	boost::split(fields, input_line, boost::is_any_of(BAR));
 
-        size_t pos = input_line.find_first_of(comma,0);
-        if (pos == string::npos)
-            return 1; // failure
-
-        tile_id = input_line.substr(0,pos);
-        if (isTileRelevant(tile_id)) // if tile ID matches, continue searching 
-        {
-            pos=input_line.find_first_of(comma,pos+1);
-            geometry_collction.push_back(shapebegin + input_line.substr(pos+2,input_line.length()- pos - 3) + shapeend);
-            //geometry_collction.push_back(input_line.substr(pos+1,string::npos));
-            //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
-        }
+	int rel =isTileRelevant(fields[OSM_TILEID]);
+	if (rel == 0)// if tile ID matches, continue searching 
+	{
+	    exact_hits.push_back(fields[OSM_POLYGON]);
+	    //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
+	}
+	else if (rel==1)
+	{
+	    candidate_hits.push_back(fields[OSM_POLYGON]);
+	}
+	fields.clear();
     }
-    //cerr << "Number of objects contained in the candidate list: " << geometry_collction.size() << endl;
-    //cerr.flush();
+
     processQuery();
 
-    cout.flush();
+    delete england_poly;
+    delete wkt_reader;
+    delete gf;
+
     return 0; // success
 }
 

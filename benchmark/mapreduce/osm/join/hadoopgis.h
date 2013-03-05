@@ -30,9 +30,11 @@
 #include <geos/geom/PrecisionModel.h>
 #include <geos/geom/GeometryFactory.h>
 #include <geos/geom/Geometry.h>
+#include <geos/geom/Point.h>
 #include <geos/io/WKTReader.h>
 
 #define PAIS_SRID 4326
+#define OSM_SRID 4326
 
 #define FillFactor 0.7
 #define IndexCapacity 100

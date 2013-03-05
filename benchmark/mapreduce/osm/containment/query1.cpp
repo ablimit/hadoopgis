@@ -50,7 +50,6 @@ void processQuery()
 bool paisUIDMatch(string pais_uid)
 {
     char * filename = getenv("map_input_file");
-    //char * filename = "astroII.1.1";
     if ( NULL == filename ){
 	cerr << "map.input.file is NULL." << endl;
 	return false;
@@ -67,7 +66,7 @@ int main(int argc, char **argv) {
     vector<string> fields;
 
     while(cin && getline(cin, input_line) && !cin.eof()){
-        boost::split(fields, input_line, boost::is_any_of(bar));
+        boost::split(fields, input_line, boost::is_any_of(BAR));
 
         if (fields[OSM_TILEID].size()> 0 && fields[OSM_TILEID].compare(tileID)==0) // if tile ID matches, continue searching 
         {

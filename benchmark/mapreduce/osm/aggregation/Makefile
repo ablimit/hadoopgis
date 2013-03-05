@@ -26,23 +26,17 @@ else
     CC = g++
 endif
 
-all: q1 q2 q3 q4 q5
+all: q1 q2 q3
 
-q1: query1.cpp hadoopgis.h vecstream.h
+q1: query1.cpp hadoopgis.h 
 	$(CC) query1.cpp $(CFLAGS) $(LDFLAGS) -o q1
 
-q2: query2.cpp hadoopgis.h paris.h
+q2: query2.cpp hadoopgis.h
 	$(CC) query2.cpp $(CFLAGS) $(LDFLAGS) -o q2
 
-q3: query3.cpp hadoopgis.h england.h
+q3: query3.cpp hadoopgis.h
 	$(CC) query3.cpp $(CFLAGS) $(LDFLAGS) -o q3
 
-q4: query4.cpp hadoopgis.h england.h
-	$(CC) query4.cpp $(CFLAGS) $(LDFLAGS) -o q4
-
-q5: query5.cpp hadoopgis.h 
-	$(CC) query4.cpp $(CFLAGS) $(LDFLAGS) -o q5
-
 clean:
-	@rm -f q1 q2 q3 q4 q5
+	@rm -f q1 q2 q3
 

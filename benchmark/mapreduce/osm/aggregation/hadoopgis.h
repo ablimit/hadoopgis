@@ -17,7 +17,6 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometry.hpp>
-#include <boost/geometry/algorithms/covered_by.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/geometries/polygon.hpp>
 #include <boost/geometry/geometries/box.hpp>
@@ -30,9 +29,11 @@
 #include <geos/geom/PrecisionModel.h>
 #include <geos/geom/GeometryFactory.h>
 #include <geos/geom/Geometry.h>
+#include <geos/geom/Point.h>
 #include <geos/io/WKTReader.h>
 
 #define PAIS_SRID 4326
+#define OSM_SRID 4326
 
 #define FillFactor 0.7
 #define IndexCapacity 100

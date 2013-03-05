@@ -1,8 +1,9 @@
 #include "hadoopgis.h"
-#include "paris.h"
+#include "england.h"
 
 /* local vars  */
 
+const double AREA_PREDICATE = 0.1;
 const double width  = 0.09;
 const double height   = 0.045;
 const double origin_x = -180.00 ;
@@ -14,7 +15,6 @@ vector<string> candidate_hits;
 
 GeometryFactory *gf = NULL;
 WKTReader *wkt_reader = NULL;
-Geometry *paris_poly = NULL; 
 
 /* functions */
 
@@ -50,9 +50,9 @@ int isTileRelevant(string tile_id){
 
     Geometry *tile_boundary = wkt_reader->read(wkt);
     
-    if (paris_poly->intersects(tile_boundary))
+    if (england_poly->intersects(tile_boundary))
     {
-	if (paris_poly->contains(tile_boundary))
+	if (england_poly->contains(tile_boundary))
 	    val = 0;
 	else 
 	    val = 1;
@@ -65,20 +65,6 @@ int isTileRelevant(string tile_id){
 
 void processQuery()
 {
-    Geometry * way = NULL; 
-    // polygons which are definitly contained in the boundary
-    for (vector<string>::iterator it = exact_hits.begin() ; it != exact_hits.end(); ++it)
-	cout << *it<< endl;
-
-    // polygons which may be contained in the boundary
-    for (vector<string>::iterator it = candidate_hits.begin() ; it != candidate_hits.end(); ++it)
-    {
-	way = wkt_reader->read(*it);
-
-	if (paris_poly->contains(way))
-	    cout << *it <<endl;
-	delete way;
-    }
     cout.flush();
 }
 
@@ -89,27 +75,22 @@ int main(int argc, char **argv) {
 
     gf = new GeometryFactory(new PrecisionModel(),PAIS_SRID);
     wkt_reader= new WKTReader(gf);
-    paris_poly = wkt_reader->read(paris);
-    
+    Geometry *way = NULL; 
+
+
     while(cin && getline(cin, input_line) && !cin.eof()){
 	boost::split(fields, input_line, boost::is_any_of(BAR));
 
-	int rel =isTileRelevant(fields[OSM_TILEID]);
-	if (rel == 0)// if tile ID matches, continue searching 
-	{
-	    exact_hits.push_back(fields[OSM_POLYGON]);
-	    //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
-	}
-	else if (rel==1)
-	{
-	    candidate_hits.push_back(fields[OSM_POLYGON]);
-	}
+	way = wkt_reader->read(fields[OSM_POLYGON]);
+	if (way->getArea() > AREA_PREDICATE)
+	    cout << fields[OSM_POLYGON]<< endl;
+
+	delete way;
 	fields.clear();
     }
 
     processQuery();
 
-    delete paris_poly;
     delete wkt_reader;
     delete gf;
 
