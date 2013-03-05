@@ -29,7 +29,7 @@ endif
 all: map reduce
 
 map: mapper.cpp hadoopgis.h 
-	$(CC) mapper.cpp -O3 -o mapper
+	$(CC) mapper.cpp $(CFLAGS) $(LDFLAGS) -o mapper
 
 reduce: reducer.cpp MReducerx.h
 	$(CC) reducer.cpp $(CFLAGS) $(LDFLAGS) -o reducer
