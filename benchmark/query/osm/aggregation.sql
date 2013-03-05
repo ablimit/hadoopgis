@@ -29,3 +29,4 @@ SELECT
 FROM osm_polygon_planet
 WHERE ST_Area(way) > 0.5 ;
 
+\timing off

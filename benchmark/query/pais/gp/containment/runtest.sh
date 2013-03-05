@@ -9,7 +9,7 @@ if [ "$HOSTNAME" = ${gpdb} ] ; then
     do
 	echo "EXEC q${query}.sql"
 
-	psql --tuples-only --dbname=pais --file=q${query}.sql | sort -n > q${query}.out
+	psql --tuples-only --dbname=pais --file=q${query}.sql | sort -n > q${query}.out.db
 
     done
 
