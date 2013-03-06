@@ -1,120 +1,77 @@
-#include <string.h>
-
-// spatialindex
 #include <spatialindex/SpatialIndex.h>
 
-// geos 
-#include <geos/geom/PrecisionModel.h>
-#include <geos/geom/GeometryFactory.h>
-#include <geos/geom/Geometry.h>
-#include <geos/geom/Point.h>
-#include <geos/io/WKTReader.h>
-
-// boost 
-#include <boost/algorithm/string.hpp>
-
-//constants 
-#define OSM_ID 0
-#define OSM_TILEID 1
-#define OSM_OID 2
-#define OSM_ZORDER 3
-#define OSM_POLYGON 4
-
 using namespace std;
-using namespace geos;
-using namespace geos::io;
-using namespace geos::geom;
 using namespace SpatialIndex;
-
 
 class MyDataStream : public IDataStream
 {
-public:
-	MyDataStream(std::string inputFile) : m_pNext(0), m_id(0)
-	{
-		m_fin.open(inputFile.c_str());
-
-		if (! m_fin)
-			throw Tools::IllegalArgumentException("Input file not found.");
-
-    gf = new GeometryFactory(new PrecisionModel(),4326);
-    wkt_reader= new WKTReader(gf);
-		readNextEntry();
-	}
-
-	virtual ~MyDataStream()
-	{
-		if (m_pNext != 0) delete m_pNext;
-	}
-
-	virtual IData* getNext()
-	{
-		if (m_pNext == 0) return 0;
-
-		RTree::Data* ret = m_pNext;
-		m_pNext = 0;
-		readNextEntry();
-		return ret;
-	}
-
-	virtual bool hasNext()
-	{
-		return (m_pNext != 0);
-	}
-
-	virtual uint32_t size()
-	{
-		throw Tools::NotSupportedException("Operation not supported.");
-	}
-
-	virtual void rewind()
-	{
-		if (m_pNext != 0)
-		{
-			delete m_pNext;
-			m_pNext = 0;
-		}
-
-		m_fin.seekg(0, std::ios::beg);
-        m_id = 0 ;
-		readNextEntry();
-	}
-
-    void readNextEntry()
+    public:
+        MyDataStream(std::string inputFile) : m_pNext(0), m_id(0)
     {
-        double low[2], high[2];
-        string input_line ;
+        m_fin.open(inputFile.c_str());
 
-        if (m_fin.good() && !m_fin.good())
+        if (! m_fin)
+            throw Tools::IllegalArgumentException("Input file not found.");
+            readNextEntry();
+    }
+
+        virtual ~MyDataStream()
         {
-            getline(m_fin, input_line);
-            m_id++;
-            boost::split(fields, input_line, boost::is_any_of("|"));
-	    cerr << "line: " << m_id <<endl ;
-            poly = wkt_reader->read(fields[OSM_POLYGON]);
-            if (NULL != poly ){
-                const Envelope * env = poly->getEnvelopeInternal();
-                low [0] = env->getMinX();
-                low [1] = env->getMinY();
-                high [0] = env->getMaxX();
-                high [1] = env->getMaxY();
+            if (m_pNext != 0) delete m_pNext;
+            m_fin.close();
+        }
 
+        virtual IData* getNext()
+        {
+            if (m_pNext == 0) return 0;
+
+            RTree::Data* ret = m_pNext;
+            m_pNext = 0;
+            readNextEntry();
+            return ret;
+        }
+
+        virtual bool hasNext()
+        {
+            return (m_pNext != 0);
+        }
+
+        virtual uint32_t size()
+        {
+            throw Tools::NotSupportedException("Operation not supported.");
+        }
+
+        virtual void rewind()
+        {
+            if (m_pNext != 0)
+            {
+                delete m_pNext;
+                m_pNext = 0;
+            }
+
+            m_fin.seekg(0, std::ios::beg);
+            m_id = 0 ;
+            readNextEntry();
+        }
+
+        void readNextEntry()
+        {
+            double low[2], high[2];
+
+            
+            m_fin >> m_id >> low[0] >> low[1] >> high[0] >> high[1];
+            
+            if (m_fin.good())
+            {
+                //m_id++;
                 Region r(low, high, 2);
                 m_pNext = new RTree::Data(0, 0 , r, m_id);// store a zero size null poiter.
-                fields.clear();
             }
         }
 
-    }
-
-    std::ifstream m_fin;
-    RTree::Data* m_pNext;
-    id_type m_id;
-    GeometryFactory *gf;
-    WKTReader *wkt_reader;
-    Geometry *poly ; 
-
-    vector<string> fields;
+        std::ifstream m_fin;
+        RTree::Data* m_pNext;
+        id_type m_id;
 };
 
 int main(int argc, char** argv)
@@ -140,7 +97,8 @@ int main(int argc, char** argv)
         // (LRU buffer, etc can be created the same way).
 
         MyDataStream stream(argv[1]);
-
+        cerr << "okay" << endl; 
+        cerr.flush();
         // Create and bulk load a new RTree with dimensionality 2, using "file" as
         // the StorageManager and the RSTAR splitting policy.
         id_type indexIdentifier;
