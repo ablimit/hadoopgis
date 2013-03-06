@@ -1,4 +1,3 @@
-
 boost=/home/aaji/softs/boost
 spatial=/home/aaji/softs
 
@@ -28,6 +27,7 @@ endif
 
 all: RTreeBulkLoad.cc
 	$(CC) RTreeBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o rtreeloader
+	$(CC) processor.cc $(CFLAGS) $(LDFLAGS) -o preprocess
 
 clean:
 	@rm -f rtreeloader
