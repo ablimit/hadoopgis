@@ -85,12 +85,12 @@ public:
         double low[2], high[2];
         string input_line ;
 
-        if (m_fin.good())
+        if (m_fin.good() && !m_fin.good())
         {
             getline(m_fin, input_line);
             m_id++;
             boost::split(fields, input_line, boost::is_any_of("|"));
-
+	    cerr << "line: " << m_id <<endl ;
             poly = wkt_reader->read(fields[OSM_POLYGON]);
             if (NULL != poly ){
                 const Envelope * env = poly->getEnvelopeInternal();

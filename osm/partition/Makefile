@@ -30,5 +30,5 @@ all: RTreeBulkLoad.cc
 	$(CC) processor.cc $(CFLAGS) $(LDFLAGS) -o preprocess
 
 clean:
-	@rm -f rtreeloader
+	@rm -f rtreeloader preprocess
 
