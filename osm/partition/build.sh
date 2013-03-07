@@ -3,8 +3,10 @@
 loc=/data2/ablimit/Data/spatialdata
 make -f Makefile
 
-echo "started building rtree"
+echo "generating mbb"
+./preprocess <${loc}/osmout/planet.dat.1 > ${loc}/osmout/osm.mbb.dat
 
-./rtreeloader ${loc}/osmout/osm_polygon_planet.dat ${loc}/osm/rtreeindex 1000 5000 0.9
+echo "started building rtree"
+#./rtreeloader ${loc}/osmout/planet.dat.1 ${loc}/osm/rindex/planet.idx 1000 5000 0.9
 
 echo "done."
