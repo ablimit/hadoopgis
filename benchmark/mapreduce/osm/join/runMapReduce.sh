@@ -12,11 +12,12 @@ reco=$(date +%F-%k-%M)
 export HADOOP_HOME=/usr/lib/hadoop-0.20-mapreduce
 sudo -u hdfs hdfs dfs -rm -r /user/aaji/osmjoinout
 
-for j in 1 2 3 4 5 6 7 8 9 10
+for j in 1 2 3
 do
     date >> osm.${reco}.log
     echo "round ${j}"
-    for reducecount in 200 150 100 80 60 40 20
+    # for reducecount in 200 150 100 80 60 40 20
+    for reducecount in 16 8
     do
 	START=$(date +%s)
 
@@ -30,6 +31,6 @@ do
 	# sudo -u hdfs hdfs dfs -copyToLocal /user/aaji/joinout ${OUTDIR}/mjoin_${1}_${reducecount}
 	sudo -u hdfs hdfs dfs -rm -r /user/aaji/osmjoinout
     done
-    echo -e "\n\n" >>osm.${reco}.log
+    echo "" >>osm.${reco}.log
 done
 
