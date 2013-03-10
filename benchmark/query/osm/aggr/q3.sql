@@ -1,12 +1,12 @@
 -- feature aggreagation
-\timing on
 
 --e) spatial feature aggregation with spatial predicate (collection)
-SELECT 
-    ST_Area(way) AS AREA,
-    ST_Centroid(way) AS CENTROID,
-    ST_ConvexHull(way) AS CONVHULL,
-    ST_Perimeter(way) AS PERIMETER
-FROM osm_polygon_planet
-WHERE ST_Area(way) > 0.5 GROUP BY tilename;
+
+SELECT tilename AS TID,
+    AVG(ST_Area(way)) AS AVG_AREA,
+--    ST_Centroid(way) AS CENTROID,
+--    ST_ConvexHull(way) AS CONVHULL,
+    AVG(ST_Perimeter(way)) AS AVG_PERIMETER
+FROM osm_polygon_planet_fourxfour
+WHERE ST_Area(way) > 0.1 GROUP BY tilename;
 

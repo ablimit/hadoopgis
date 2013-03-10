@@ -1,22 +1,19 @@
 -- spatial join with predicate of polygon intersection
 
 -- a) two way join
-\timing on
 
 -- SELECT count(*) from (
 
-    SELECT A.id,B.id
-    FROM osm_polygon_planet A, osm_polygon_europe B
-    WHERE  A.tilename = B.tilename AND length(A.tilename) > 2 AND 
-    ST_Intersects(A.way, B.way) = TRUE;
+--    SELECT A.id,B.id
+--    FROM osm_polygon_planet A, osm_polygon_europe B
+--    WHERE  A.tilename = B.tilename AND length(A.tilename) > 2 AND 
+--    ST_Intersects(A.way, B.way) = TRUE;
     --) AS temp ; 
 
---SELECT A.id,B.id
--- FROM osm_polygon_planet_fourxfour A, osm_polygon_europe_fourxfour B
--- WHERE  A.tilename = B.tilename AND length(A.tilename) > 2 AND 
--- ST_Intersects(A.way, B.way) = TRUE;
+SELECT A.id,B.id
+FROM osm_polygon_planet_fourxfour A, osm_polygon_europe_fourxfour B
+WHERE  A.tilename = B.tilename AND length(A.tilename) > 2 AND ST_Intersects(A.way, B.way) = TRUE;
 
-\timing off
 
 
 -- SELECT A.id, A.tilename, ST_Area(ST_Intersection(A.way, B.way)) / ST_Area(ST_Union( A.way, B.way))  AS a_ratio,

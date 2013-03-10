@@ -1,9 +1,9 @@
 --d) spatial feature aggregation (collection)
-\timing on 
+
 SELECT 
-    ST_Area(polygon) AS AREA,
-    ST_Centroid(polygon) AS CENTROID,
-    ST_ConvexHull(polygon) AS CONVHULL,
-    ST_Perimeter(polygon) AS PERIMETER
-FROM   	markup_polygon ;
+    AVG(ST_Area(polygon)) AS AVG_AREA,
+--    ST_Centroid(polygon) AS CENTROID,
+--    ST_ConvexHull(polygon) AS CONVHULL,
+    AVG(ST_Perimeter(polygon)) AS AVG_PERIMETER
+FROM   	markup_polygon GROUP BY pais_uid;
 

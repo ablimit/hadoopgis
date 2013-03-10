@@ -1,7 +1,6 @@
 -- Selection without field filtering 
-\timing on  
 
-SELECT 	way
-FROM   	osm_polygon_planet  
+SELECT 	ST_AsText(way)
+FROM   	osm_polygon_planet_fourxfour  
 WHERE  	ST_Area(way) > 1.0 ;
 

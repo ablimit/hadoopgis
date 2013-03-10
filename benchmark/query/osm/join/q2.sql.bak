@@ -1,0 +1,8 @@
+-- spatial join with predicate of polygon intersection
+
+-- a) two way join
+
+SELECT A.id,B.id
+FROM osm_polygon_planet A, osm_polygon_europe B
+WHERE  A.tilename = B.tilename AND length(A.tilename) > 2 AND 
+ST_Intersects(A.way, B.way) = TRUE;

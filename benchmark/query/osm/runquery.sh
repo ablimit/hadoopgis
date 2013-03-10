@@ -1,24 +1,36 @@
 #! /bin/bash
 
-if [ ! $# == 2 ]; then
-    echo "Usage: $0 [log file] [output file]"
-    exit
-fi
+
+#if [ ! $# == 2 ]; then
+#    echo "Usage: $0 [log file] [output file]"
+#    exit
+#fi
+logfile=perf
 
 gpdb='node40.clus.cci.emory.edu'
 
 if [ "$HOSTNAME" = ${gpdb} ] ; then
-    date >> $1
+    date >> ${logfile}.log
 
-    for query in containment.sql aggregation.sql # join.sql
+    for class in cont aggr #join
     do
-	echo "EXEC ${query}"
-	echo "EXEC ${query}" >> $1
+	echo "EXEC Type: ${class}"
+	echo "EXEC ${class} :" >> ${logfile}.log
+	for query in 1 2 3 4 5 6
+	do
+	    if [ -e ${class}/q${query}.sql ]
+	    then
+		echo -n "Q${query} " >> ${logfile}.log
 
-	psql --dbname=osm --output=$2  --file=$query  >> $1
+		echo "EXEC Q${query}"
+
+		psql --dbname=osm --output=/shared/tempdir/osm/${class}/q${query}.out  --file=${class}/q${query}.sql  >> ${logfile}.log
+	    fi
+	done
+	echo "" >> ${logfile}.log
     done
 
-    echo -e "\n\n\n" >> $1
+    echo "" >> ${logfile}.log
 
 
 else
