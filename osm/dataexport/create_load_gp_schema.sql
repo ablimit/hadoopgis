@@ -9,7 +9,7 @@ CREATE TABLE osm_polygon_planet_fourxfour (
     tilename	varchar(32),
     osm_id      bigint,
     z_order        integer) 
-WITH (appendonly=true)
+-- WITH (appendonly=true)
 DISTRIBUTED BY (tilename);
 
 SELECT AddGeometryColumn('public','osm_polygon_planet_fourxfour', 'way', -1, 'POLYGON', 2);
