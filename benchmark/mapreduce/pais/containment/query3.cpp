@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
         if (isTileRelevant(tile_id)) // if tile ID matches, continue searching 
         {
             pos2=input_line.find_first_of(comma,pos+1);
-            id_collction.push_back(input_line.substr(pos+1,pos2-pos));
+            id_collction.push_back(input_line.substr(pos+1,pos2-pos-1));
 	    pos=pos2;
             geometry_collction.push_back(shapebegin + input_line.substr(pos+2,input_line.length()- pos - 3) + shapeend);
             //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;

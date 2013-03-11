@@ -8,6 +8,7 @@ const string region ="POLYGON((22528 8192,67584 8192,67584 24576,22528 24576,225
 polygon poly;
 
 vector<string> geometry_collction ; 
+vector<string> id_collction ; 
 double plow[2], phigh[2];
 
 bool paisUIDMatch(string pais_uid)
@@ -100,13 +101,16 @@ int main(int argc, char **argv) {
         while(cin && getline(cin, input_line) && !cin.eof()){
 
             size_t pos = input_line.find_first_of(comma,0);
+            size_t pos2;
             if (pos == string::npos)
                 return 1; // failure
 
             tile_id = input_line.substr(0,pos);
             if (isTileRelevant(tile_id)) // if tile ID matches, continue searching 
             {
-                pos=input_line.find_first_of(comma,pos+1);
+            pos2=input_line.find_first_of(comma,pos+1);
+            id_collction.push_back(input_line.substr(pos+1,pos2-pos-1));
+	    pos=pos2;
                 geometry_collction.push_back(shapebegin + input_line.substr(pos+2,input_line.length()- pos - 3) + shapeend);
                 //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
             }
