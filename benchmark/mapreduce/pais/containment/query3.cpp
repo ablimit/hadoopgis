@@ -5,6 +5,7 @@ const int tile_size  = 4096;
 const string region ="POLYGON((40960 40960, 40960 41984, 41984 41984, 41984 40960, 40960 40960))" ;
 
 vector<string> geometry_collction ; 
+vector<string> id_collction ; 
 double plow[2], phigh[2];
 polygon poly;
 
@@ -90,7 +91,7 @@ int main(int argc, char **argv) {
         {
             pos=input_line.find_first_of(comma,pos+1);
             geometry_collction.push_back(shapebegin + input_line.substr(pos+2,input_line.length()- pos - 3) + shapeend);
-            //geometry_collction.push_back(input_line.substr(pos+1,string::npos));
+            id_collction.push_back(input_line.substr(0,pos));
             //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
         }
     }

@@ -1,4 +1,5 @@
 extern vector<string> geometry_collction ; 
+extern vector<string> id_collction ; 
 class ContainmentDataStream : public IDataStream
 {
     public:
@@ -91,7 +92,7 @@ class MyVisitor : public IVisitor
 
 	void visitData(const IData& d)
 	{
-	    std::cout << geometry_collction[d.getIdentifier()] << std::endl;
+	    std::cout << id_collction[d.getIdentifier()] << std::endl;
 	}
 
 	void visitData(std::vector<const IData*>& v) {}
