@@ -44,7 +44,7 @@ sudo -u hdfs hdfs dfs -rm -r /user/aaji/paiscontout
 
 date >> ${logfile}
 
-for query in q2 q3
+for query in q3
 do
     for j in 1 2 3 4 5
     do
