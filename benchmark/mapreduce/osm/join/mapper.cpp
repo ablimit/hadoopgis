@@ -1,11 +1,4 @@
-#include <iostream>
-#include <string.h>
-#include <string>
-
-using namespace std;
-
-const string shapebegin = "POLYGON((";
-const string shapeend = "))";
+#include "hadoopgis.h"
 
 int getJoinIndex ()
 {
@@ -16,7 +9,7 @@ int getJoinIndex ()
 	return 1 ;
     }
     int len= strlen(filename);
-    int index = filename[len-1] - '0' ;
+    int index = filename[len-1] - '1' ;
     return index;
 }
 
@@ -24,29 +17,21 @@ int main(int argc, char **argv) {
 
     int index = getJoinIndex();
     // cerr << "Index: " << index << endl; 
-    if (index <1)
+    if (index <0)
     {
 	cerr << "InputFileName index is corrupted.. " << endl;
 	return 1; //failure 
     }
 
-    string tab = "\t";
-    char comma = ',';
     string input_line;
-    string key ;
-    string value;
+    vector<string> fields;
 
     while(cin && getline(cin, input_line) && !cin.eof()){
-
-	size_t pos=input_line.find_first_of(comma,0);
-	if (pos == string::npos)
-	    return 1; // failure
-
-	key = input_line.substr(0,pos);
-	pos=input_line.find_first_of(comma,pos+1);
-	value= input_line.substr(pos+2,input_line.length()-pos-3);
-	// cout << index << key<< tab << value << endl;
-	cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
+	
+	boost::split(fields, input_line, boost::is_any_of(BAR));
+	if (fields[OSM_TILEID].size()> 2 )
+	    cout << fields[OSM_TILEID]<< TAB << index<< BAR << fields[OSM_ID] << BAR <<fields[OSM_POLYGON]<< endl;
+	fields.clear();
     }
     cout.flush();
 

@@ -1,0 +1,43 @@
+
+Mon Feb 18 17:49:03 EST 2013
+EXEC containment.sql
+Timing is on.
+Time: 2540.148 ms
+Time: 16211.571 ms
+Time: 16423.695 ms
+Time: 6123.097 ms
+Time: 31205.450 ms
+EXEC aggregation.sql
+Timing is on.
+Time: 1812.358 ms
+Time: 518755.366 ms
+Time: 50559.697 ms
+
+Fri Mar  1 13:01:43 EST 2013
+EXEC containment
+Timing is on.
+Timing is off.
+EXEC aggregation
+Timing is on.
+Time: 2087.750 ms
+Time: 518942.805 ms
+Time: 150347.313 ms
+Timing is off.
+
+
+Sat Mar  2 13:28:37 EST 2013
+EXEC join
+Timing is on.
+Time: 11707377.690 ms
+Timing is off.
+
+
+Sun Mar  3 15:42:05 EST 2013
+EXEC join
+Timing is on.
+Time: 389556531.228 ms
+Timing is off.
+
+
+
+

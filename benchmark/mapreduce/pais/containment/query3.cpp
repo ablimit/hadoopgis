@@ -2,9 +2,9 @@
 #include "vecstream.h"
 
 const int tile_size  = 4096;
-const string region ="POLYGON((40960 40960, 41984 40960,  41984 41984, 40960 41984, 40960 40960))" ;
-
+const string region ="POLYGON((22528 8192,67584 8192,67584 24576,22528 24576,22528 8192))";
 vector<string> geometry_collction ; 
+vector<string> id_collction ; 
 double plow[2], phigh[2];
 polygon poly;
 
@@ -53,10 +53,8 @@ void processQuery()
         bool ret = spidx->isIndexValid();
         if (ret == false) std::cerr << "ERROR: Structure is invalid!" << std::endl;
         // else std::cerr << "The stucture seems O.K." << std::endl;
-        polygon container ; 
         box container_mbb;
-        boost::geometry::read_wkt(region, container);
-        boost::geometry::envelope(container,container_mbb);
+        boost::geometry::envelope(poly,container_mbb);
         plow [0] = boost::geometry::get<boost::geometry::min_corner, 0>(container_mbb);
         plow [1] = boost::geometry::get<boost::geometry::min_corner, 1>(container_mbb);
 
@@ -77,24 +75,29 @@ void processQuery()
 int main(int argc, char **argv) {
     string input_line;
     string tile_id ;
+    string oid ;
 
     boost::geometry::read_wkt(region, poly);
 
     while(cin && getline(cin, input_line) && !cin.eof()){
 
         size_t pos = input_line.find_first_of(comma,0);
+        size_t pos2;
         if (pos == string::npos)
             return 1; // failure
 
         tile_id = input_line.substr(0,pos);
         if (isTileRelevant(tile_id)) // if tile ID matches, continue searching 
         {
-            pos=input_line.find_first_of(comma,pos+1);
+            pos2=input_line.find_first_of(comma,pos+1);
+            id_collction.push_back(input_line.substr(pos+1,pos2-pos-1));
+	    pos=pos2;
             geometry_collction.push_back(shapebegin + input_line.substr(pos+2,input_line.length()- pos - 3) + shapeend);
             //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
         }
     }
-
+    //cerr << "Number of objects contained in the candidate list: " << geometry_collction.size() << endl;
+    //cerr.flush();
     processQuery();
 
     cout.flush();

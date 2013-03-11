@@ -1,14 +1,33 @@
-dir=/home/aaji/softs/boost
+boost=/home/aaji/softs/boost
 spatial=/home/aaji/softs
 
-all: mapper reducer
-    
-mapper:	mapper.cpp
-	g++ -m64 -O3 mapper.cpp -o mapper -I${dir}/include -L${dir}/lib
+UNAME		= $(shell uname)
+OPTFLAGS	= -O3
+INCBASE		= -I.
+LIBBASE		= -lspatialindex 
 
-reducer: reducerx.cpp IndexParam.h MReducerx.h
-	g++ -m64 -O3 -lspatialindex reducerx.cpp -o reducer -I${dir}/include -L${dir}/lib -I${spatial}/include -L${spatial}/lib
+ifneq (,$(findstring emory,$(shell uname -a)))
+	INCFLAGS = -I$(boost)/include -I$(spatial)/include
+	LIBS = -L$(boost)/lib -L$(spatial)/lib
+endif
+
+CFLAGS      = $(OPTFLAGS) $(INCBASE) $(INCFLAGS) 
+LDFLAGS     = $(LIBBASE) $(LIBS)
+
+ifeq ($(UNAME), Darwin)
+	CC = g++ -arch x86_64
+else 
+	CC = g++
+endif
+
+all: map red
+
+map: mapper.cpp 
+	$(CC) mapper.cpp $(CFLAGS) $(LDFLAGS) -o mapper
+
+red: reducerx.cpp IndexParam.h MReducerx.h
+	$(CC) reducerx.cpp $(CFLAGS) $(LDFLAGS) -o reducer
+
 clean:
-	rm mapper
-	rm reducer
+	@rm -f mapper reducer
 

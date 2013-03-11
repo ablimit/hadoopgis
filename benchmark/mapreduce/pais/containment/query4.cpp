@@ -1,3 +1,4 @@
+#include <cmath>
 #include "hadoopgis.h"
 #include "vecstream.h"
 
@@ -100,6 +101,7 @@ int main(int argc, char **argv) {
     string input_line;
     string tile_id ;
     polygon polygon_object ;
+    float ar =0.0;
 
     boost::geometry::read_wkt(region, poly);
 
@@ -117,8 +119,11 @@ int main(int argc, char **argv) {
                 pos=input_line.find_first_of(comma,pos+1);
                 string sobject = shapebegin + input_line.substr(pos+2,input_line.length()- pos - 3) + shapeend;
                 boost::geometry::read_wkt(sobject, polygon_object);  // spatial filtering
-                if (boost::geometry::area(polygon_object)>AVG_AREA)
+                ar = abs(boost::geometry::area(polygon_object));
+		    if (ar>AVG_AREA)
                     geometry_collction.push_back(sobject);
+		else if (ar <0.0)
+		    cerr<< ar << endl;
                 //cout << key<< tab << index << tab << shapebegin <<value <<shapeend<< endl;
             }
         }
