@@ -5,5 +5,5 @@ SELECT
 --    ST_Centroid(polygon) AS CENTROID,
 --    ST_ConvexHull(polygon) AS CONVHULL,
     AVG(ST_Perimeter(polygon)) AS AVG_PERIMETER
-FROM   	markup_polygon GROUP BY pais_uid;
+FROM   	markup_polygon;
 
