@@ -7,5 +7,5 @@ SELECT tilename AS TID,
 --    ST_Centroid(way) AS CENTROID,
 --    ST_ConvexHull(way) AS CONVHULL,
     AVG(ST_Perimeter(way)) AS AVG_PERIMETER
-FROM osm_polygon_planet_fourxfour GROUP BY tilename;
+FROM osm_polygon_planet_fourxfour;
 

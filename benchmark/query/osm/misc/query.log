@@ -14,9 +14,6 @@ Time: 518755.366 ms
 Time: 50559.697 ms
 
 Fri Mar  1 13:01:43 EST 2013
-EXEC containment
-Timing is on.
-Timing is off.
 EXEC aggregation
 Timing is on.
 Time: 2087.750 ms
@@ -31,7 +28,7 @@ Timing is on.
 Time: 11707377.690 ms
 Timing is off.
 
-
+# large tile table result
 Sun Mar  3 15:42:05 EST 2013
 EXEC join
 Timing is on.
