@@ -34,8 +34,8 @@ esac
 
 # echo $optinput 
 # echo "good"
-mappername=mapperStarDup2
-reducername=reducerStarDup2
+mappername=mapperStarDup
+reducername=reducerStarDup
 outputHdfs=/user/hvo8/outputDup
 
 nameRemover=mapperRemove
