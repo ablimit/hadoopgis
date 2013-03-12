@@ -2,7 +2,7 @@
 
 --e) spatial feature aggregation with spatial predicate (collection)
 
-SELECT tilename AS TID,
+SELECT 
     AVG(ST_Area(way)) AS AVG_AREA,
 --    ST_Centroid(way) AS CENTROID,
 --    ST_ConvexHull(way) AS CONVHULL,
