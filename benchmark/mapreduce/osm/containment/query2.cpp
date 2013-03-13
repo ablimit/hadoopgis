@@ -12,6 +12,8 @@ double plow[2], phigh[2];
 vector<string> exact_hits ; 
 vector<string> candidate_hits;
 
+vector<string> candidate_hits_rec;
+
 GeometryFactory *gf = NULL;
 WKTReader *wkt_reader = NULL;
 Geometry *paris_poly = NULL; 
@@ -71,12 +73,12 @@ void processQuery()
 	cout << *it<< endl;
 
     // polygons which may be contained in the boundary
-    for (vector<string>::iterator it = candidate_hits.begin() ; it != candidate_hits.end(); ++it)
+    for (int i =0 ; i < candidate_hits.size() ; i++)
     {
-	way = wkt_reader->read(*it);
+	way = wkt_reader->read(candidate_hits[i]);
 
 	if (paris_poly->contains(way))
-	    cout << *it <<endl;
+	    cout << candidate_hits_rec[i]<<endl;
 	delete way;
     }
     cout.flush();
@@ -97,12 +99,13 @@ int main(int argc, char **argv) {
 	int rel =isTileRelevant(fields[OSM_TILEID]);
 	if (rel == 0)// if tile ID matches, continue searching 
 	{
-	    exact_hits.push_back(fields[OSM_POLYGON]);
+	    exact_hits.push_back(input_line);
 	    //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
 	}
 	else if (rel==1)
 	{
 	    candidate_hits.push_back(fields[OSM_POLYGON]);
+	    candidate_hits_rec.push_back(input_line);
 	}
 	fields.clear();
     }

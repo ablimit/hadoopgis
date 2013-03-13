@@ -26,7 +26,7 @@ map: mapper.cpp
 	$(CC) mapper.cpp $(CFLAGS) $(LDFLAGS) -o mapper
 
 red: reducerx.cpp IndexParam.h MReducerx.h
-	$(CC) reducerx.cpp $(CFLAGS) $(LDFLAGS) -o reducer
+	$(CC) reducerx.cpp -w $(CFLAGS) $(LDFLAGS) -o reducer
 
 clean:
 	@rm -f mapper reducer

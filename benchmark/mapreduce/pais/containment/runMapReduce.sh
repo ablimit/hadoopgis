@@ -36,7 +36,6 @@ case "$1" in
 esac
 
 
-make q2
 make q3
 
 export HADOOP_HOME=/usr/lib/hadoop-0.20-mapreduce
@@ -51,8 +50,8 @@ do
 	for maxmap in 1 2 4
 	do
 	    echo "round ${j}"
-	    START=$(date +%s)
 	    expres=`expr ${maxmap} \\* 8`
+	    START=$(date +%s)
 
 	    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.reduce.tasks=0 -D mapred.tasktracker.map.tasks.maximum=${maxmap} -mapper ${query} -file ${query} ${optinput} -output /user/aaji/paiscontout -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="pais_cont_${query}_${expres}"  -jobconf mapred.task.timeout=36000000
 
@@ -68,4 +67,8 @@ do
     done
     echo "" >>${logfile}
 done
+
+make clean
+
+
 
