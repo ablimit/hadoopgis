@@ -3,7 +3,6 @@
 logfile=cont.log
 
 make q2
-make q3
 
 export HADOOP_HOME=/usr/lib/hadoop-0.20-mapreduce
 
@@ -11,11 +10,11 @@ hdfsoutdir=/user/aaji/osmcontout
 
 sudo -u hdfs hdfs dfs -rm -r ${hdfsoutdir}
 
-optinput="-input /user/aaji/osm/smalltile"
+optinput="-input /user/aaji/osm/smalltile/planet.dat.1"
 
 date >> ${logfile}
 
-for query in q2 q3
+for query in q2
 do
     for j in 1 2 3
     do

@@ -4,12 +4,13 @@
 logfile=aggr.log
 
 make q2
+make aggr
 
 export HADOOP_HOME=/usr/lib/hadoop-0.20-mapreduce
 
 hdfsoutdir=/user/aaji/osmaggrout
 
-optinput="-input /user/aaji/osm/smalltile"
+optinput="-input /user/aaji/osm/smalltile/planet.dat.1 "
 
 sudo -u hdfs hdfs dfs -rm -r ${hdfsoutdir}
 
@@ -25,7 +26,7 @@ do
 	    expres=`expr ${maxmap} \\* 8`
 	    START=$(date +%s)
 
-	    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.reduce.tasks=0 -D mapred.tasktracker.map.tasks.maximum=${maxmap} -mapper ${query} -file ${query} ${optinput} -output ${hdfsoutdir}  -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="osm_aggr_${query}_${expres}"  -jobconf mapred.task.timeout=36000000
+	    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.reduce.tasks=0 -D mapred.tasktracker.map.tasks.maximum=1 -mapper ${query} -file ${query} -reducer aggr -file aggr ${optinput} -output ${hdfsoutdir}  -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="osm_aggr_${query}_${expres}"  -jobconf mapred.task.timeout=36000000
 
 
 	    END=$(date +%s)
