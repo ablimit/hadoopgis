@@ -5,7 +5,7 @@ spatial=/home/aaji/softs
 UNAME		= $(shell uname)
 OPTFLAGS	= -O3
 INCBASE		= -I.
-LIBBASE		= -lspatialindex 
+LIBBASE		= -lspatialindex -lgeos
 
 ifneq (,$(findstring emory,$(shell uname -a)))
     INCFLAGS = -I$(boost)/include -I$(spatial)/include
@@ -26,9 +26,9 @@ else
     CC = g++
 endif
 
-all: q1 q2 q3
+all: q1 q2 q3 aggr
 
-q1: query1.cpp hadoopgis.h 
+q1: query1.cpp hadoopgis.h
 	$(CC) query1.cpp $(CFLAGS) $(LDFLAGS) -o q1
 
 q2: query2.cpp hadoopgis.h
@@ -37,6 +37,9 @@ q2: query2.cpp hadoopgis.h
 q3: query3.cpp hadoopgis.h
 	$(CC) query3.cpp $(CFLAGS) $(LDFLAGS) -o q3
 
+aggr: aggregator.cpp hadoopgis.h
+	$(CC) aggregator.cpp $(CFLAGS) $(LDFLAGS) -o aggr
+
 clean:
-	@rm -f q1 q2 q3
+	@rm -f q1 q2 q3 aggregator
 

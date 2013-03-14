@@ -5,14 +5,14 @@
 #    echo "Usage: $0 [log file] [output file]"
 #    exit
 #fi
-logfile=perf
+logfile=perf16
 
 gpdb='node40.clus.cci.emory.edu'
 
 if [ "$HOSTNAME" = ${gpdb} ] ; then
     date >> ${logfile}.log
 
-    for class in cont aggr #join
+    for class in cont aggr
     do
 	echo "EXEC Type: ${class}"
 	echo "EXEC ${class} :" >> ${logfile}.log

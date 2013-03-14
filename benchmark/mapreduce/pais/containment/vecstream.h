@@ -92,7 +92,7 @@ class MyVisitor : public IVisitor
 
 	void visitData(const IData& d)
 	{
-	    std::cout << id_collction[d.getIdentifier()] << std::endl;
+	    std::cout << id_collction[d.getIdentifier()] << "," <<geometry_collction[d.getIdentifier()] << std::endl;
 	}
 
 	void visitData(std::vector<const IData*>& v) {}
