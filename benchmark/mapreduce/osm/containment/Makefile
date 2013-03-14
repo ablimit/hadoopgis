@@ -4,6 +4,7 @@ spatial=/home/aaji/softs
 
 UNAME		= $(shell uname)
 OPTFLAGS	= -O3
+DEBUGFLAGS	= -g
 INCBASE		= -I.
 LIBBASE		= -lspatialindex -lgeos
 

@@ -8,11 +8,13 @@ const double height   = 0.045;
 const double origin_x = -180.00 ;
 const double origin_y = -90.00 ;
 double plow[2], phigh[2];
-    
-vector<string> exact_hits ; 
-vector<string> candidate_hits;
 
-vector<string> candidate_hits_rec;
+int counter =0 ;
+
+map<string,string> exact_hits ; 
+map<string,string> candidate_hits;
+
+map<string,string> candidate_hits_rec;
 
 GeometryFactory *gf = NULL;
 WKTReader *wkt_reader = NULL;
@@ -28,8 +30,8 @@ string constructBoundary(string tile_id){
         return "" ;
     }
     stringstream ss;
-    int x = boost::lexical_cast< int >( strs[1] );
-    int y = boost::lexical_cast< int >( strs[2] );
+    int x = boost::lexical_cast< int >( strs[0] );
+    int y = boost::lexical_cast< int >( strs[1] );
 
     // construct a WKT polygon 
     ss << shapebegin ;
@@ -37,20 +39,16 @@ string constructBoundary(string tile_id){
     ss << origin_x + x     * width ; ss << SPACE ; ss << origin_y + (y-1) * height ; ss << COMMA;
     ss << origin_x + x     * width ; ss << SPACE ; ss << origin_y + y     * height ; ss << COMMA;
     ss << origin_x + (x-1) * width ; ss << SPACE ; ss << origin_y + y     * height ; ss << COMMA;
-    ss << origin_x + (x-1) * width ; ss << SPACE ; ss << origin_y + (y-1) * height ; ss << COMMA;
+    ss << origin_x + (x-1) * width ; ss << SPACE ; ss << origin_y + (y-1) * height ; 
     ss << shapeend ;
 
     return ss.str();
 }
 
-int isTileRelevant(string tile_id){
-    if (tile_id.size()<3)
-	return 2;
-
-    int val = -1; 
-    string wkt = constructBoundary(tile_id);
-
-    Geometry *tile_boundary = wkt_reader->read(wkt);
+int isTileRelevant(bool isTile, string tile_id){
+    int val = -1;
+    //cerr<< tile_id << TAB << wkt << TAB;
+    Geometry *tile_boundary = wkt_reader->read(isTile ? constructBoundary(tile_id): tile_id);
     
     if (paris_poly->intersects(tile_boundary))
     {
@@ -59,7 +57,6 @@ int isTileRelevant(string tile_id){
 	else 
 	    val = 1;
     }
-    val =2;
 
     delete tile_boundary ;
     return val;
@@ -67,19 +64,20 @@ int isTileRelevant(string tile_id){
 
 void processQuery()
 {
+    cerr << "Started Query Processing...." << endl;
     Geometry * way = NULL; 
     // polygons which are definitly contained in the boundary
-    for (vector<string>::iterator it = exact_hits.begin() ; it != exact_hits.end(); ++it)
-	cout << *it<< endl;
+    for (map<string,string>::iterator it = exact_hits.begin() ; it != exact_hits.end(); ++it)
+	cout << it->first << endl;
 
     // polygons which may be contained in the boundary
-    for (int i =0 ; i < candidate_hits.size() ; i++)
+    for (map<string,string>::iterator it = candidate_hits.begin() ; it != candidate_hits.end(); ++it)
     {
-	way = wkt_reader->read(candidate_hits[i]);
+        way = wkt_reader->read(it->second);
 
-	if (paris_poly->contains(way))
-	    cout << candidate_hits_rec[i]<<endl;
-	delete way;
+        if (paris_poly->contains(way))
+            cout << it->first <<endl;
+        delete way;
     }
     cout.flush();
 }
@@ -88,30 +86,47 @@ void processQuery()
 int main(int argc, char **argv) {
     string input_line;
     vector<string> fields;
+    int rel = -1;
 
     gf = new GeometryFactory(new PrecisionModel(),PAIS_SRID);
     wkt_reader= new WKTReader(gf);
     paris_poly = wkt_reader->read(paris);
+    //cerr << paris_poly->getGeometryType() <<endl; 
     
     while(cin && getline(cin, input_line) && !cin.eof()){
-	boost::split(fields, input_line, boost::is_any_of(BAR));
+        //cerr << "DEBUG @: " << ++counter << endl;
+        //cerr.flush();
+        boost::split(fields, input_line, boost::is_any_of(BAR));
 
-	int rel =isTileRelevant(fields[OSM_TILEID]);
-	if (rel == 0)// if tile ID matches, continue searching 
-	{
-	    exact_hits.push_back(input_line);
-	    //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
-	}
-	else if (rel==1)
-	{
-	    candidate_hits.push_back(fields[OSM_POLYGON]);
-	    candidate_hits_rec.push_back(input_line);
-	}
-	fields.clear();
+        rel= (fields[OSM_TILEID].size()<3) ? isTileRelevant(false,fields[OSM_POLYGON]) : isTileRelevant(true,fields[OSM_TILEID]);
+
+        if (rel == 0)// if tile ID matches, continue searching 
+        {
+            //cerr << "Exact: "<< fields[OSM_ID] << endl;
+            exact_hits[fields[OSM_ID]]=input_line;
+            //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
+        }
+        else if (rel==1)
+        {
+            //cerr << "Candi: " << fields[OSM_ID] <<endl;
+            candidate_hits[fields[OSM_ID]]=fields[OSM_POLYGON];
+            candidate_hits_rec[fields[OSM_ID]]=input_line;
+        }
+        /*
+        else {
+            cerr << "Empty: " << fields[OSM_ID] <<endl;
+        }
+        */
+        fields.clear();
     }
+    //cerr << "okay" << endl;
+    cerr<< "Exact hist: " << exact_hits.size() << endl; 
+    cerr<< "Candidate: " << candidate_hits.size() << endl; 
 
     processQuery();
 
+    cerr.flush();
+    
     delete paris_poly;
     delete wkt_reader;
     delete gf;

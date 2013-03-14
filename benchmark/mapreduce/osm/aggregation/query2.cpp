@@ -5,9 +5,15 @@ vector<string> exact_hits ;
 
 GeometryFactory *gf = NULL;
 WKTReader *wkt_reader = NULL;
+double avg_area = 0.0;
+double avg_perimeter = 0.0;
+int size= 0;
 
 /* functions */
-void processQuery() { cout.flush(); }
+void processQuery() { 
+    cout << "K" << TAB <<avg_area<< TAB << avg_perimeter<< TAB << size<<endl;
+    cout.flush(); 
+}
 
 int main(int argc, char **argv) {
     string input_line;
@@ -19,17 +25,17 @@ int main(int argc, char **argv) {
 
     while(cin && getline(cin, input_line) && !cin.eof()){
 
-	boost::split(fields, input_line, boost::is_any_of(BAR));
-	way = wkt_reader->read(fields[OSM_POLYGON]);
-	
-	cout << way->getArea() << TAB 
-	    << way->getCentroid()->toString() << TAB
-	    << way->convexHull()->toString()  << TAB
-	    << way->getLength() << endl;
-	
-	delete way;
-	fields.clear();
+        boost::split(fields, input_line, boost::is_any_of(BAR));
+        way = wkt_reader->read(fields[OSM_POLYGON]);
+
+        avg_area += way->getArea();
+        avg_perimeter += way->getLength();
+        size++; 
+        
+        delete way;
+        fields.clear();
     }
+
 
     processQuery();
 
