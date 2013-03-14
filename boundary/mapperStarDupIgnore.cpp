@@ -27,7 +27,7 @@ typedef map<string,map<int,vector<box*> > > boxmap;
 const char offset = '1';
 const char tab = '\t';
 const char comma = ',';
-const int tileSize = 320; /* Default tile size */
+const int tileSize = 2048; /* Default tile size */
 const char minusS = '-';
 
 /* The polygon string format for C++ */
