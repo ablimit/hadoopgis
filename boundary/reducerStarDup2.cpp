@@ -40,27 +40,20 @@ bool readSpatialInput() {
 
     polygon * shape= NULL;
     box * mbb = NULL;
-	size_t pos;
-	size_t pos2;    
 	int index =0;
 
     string key ;
     string value;
 	string tmpid;
+    vector<string> fields;
 
     while(cin && getline(cin, input_line) && !cin.eof()) {
-		pos = input_line.find_first_of(tab);
-		key = input_line.substr(0,pos);
-	
-		/* The very first character denotes join index */
-		index = input_line[pos+1] - offset;   
 
-		/* Next following is polygon ID */
-		tmpid = input_line.substr(pos + 3, 6);
-
-		/* Next is the markup in POLYGON((X,Y...)) format */
-		value = input_line.substr(pos + 10,input_line.size() - pos - 10);
-	
+        boost::split(fields,input_line,boost::is_any_of(tab));
+        key =fields[0];
+        index = boost::lexical_cast<int>(fields[1]) -1;
+        tmpid = fields[2];
+        value = fields[3];
 		shape = new polygon();
 		mbb = new box();
 
@@ -73,6 +66,8 @@ bool readSpatialInput() {
 		outline[key][index].push_back(mbb);
 		markup[key][index].push_back(shape);
 		polyid[key][index].push_back(tmpid);
+
+        fields.clear();
     }
     return true;
 }
@@ -141,6 +136,7 @@ int main(int argc, char** argv)
 						<< tab << overlap_area << endl;	
 					/* Reset the intersecting shapes  */		
 					output.clear();
+                    overlap_area = 0.0 ;
 				}
 				}
 			}

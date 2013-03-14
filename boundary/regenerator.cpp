@@ -70,7 +70,6 @@ int main(int argc, char **argv) {
 	int yCord;
 
 	string polyid;
-	string newpolyid;
 	string newvalue;
 	vector<string> strs;
 	vector<string> pairCords;
@@ -81,6 +80,8 @@ int main(int argc, char **argv) {
 	polygon * shape= NULL;
     box * mbb = NULL;
 
+    int pid; 
+
 	numObjects = 0;
 	dup = 0;
 	offsetDistance = (int) (tileSize / MULTI);
@@ -90,16 +91,17 @@ int main(int argc, char **argv) {
 	imgid = input_line.substr(0, pos2); /* Name of the image */
 
 	/* pos becomes the COMMA in front of the */
-	pos = input_line.find_first_of(COMMA,0);
+	pos2 = input_line.find_first_of(COMMA,0);
 
 	
 	if (pos == string::npos)
 	    return 1; // failure
 
-	pos = input_line.find_first_of(COMMA,pos+1);
-
+	pos = input_line.find_first_of(COMMA,pos2+1);
 	/* Retrieve the 10 digit polygon ID*/
-	polyid = input_line.substr(pos - 11, 10);
+	polyid = input_line.substr(pos2+2, pos-pos2-3);
+	pid = boost::lexical_cast<int>(polyid) ;
+    //cerr << pid << endl;
 
 	/* Ignore double quotes */
 	value= input_line.substr(pos + 2, input_line.size() - pos - 3);	
@@ -127,7 +129,7 @@ int main(int argc, char **argv) {
 			cout << imgid << DASH << setfill('0') << setw(10) << minX
 				<< DASH				
 				<< setfill('0') << setw(10) << minY
-				<< COMMA << polyid << COMMA << doublequote <<value << doublequote <<endl;
+				<< COMMA << pid << COMMA << doublequote <<value << doublequote <<endl;
 		numObjects++;
 	} else {
 		/* Generate multiple boundary objects */
@@ -138,7 +140,7 @@ int main(int argc, char **argv) {
 			cout << imgid << DASH << setfill('0') << setw(10) << minX
 				<< DASH				
 				<< setfill('0') << setw(10) << minY
-				<< COMMA << polyid << UNDERSCOR << i << COMMA << doublequote;
+				<< COMMA << pid << UNDERSCOR << i << COMMA << doublequote;
 
 			if (tmpX > 1) {
 				/* Span 2 tiles horizontally so we increment y-coordinates accordingly */

@@ -27,7 +27,7 @@ typedef map<string,map<int,vector<box*> > > boxmap;
 const char offset = '1';
 const char tab = '\t';
 const char comma = ',';
-const int tileSize = 320; /* Default tile size */
+const int tileSize = 2048; /* Default tile size */
 const char minusS = '-';
 
 /* The polygon string format for C++ */
@@ -45,7 +45,7 @@ int getJoinIndex ()
 	   return 1 ;
     }
     int len= strlen(filename);
-    int index = filename[len-1] - '0' ;
+    int index = filename[len-1] - '0';
     return index;
 }
 
@@ -78,15 +78,16 @@ int main(int argc, char **argv) {
 		imgid = input_line.substr(0,pos2); /* Name of the image */
 
 		/* pos becomes the comma in front of the */
-		pos = input_line.find_first_of(comma,0);
+		pos2 = input_line.find_first_of(comma,0);
 
 		if (pos == string::npos)
 			return 1; // failure
 
-		pos = input_line.find_first_of(comma,pos+1);
+		pos = input_line.find_first_of(comma,pos2+1);
 
-		/* Retrieve the 6-digit polygon ID*/
-		polyid = input_line.substr(pos - 7, 6);
+		/* Retrieve the 10-digit polygon ID*/
+		polyid = input_line.substr(pos2+1,pos-pos2-1);
+        //cerr << polyid << endl;
 
 		/* Polygon markup */
 		value= input_line.substr(pos + 2, input_line.size() - pos - 3);	
@@ -119,7 +120,7 @@ int main(int argc, char **argv) {
 		for (i = 0; i < tmpX; i++) {
 			for (j = 0; j < tmpY; j++) {
 				/*  key is tileid == imgid-minX-minY */
-				cout << imgid << minusS << (minX + i * tileSize) << (minY + j * tileSize) 
+				cout << imgid << minusS << (minX + i * tileSize) << minusS << (minY + j * tileSize) 
 				<< tab << index << tab << polyid << tab << polystring << endl;
 			}
 		}

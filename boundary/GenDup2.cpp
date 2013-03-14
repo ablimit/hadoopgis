@@ -96,8 +96,8 @@ int main(int argc, char **argv) {
 
 	pos = input_line.find_first_of(comma,pos+1);
 
-	/* Retrieve the 6 digit polygon ID*/
-	polyid = input_line.substr(pos - 7, 6);
+	/* Retrieve the 10 digit polygon ID*/
+	polyid = input_line.substr(pos - 11, 10);
 
 	/* Ignore double quotes */
 	value= input_line.substr(pos + 2, input_line.size() - pos - 3);	

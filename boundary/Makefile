@@ -21,10 +21,19 @@ else
 	CC = g++
 endif
 
-all: regen
+all: regen mapa reda redb
 
 regen: regenerator.cpp
 	$(CC) regenerator.cpp $(CFLAGS) $(LDFLAGS) -o regen
+
+mapa: mapperStarDup2.cpp
+	$(CC) mapperStarDup2.cpp $(CFLAGS) $(LDFLAGS) -o mappera
+
+reda: reducerStarDup2.cpp
+	$(CC) reducerStarDup2.cpp $(CFLAGS) $(LDFLAGS) -o reducera
+
+redb: reducerRemove2.cpp
+	$(CC) reducerRemove2.cpp $(CFLAGS) $(LDFLAGS) -o reducerb
 
 clean:
 	@rm -f regen
