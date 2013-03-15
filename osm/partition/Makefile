@@ -25,10 +25,17 @@ else
     CC = g++
 endif
 
-all: RTreeBulkLoad.cc
+all: loader processor query 
+
+loader: RTreeBulkLoad.cc
 	$(CC) RTreeBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o rtreeloader
+	
+processor: processor.cc
 	$(CC) processor.cc $(CFLAGS) $(LDFLAGS) -o preprocess
 
+query: RTreeQuery.cc
+	$(CC) RTreeQuery.cc $(CFLAGS) $(LDFLAGS) -o rquery
+
 clean:
-	@rm -f rtreeloader preprocess
+	@rm -f rtreeloader preprocess rquery
 
