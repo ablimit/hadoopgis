@@ -15,7 +15,8 @@ if [ "$HOSTNAME" = ${gpdb} ] ; then
     echo "Adding spatial extension to $1 ...."
     psql --dbname=$1 --file=$GPHOME/share/postgresql/contrib/postgis.sql
     echo "Uploading data to $1 ...."
-    psql --dbname=$1 --file=paisdb.sql
+    # psql --dbname=$1 --file=paisdb.sql
+    psql --dbname=$1 --file=paisdb_multipletable.sql
 
 fi
 
