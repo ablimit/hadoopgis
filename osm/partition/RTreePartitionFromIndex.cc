@@ -6,10 +6,6 @@
 using namespace SpatialIndex;
 using namespace std;
 
-#define INSERT 1
-#define DELETE 0
-#define QUERY 2
-
 // example of a Strategy pattern.
 // traverses the tree by level.
 class MyQueryStrategy : public SpatialIndex::IQueryStrategy
@@ -33,14 +29,11 @@ public:
             }
             else if (n->getLevel() ==0)
             {
-                IShape* ps;
-                entry.getShape(&ps);
-                Region* pr = dynamic_cast<Region*>(ps);
-                cout << "set object rect from ";  //2,2 to 4,40
-                cout << pr->m_pLow[0] << "," << pr->m_pLow[1] << " to "<< pr->m_pHigh[0] << "," << pr->m_pHigh[1] << endl;
-                // print node MBRs gnuplot style!
+                for (uint32_t cChild = 0; cChild < n->getChildrenCount(); cChild++)
+                {
+                    cout << n->getChildIdentifier(cChild) << "\t" << n->getIdentifier()<<endl;
+                }
 
-                delete ps;
             }
         }
 
@@ -56,27 +49,6 @@ public:
     }
 };
 
-// example of a Strategy pattern.
-// find the total indexed space managed by the index (the MBR of the root).
-class MyQueryStrategy2 : public IQueryStrategy
-{
-    public:
-        Region m_indexedSpace;
-
-    public:
-        void getNextEntry(const IEntry& entry, id_type& nextEntry, bool& hasNext)
-        {
-            // the first time we are called, entry points to the root.
-
-            // stop after the root.
-            hasNext = false;
-
-            IShape* ps;
-            entry.getShape(&ps);
-            ps->getMBR(m_indexedSpace);
-            delete ps;
-        }
-};
 
 int main(int argc, char** argv)
 {
@@ -102,9 +74,8 @@ int main(int argc, char** argv)
         ISpatialIndex* tree = RTree::loadRTree(*file, 1);
 
 
-        MyQueryStrategy2 qs;
+        MyQueryStrategy qs;
         tree->queryStrategy(qs);
-	cerr << "Indexed space: " << qs.m_indexedSpace << endl;
         
         cerr << *tree;
         //cerr << "Buffer hits: " << file->getHits() << endl;
