@@ -11,7 +11,7 @@ int size= 0;
 
 /* functions */
 void processQuery() { 
-    cout << "K" << TAB <<avg_area<< TAB << avg_perimeter<< TAB << size<<endl;
+    cout << "OSM" << TAB <<avg_area<< TAB << avg_perimeter<< TAB << size<<endl;
     cout.flush(); 
 }
 

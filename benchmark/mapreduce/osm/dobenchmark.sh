@@ -6,7 +6,7 @@ do
 
     echo "Task: ${task} "
     cd ${task}
-    sh runMapReduce.sh 2
+    sh runMapReduce.sh
     cd -
 done
 

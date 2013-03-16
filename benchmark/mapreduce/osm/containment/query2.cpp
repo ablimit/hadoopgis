@@ -68,7 +68,7 @@ void processQuery()
     Geometry * way = NULL; 
     // polygons which are definitly contained in the boundary
     for (map<string,string>::iterator it = exact_hits.begin() ; it != exact_hits.end(); ++it)
-	cout << it->first << endl;
+	cout << it->second << endl;
 
     // polygons which may be contained in the boundary
     for (map<string,string>::iterator it = candidate_hits.begin() ; it != candidate_hits.end(); ++it)
@@ -76,7 +76,7 @@ void processQuery()
         way = wkt_reader->read(it->second);
 
         if (paris_poly->contains(way))
-            cout << it->first <<endl;
+            cout << candidate_hits_rec[it->first] <<endl;
         delete way;
     }
     cout.flush();

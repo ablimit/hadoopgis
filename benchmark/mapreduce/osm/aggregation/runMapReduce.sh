@@ -26,7 +26,7 @@ do
 	    expres=`expr ${maxmap} \\* 8`
 	    START=$(date +%s)
 
-	    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.reduce.tasks=0 -D mapred.tasktracker.map.tasks.maximum=1 -mapper ${query} -file ${query} -reducer aggr -file aggr ${optinput} -output ${hdfsoutdir}  -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="osm_aggr_${query}_${expres}"  -jobconf mapred.task.timeout=36000000
+	    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.reduce.tasks=1 -D mapred.tasktracker.map.tasks.maximum=${maxmap} -mapper ${query} -file ${query} -reducer aggr -file aggr ${optinput} -output ${hdfsoutdir}  -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="osm_aggr_${query}_${expres}"  -jobconf mapred.task.timeout=36000000
 
 
 	    END=$(date +%s)

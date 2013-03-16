@@ -8,7 +8,8 @@ void processQuery()
     polygon poly;
     polygon hull;
     point center;
-    float avg_area,avg_perimeter;
+    double avg_area = 0.0 ;
+    double avg_perimeter = 0.0;
 
     if (geometry_collction.size()>0)
     {
@@ -20,13 +21,13 @@ void processQuery()
 	    avg_perimeter += boost::geometry::perimeter(poly);
 
 	    /*
-	    cout << area <<comma 
-		<< boost::geometry::dsv(center) << comma
-		<< boost::geometry::dsv(hull)   << comma 
+	    cout << area <<COMMA 
+		<< boost::geometry::dsv(center) << COMMA
+		<< boost::geometry::dsv(hull)   << COMMA 
 		<< perimeter << endl;
 	    */
 	}
-	    cout << avg_area/geometry_collction.size() << comma << avg_perimeter/geometry_collction.size() << endl;
+	    cout << "PAIS" << avg_area << TAB << avg_perimeter << TAB <<geometry_collction.size() << endl;
 
     }
     cout.flush();
@@ -39,14 +40,14 @@ int main(int argc, char **argv) {
 
         while(cin && getline(cin, input_line) && !cin.eof()){
 
-            size_t pos = input_line.find_first_of(comma,0);
+            size_t pos = input_line.find_first_of(COMMA,0);
             if (pos == string::npos)
                 return 1; // failure
 
             tile_id = input_line.substr(0,pos);
-            pos=input_line.find_first_of(comma,pos+1);
+            pos=input_line.find_first_of(COMMA,pos+1);
             geometry_collction.push_back(shapebegin + input_line.substr(pos+2,input_line.length()- pos - 3) + shapeend);
-            //cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
+            //cout << key<< TAB << index<< TAB << shapebegin <<value <<shapeend<< endl;
         }
 
     processQuery();

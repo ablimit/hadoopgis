@@ -21,9 +21,9 @@ void processQuery()
 	    boost::geometry::convex_hull(poly, hull);
 	    perimeter = boost::geometry::perimeter(poly);
 
-	    cout << area <<comma 
-		<< boost::geometry::dsv(center) << comma
-		<< boost::geometry::dsv(hull)   << comma 
+	    cout << area <<COMMA 
+		<< boost::geometry::dsv(center) << COMMA
+		<< boost::geometry::dsv(hull)   << COMMA 
 		<< perimeter << endl;
 	}
 
@@ -41,12 +41,12 @@ int main(int argc, char **argv) {
 
     while(cin && getline(cin, input_line) && !cin.eof()){
 
-        size_t pos = input_line.find_first_of(comma,0);
+        size_t pos = input_line.find_first_of(COMMA,0);
         if (pos == string::npos)
             return 1; // failure
 
         tile_id = input_line.substr(0,pos);
-        pos=input_line.find_first_of(comma,pos+1);
+        pos=input_line.find_first_of(COMMA,pos+1);
         string sobject = shapebegin + input_line.substr(pos+2,input_line.length()- pos - 3) + shapeend;
         boost::geometry::read_wkt(sobject, polygon_object);  // spatial filtering
         ar = abs(boost::geometry::area(polygon_object));

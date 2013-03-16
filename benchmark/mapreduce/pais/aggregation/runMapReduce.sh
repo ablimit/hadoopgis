@@ -35,7 +35,8 @@ case "$1" in
 
 esac
 
-make -f Makefile
+make q3
+make aggr
 
 export HADOOP_HOME=/usr/lib/hadoop-0.20-mapreduce
 sudo -u hdfs hdfs dfs -rm -r /user/aaji/paisaggrout
@@ -52,7 +53,7 @@ do
 	    expres=`expr ${maxmap} \\* 8`
 	    START=$(date +%s)
 
-	    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.reduce.tasks=0 -D mapred.tasktracker.map.tasks.maximum=${maxmap} -mapper ${query} -file ${query} ${optinput} -output /user/aaji/paisaggrout -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="pais_aggr_${query}_${expres}"  -jobconf mapred.task.timeout=36000000
+	    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.reduce.tasks=1 -D mapred.tasktracker.map.tasks.maximum=${maxmap} -mapper ${query} -file ${query} -reducer aggr -file aggr ${optinput} -output /user/aaji/paisaggrout -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="pais_aggr_${query}_${expres}"  -jobconf mapred.task.timeout=36000000
 
 
 	    END=$(date +%s)
@@ -67,5 +68,5 @@ do
     echo "" >>${logfile}
 done
 
-make -f Makefile clean
+make clean
 
