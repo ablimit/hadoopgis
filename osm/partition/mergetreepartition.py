@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /home/aaji/softs/bin/python
 
 import sys
 from collections import defaultdict

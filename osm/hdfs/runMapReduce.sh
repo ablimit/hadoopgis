@@ -13,11 +13,14 @@ hdfsoutdir=$1
 hdfsinputdir="-input /user/aaji/osm/smalltile"
 
 START=$(date +%s)
-for i in 1 2 3 4 5 6 7 8 9 10
+for i in 3 4 5 6 7 8 9 10
 do
-    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -mapper "duplicator ${i}" -reducer org.apache.hadoop.mapred.lib.IndentityReducer -file duplicator ${input} -output ${hdfsoutdir}/x{i} -numReduceTasks 8 -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="osm_duplication"  -jobconf mapred.task.timeout=36000000
+    reducecount=`expr ${i} \\* 10`
+    # sudo -u hdfs hdfs dfs -rm -r ${hdfsoutdir}/x${i}
+    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.child.java.opts=-Xmx2048M -mapper "replicator ${i}" -file replicator ${hdfsinputdir} -output ${hdfsoutdir}/x${i} -numReduceTasks ${reducecount} -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="osm_duplication"  -jobconf mapred.task.timeout=36000000
 
 
+    # -reducer org.apache.hadoop.mapred.lib.IndentityReducer 
     END=$(date +%s)
     DIFF=$(( $END - $START ))
     echo "Factor_$i,${DIFF}" >> dup.log

@@ -18,6 +18,19 @@ using namespace std;
 const string BAR = "|";
 const string UNDERSCORE = "_";
 
+int getJoinIndex ()
+{
+    char * filename = getenv("map_input_file");
+    //char * filename = "astroII.1.1";
+    if ( NULL == filename ){
+	cerr << "map.input.file is NULL." << endl;
+	return 1 ;
+    }
+    int len= strlen(filename);
+    int index = filename[len-1] - '1' ;
+    return index;
+}
+
 
 int main(int argc, char **argv) {
 
@@ -27,6 +40,7 @@ int main(int argc, char **argv) {
 	return -1;
     }
     const int dupFactor  = atoi(argv[1]);
+    const int index = getJoinIndex();
 
     string input_line;
     vector<string> fields;
@@ -37,7 +51,7 @@ int main(int argc, char **argv) {
 	{
 	    for (int i=0; i<dupFactor;i++ )
 	    {
-		cout << i << UNDERSCORE<< boost::algorithm::join(fields,BAR) << endl;
+		cout << index<< UNDERSCORE << i << UNDERSCORE<< boost::algorithm::join(fields,BAR) << endl;
 	    }
 	}
 	else 
