@@ -20,14 +20,11 @@ else
 	CC = g++
 endif
 
-all: map red
+all: prof
 
-map: mapper.cpp 
-	$(CC) mapper.cpp $(CFLAGS) $(LDFLAGS) -o mapper
-
-red: profilequery.cc MReducerx.h
+prof: profilequery.cc MReducerx.h
 	$(CC) profilequery.cc $(CFLAGS) $(LDFLAGS) -o profiler
 
 clean:
-	@rm -f mapper profiler
+	@rm -f profiler
 
