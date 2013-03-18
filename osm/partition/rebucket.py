@@ -2,7 +2,7 @@
 
 import sys
 
-dumvar =-1 
+dumvar ="-1"
 bar = "|" 
 
 for line in sys.stdin:

@@ -118,10 +118,17 @@ int main(int argc, char **argv) {
 	    processSplitTile(tile_id, sp[2]);
 	fields.clear();
     }
-
-
+    
+    // osm europe data 
     while(cin && getline(cin, input_line) && !cin.eof()){
 	boost::split(fields, input_line, boost::is_any_of(BAR));
+
+	if (tilePartitionMap.count(fields[OSM_TILEID])>0) // the tile is in the partition
+	{
+
+	}
+	else {
+	}
 
 	int rel =isTileRelevant(fields[OSM_TILEID]);
 	if (rel == 0)// if tile ID matches, continue searching 

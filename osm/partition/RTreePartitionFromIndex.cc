@@ -29,10 +29,12 @@ public:
             }
             else if (n->getLevel() ==0)
             {
-                for (uint32_t cChild = 0; cChild < n->getChildrenCount(); cChild++)
+		int children_count = n->getChildrenCount();
+                for (uint32_t cChild = 0; cChild < children_count; cChild++)
                 {
                     cout << n->getChildIdentifier(cChild) << "\t" << n->getIdentifier()<<endl;
                 }
+		cerr << n->getIdentifier() << " --- " << children_count <<endl;
 
             }
         }
