@@ -45,7 +45,7 @@ int getJoinIndex ()
 	   return 1 ;
     }
     int len= strlen(filename);
-    int index = filename[len-1] - '0' ;
+    int index = filename[len-1] - '0';
     return index;
 }
 
@@ -78,15 +78,16 @@ int main(int argc, char **argv) {
 		imgid = input_line.substr(0,pos2); /* Name of the image */
 
 		/* pos becomes the comma in front of the */
-		pos = input_line.find_first_of(comma,0);
+		pos2 = input_line.find_first_of(comma,0);
 
 		if (pos == string::npos)
 			return 1; // failure
 
-		pos = input_line.find_first_of(comma,pos+1);
+		pos = input_line.find_first_of(comma,pos2+1);
 
-		/* Retrieve the 6-digit polygon ID*/
-		polyid = input_line.substr(pos - 7, 6);
+		/* Retrieve the 10-digit polygon ID*/
+		polyid = input_line.substr(pos2+1,pos-pos2-1);
+        //cerr << polyid << endl;
 
 		/* Polygon markup */
 		value= input_line.substr(pos + 2, input_line.size() - pos - 3);	
@@ -115,14 +116,11 @@ int main(int argc, char **argv) {
 		tmpX = (maxX - minX) / tileSize + 1;
 		tmpY = (maxY - minY) / tileSize + 1;
 
-		/* Emit the polygon to appropriate tiles */
-		for (i = 0; i < tmpX; i++) {
-			for (j = 0; j < tmpY; j++) {
-				/*  key is tileid == imgid-minX-minY */
-				cout << imgid << minusS << (minX + i * tileSize) << (minY + j * tileSize) 
-				<< tab << index << tab << polyid << tab << polystring << endl;
-			}
-		}
+		/* Emit the polygon to only 1 tile */
+		/*  key is tileid == imgid-minX-minY */
+		cout << imgid << minusS << (minX + i * tileSize) << minusS << (minY + j * tileSize) 
+			<< tab << index << tab << polyid << tab << polystring << endl;
+	
     }
     return 0; // success
 }

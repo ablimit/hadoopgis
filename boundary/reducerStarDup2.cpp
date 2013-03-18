@@ -28,10 +28,11 @@ boxmap outline;
 polynamesmap polyid;
 
 const char offset = '1';
-const string tab = "\t";
-const char comma = ',';
-const char underscore = '_';
-const char minusS = '-';
+const string TAB = "\t";
+const char COMMA = ',';
+const char UNDERSCORE = '_';
+const char DASH = '-';
+const string SEPARATOR = " | ";
 
 bool readSpatialInput();
 
@@ -49,7 +50,7 @@ bool readSpatialInput() {
 
     while(cin && getline(cin, input_line) && !cin.eof()) {
 
-        boost::split(fields,input_line,boost::is_any_of(tab));
+        boost::split(fields,input_line,boost::is_any_of(TAB));
         key =fields[0];
         index = boost::lexical_cast<int>(fields[1]) -1;
         tmpid = fields[2];
@@ -80,7 +81,12 @@ int main(int argc, char** argv)
     int size = -1;
 	int pos3;
 
-	double overlap_area;
+	double overlap_ratio = 0.0;
+    double overlap_area = 0.0;
+    double union_area = 0.0;
+    double distance = 0.0;
+	double area_src = 0.0;
+	double area_tar = 0.0;
 
 	int x1, y1, x2, y2;
 	x1 = 0;
@@ -96,7 +102,7 @@ int main(int argc, char** argv)
 		for (iter= outline.begin(); iter != outline.end(); iter++)
 		{
 			key  = iter->first;
-			pos3 = key.find_first_of(minusS, 0);
+			pos3 = key.find_first_of(DASH, 0);
 			imageid = key.substr(0, pos3);
 	
 			map<int ,vector<box*> > &mbbs = outline[key];
@@ -123,20 +129,35 @@ int main(int argc, char** argv)
 						/* Skip if the two polygons do not intersect */
 						continue;
 					}
+
+					area_src = boost::geometry::area(*(shapes[0][j]));
+					area_tar = boost::geometry::area(*(shapes[i][k]));
+
 					/* Read the overlap area */
 					BOOST_FOREACH(polygon & p, output)
 					{
-					boost::geometry::correct(p);
-					overlap_area += boost::geometry::area(p);
+						boost::geometry::correct(p);
+						overlap_area += boost::geometry::area(p);
 					}
 
-					/* Output statistics: overlap area */
-					cout << imageid << minusS << polyid[key][0][j] 
-						<< minusS << polyid[key][i][k] 
-						<< tab << overlap_area << endl;	
 					/* Reset the intersecting shapes  */		
 					output.clear();
+
+					union_area = area_src + area_tar - overlap_area;
+
+					boost::geometry::centroid(*(shapes[0][j]), a); 
+					boost::geometry::centroid(*(shapes[i][k]), b);
+					distance = boost::geometry::distance(a,b);
+
+					/* Output statistics: overlap area */
+					cout << imageid << DASH << polyid[key][0][j] 
+						<< DASH << polyid[key][i][k] 
+						<< TAB << overlap_area << SEPARATOR << union_area 
+						<< SEPARATOR << distance  << endl;	
+
                     overlap_area = 0.0 ;
+					union_area = 0.0;
+					distance = 0.0;
 				}
 				}
 			}

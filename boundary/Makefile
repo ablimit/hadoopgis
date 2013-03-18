@@ -21,7 +21,7 @@ else
 	CC = g++
 endif
 
-all: regen mapa reda redb
+all: regen mapa reda redb redb2 mapb2
 
 regen: regenerator.cpp
 	$(CC) regenerator.cpp $(CFLAGS) $(LDFLAGS) -o regen
@@ -35,6 +35,15 @@ reda: reducerStarDup2.cpp
 redb: reducerRemove2.cpp
 	$(CC) reducerRemove2.cpp $(CFLAGS) $(LDFLAGS) -o reducerb
 
+mapb2: mapperRemove3.cpp
+	$(CC) mapperRemove3.cpp $(CFLAGS) $(LDFLAGS) -o mapperb2
+
+redb2: reducerRemove3.cpp
+	$(CC) reducerRemove3.cpp $(CFLAGS) $(LDFLAGS) -o reducerb2
+
+identity: mapperIdentity.cpp
+	$(CC) mapperIdentity.cpp -o mapperidentity
+
 clean:
-	@rm -f regen
+	@rm -f regen mapa reda redb mapb2 redb2 mapperidentity
 
