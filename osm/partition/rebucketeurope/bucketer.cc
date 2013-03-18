@@ -1,15 +1,16 @@
 #include "hadoopgis.h"
-#include "england.h"
 
 #include <fstream>
 #include <sstream>
 
+#include <boost/algorithm/string/join.hpp>
+
 /* local vars  */
 
 double plow[2], phigh[2];
-    
-vector<string> exact_hits ; 
-vector<string> candidate_hits;
+
+map<string,string> tilePartitionMap;
+map<string,vector<Envlope> > splitTileMap;
 
 GeometryFactory *gf = NULL;
 WKTReader *wkt_reader = NULL;
@@ -20,8 +21,8 @@ string constructBoundary(string tile_id){
     vector<string> strs;
     boost::split(strs, tile_id, boost::is_any_of(UNDERSCORE));
     if (strs.size()<2) {
-        cerr << "ERROR: ill formatted tile id." <<endl;
-        return "" ;
+	cerr << "ERROR: ill formatted tile id." <<endl;
+	return "" ;
     }
     stringstream ss;
     int x = boost::lexical_cast< int >( strs[1] );
@@ -40,26 +41,29 @@ string constructBoundary(string tile_id){
 }
 
 void processSplitTile(string tile_id, string coordinates){
-
     int val = -1; 
     vector<string> fields;
+    string tid;
+
     boost::split(fields, tile_id, boost::is_any_of(UNDERSCORE));
+    fields.pop_back();
+    tid = boost::algorithm::join(fields, "_");
+    fields.clear();
+
+    boost::split(fields, coordinates, boost::is_any_of(SPACE));
+
+    double low[2];
+    double high[2] ;
+    low[0] =boost::lexical_cast< double >( fields[0] );
+    low[1] =boost::lexical_cast< double >( fields[1] );
+    low[0] =boost::lexical_cast< double >( fields[2] );
+    low[0] =boost::lexical_cast< double >( fields[3] );
 
     string wkt = constructBoundary(tile_id);
 
-    Geometry *tile_boundary = wkt_reader->read(wkt);
-    
-    if (england_poly->intersects(tile_boundary))
-    {
-	if (england_poly->contains(tile_boundary))
-	    val = 0;
-	else 
-	    val = 1;
-    }
-    val =2;
+    Envlope mbb(low[0],high[0],low[1],high[1]);
 
-    delete tile_boundary ;
-    return val;
+    splitTileMap[tid].push_back(mbb);
 }
 
 void processQuery()
@@ -88,18 +92,16 @@ int main(int argc, char **argv) {
 	cerr << "Usage: [data2] < input"<<endl;
 	return -1; 
     }
-    
+
     ifstream infile(argv[1]);
 
     string input_line;
     vector<string> fields;
     vector<string> sp;
-    map<string,string> tilePartitionMap;
-    map<string,vector<Envlope> > split_tiles;
 
     gf = new GeometryFactory(new PrecisionModel(),PAIS_SRID);
     wkt_reader= new WKTReader(gf);
-    
+
     string tile_id ;
     string part_id;
     while (std::getline(infile, input_line))
@@ -109,7 +111,7 @@ int main(int argc, char **argv) {
 
 	if (tile_id.size()<3)
 	    continue; // boundary objects
-	
+
 	if (tilePartitionMap.count(tile_id) == 0)
 	    tilePartitionMap[tile_id]=fields[0]; //file Mapping 
 	if (std::count(tile_id.begin(), tile_id.end(), '_')>1)
