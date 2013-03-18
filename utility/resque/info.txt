@@ -1,0 +1,8 @@
+Record size [0] --	4983
+Record size [1] --	5294
+[star query] [join_size =2]
+
+Reading + Parsing cost:1.2
+RTree constrcution cost: 0.02
+Filter cost: 0.03
+Refine cost: 3.25

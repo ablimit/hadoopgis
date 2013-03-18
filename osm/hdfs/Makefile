@@ -1,3 +1,4 @@
+
 boost=/home/aaji/softs/boost
 spatial=/home/aaji/softs
 
@@ -25,21 +26,11 @@ else
     CC = g++
 endif
 
-all: loader processor query part
+all: dup
 
-loader: RTreeBulkLoad.cc
-	$(CC) RTreeBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o rtreeloader
-	
-processor: processor.cc
-	$(CC) processor.cc $(CFLAGS) $(LDFLAGS) -o preprocess
-
-query: RTreeQuery.cc
-	$(CC) RTreeQuery.cc $(CFLAGS) $(LDFLAGS) -o rquery
-
-part: RTreePartitionFromIndex.cc
-	$(CC) RTreePartitionFromIndex.cc $(CFLAGS) $(LDFLAGS) -o partitioner
-
+dup: duplicator.cpp 
+	$(CC) duplicator.cpp $(CFLAGS) $(LDFLAGS) -o replicator
 
 clean:
-	@rm -f rtreeloader preprocess rquery partitioner
+	@rm -f replicator
 
