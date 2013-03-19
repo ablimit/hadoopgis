@@ -57,9 +57,11 @@ for j in 1 2 3
 do
     echo "round ${j}"
     # for reducecount in 200 150 100 80 60 40 20
-    for maxmap in 4 2 1
+    # for maxmap in 4 2 1
+    for maxmap in 6 4 2 1
     do
-	reducecount=`expr ${maxmap} \\* 8`
+	# reducecount=`expr ${maxmap} \\* 8`
+	reducecount=`expr ${maxmap} \\* 5`
 	START=$(date +%s)
 
 	sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.tasktracker.map.tasks.maximum=${maxmap} -D mapred.tasktracker.reduce.tasks.maximum=${maxmap} -mapper mapper -reducer reducer -file mapper -file reducer ${optinput} -output /user/aaji/paisjoinout -numReduceTasks ${reducecount} -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="pais_join_${reducecount}" -jobconf mapred.task.timeout=36000000

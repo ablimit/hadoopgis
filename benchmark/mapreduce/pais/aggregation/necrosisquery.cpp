@@ -10,7 +10,7 @@ void processQuery()
     point center;
     double avg_area = 0.0 ;
     double avg_perimeter = 0.0;
-
+    int cc =0; 
     if (geometry_collction.size()>0)
     {
 	for (vector<string>::iterator it = geometry_collction.begin() ; it != geometry_collction.end(); ++it){
@@ -26,7 +26,7 @@ void processQuery()
 		<< boost::geometry::dsv(hull)   << COMMA 
 		<< perimeter << endl;
 	    */
-	    cout << "PAIS"<<TAB<< avg_area << TAB << avg_perimeter << endl;
+	    cout << cc%100 <<TAB << avg_area << TAB << avg_perimeter << endl;
 	}
     }
     cout.flush();

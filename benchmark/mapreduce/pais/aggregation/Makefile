@@ -26,7 +26,7 @@ else
     CC = g++
 endif
 
-all: q1 q2 q3 q4 aggr
+all: q1 q2 q3 q4 q5 aggr
 
 q1: query1.cpp hadoopgis.h
 	$(CC) query1.cpp $(CFLAGS) $(LDFLAGS) -o q1
@@ -40,9 +40,12 @@ q3: query3.cpp hadoopgis.h
 q4: query4.cpp hadoopgis.h
 	$(CC) query4.cpp $(CFLAGS) $(LDFLAGS) -o q4
 
+q5: necrosisquery.cpp hadoopgis.h
+	$(CC) necrosisquery.cpp $(CFLAGS) $(LDFLAGS) -o q5
+
 aggr: aggregator.cpp hadoopgis.h
 	$(CC) aggregator.cpp $(CFLAGS) $(LDFLAGS) -o aggr
 
 clean:
-	@rm -f q1 q2 q3 q4 aggr
+	@rm -f q1 q2 q3 q4 q5 aggr necaggr
 
