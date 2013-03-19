@@ -7,6 +7,15 @@
 --DB2GSE.ST_Contains(h.polygon, p.polygon) = 1
 --selectivity 0.0625 WITH UR;
 
-SELECT 	tilename AS TID ,markup_id AS MID ,ST_AsText(polygon) AS SHAPE
-FROM   	markup_polygon  
-WHERE ST_Contains( ST_PolygonFromText('POLYGON((22528 8192,67584 8192,67584 24576,22528 24576,22528 8192))'), polygon ) = TRUE ;
+SELECT current timestamp FROM sysibm.sysdummy1;
+SELECT count(*)	
+FROM   	PAIS.markup_polygon  
+WHERE DB2GSE.ST_Contains(DB2GSE.ST_PolyFromText('POLYGON((22528 8192,67584 8192,67584 24576,22528 24576,22528 8192))',100), polygon ) = 1;
+SELECT current timestamp FROM sysibm.sysdummy1;
+
+--SELECT current timestamp FROM sysibm.sysdummy1;
+--SELECT 	TILENAME AS TID ,MARKUP_ID AS MID ,DB2GSE.ST_AsText(POLYGON) AS SHAPE
+--FROM   	PAIS.markup_polygon  
+--WHERE DB2GSE.ST_Contains(DB2GSE.ST_PolyFromText('POLYGON((22528 8192,67584 8192,67584 24576,22528 24576,22528 8192))',100), polygon ) = 1;
+--SELECT current timestamp FROM sysibm.sysdummy1;
+
