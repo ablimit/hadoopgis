@@ -18,7 +18,7 @@ public:
     {
         const INode* n = dynamic_cast<const INode*>(&entry);
 
-        // traverse only index nodes at levels 2 and higher.
+        // traverse only index nodes at levels 0 and higher.
         if (n != NULL) {
             if (n->getLevel() > 0)
             {
@@ -29,12 +29,12 @@ public:
             }
             else if (n->getLevel() ==0)
             {
-		int children_count = n->getChildrenCount();
+                int children_count = n->getChildrenCount();
                 for (uint32_t cChild = 0; cChild < children_count; cChild++)
                 {
                     cout << n->getChildIdentifier(cChild) << "\t" << n->getIdentifier()<<endl;
                 }
-		cerr << n->getIdentifier() << " --- " << children_count <<endl;
+                cerr << n->getIdentifier() << " --- " << children_count <<endl;
 
             }
         }
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 
         MyQueryStrategy qs;
         tree->queryStrategy(qs);
-        
+
         cerr << *tree;
         //cerr << "Buffer hits: " << file->getHits() << endl;
 

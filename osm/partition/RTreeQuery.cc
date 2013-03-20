@@ -14,46 +14,46 @@ using namespace std;
 // traverses the tree by level.
 class MyQueryStrategy : public SpatialIndex::IQueryStrategy
 {
-private:
-	queue<id_type> ids;
+    private:
+        queue<id_type> ids;
 
-public:
-    void getNextEntry(const IEntry& entry, id_type& nextEntry, bool& hasNext)
-    {
-        const INode* n = dynamic_cast<const INode*>(&entry);
+    public:
+        void getNextEntry(const IEntry& entry, id_type& nextEntry, bool& hasNext)
+        {
+            const INode* n = dynamic_cast<const INode*>(&entry);
 
-        // traverse only index nodes at levels 2 and higher.
-        if (n != NULL) {
-            if (n->getLevel() > 0)
-            {
-                for (uint32_t cChild = 0; cChild < n->getChildrenCount(); cChild++)
+            // traverse only index nodes at levels 2 and higher.
+            if (n != NULL) {
+                if (n->getLevel() > 0)
                 {
-                    ids.push(n->getChildIdentifier(cChild));
+                    for (uint32_t cChild = 0; cChild < n->getChildrenCount(); cChild++)
+                    {
+                        ids.push(n->getChildIdentifier(cChild));
+                    }
+                }
+                else if (n->getLevel() ==0)
+                {
+                    IShape* ps;
+                    entry.getShape(&ps);
+                    Region* pr = dynamic_cast<Region*>(ps);
+                    cout << "set object rect from ";  //2,2 to 4,40
+                    cout << pr->m_pLow[0] << "," << pr->m_pLow[1] << " to "<< pr->m_pHigh[0] << "," << pr->m_pHigh[1] << endl;
+                    // print node MBRs gnuplot style!
+
+                    delete ps;
                 }
             }
-            else if (n->getLevel() ==0)
-            {
-                IShape* ps;
-                entry.getShape(&ps);
-                Region* pr = dynamic_cast<Region*>(ps);
-                cout << "set object rect from ";  //2,2 to 4,40
-                cout << pr->m_pLow[0] << "," << pr->m_pLow[1] << " to "<< pr->m_pHigh[0] << "," << pr->m_pHigh[1] << endl;
-                // print node MBRs gnuplot style!
 
-                delete ps;
+            if (! ids.empty())
+            {
+                nextEntry = ids.front(); ids.pop();
+                hasNext = true;
+            }
+            else
+            {
+                hasNext = false;
             }
         }
-
-        if (! ids.empty())
-        {
-            nextEntry = ids.front(); ids.pop();
-            hasNext = true;
-        }
-        else
-        {
-            hasNext = false;
-        }
-    }
 };
 
 // example of a Strategy pattern.
@@ -104,8 +104,8 @@ int main(int argc, char** argv)
 
         MyQueryStrategy2 qs;
         tree->queryStrategy(qs);
-	cerr << "Indexed space: " << qs.m_indexedSpace << endl;
-        
+        cerr << "Indexed space: " << qs.m_indexedSpace << endl;
+
         cerr << *tree;
         //cerr << "Buffer hits: " << file->getHits() << endl;
 
