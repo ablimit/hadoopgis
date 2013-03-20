@@ -18,22 +18,22 @@ WKTReader *wkt_reader = NULL;
 /* functions */
 
 void processSplitTile(string tile_id, string coordinates){
+    //cerr << tile_id <<"\t" << coordinates <<endl;
     vector<string> fields;
     string tid;
+    stringstream ss ;
+    ss<< coordinates;
 
     boost::split(fields, tile_id, boost::is_any_of(UNDERSCORE));
     fields.pop_back();
     tid = boost::algorithm::join(fields, "_");
-    fields.clear();
 
-    boost::split(fields, coordinates, boost::is_any_of(SPACE));
-
-    double low[2];
+    double low[2] ;
     double high[2] ;
-    low[0] =boost::lexical_cast< double >( fields[0] );
-    low[1] =boost::lexical_cast< double >( fields[1] );
-    low[0] =boost::lexical_cast< double >( fields[2] );
-    low[0] =boost::lexical_cast< double >( fields[3] );
+    ss >> low[0] ;
+    ss >> low[1] ;
+    ss >> high[0] ;
+    ss >> high[1] ;
 
     Envelope mbb(low[0],high[0],low[1],high[1]);
 
@@ -50,14 +50,14 @@ string getSplitTileId(string tile_id, string way)
     // polygons which are definitly contained in the boundary
     for (vector<Envelope>::iterator it = regions.begin() ; it != regions.end(); ++it)
     {
-        if (it->contains(geom->getEnvelopeInternal()))
-            break;
-        ++idx;
+	if (it->contains(geom->getEnvelopeInternal()))
+	    break;
+	++idx;
     }
     if (idx<4)
-        ss << tile_id << idx ;
+	ss << tile_id << idx ;
     else 
-        ss << "NULL";
+	ss << "NULL";
 
     return ss.str();
 }
@@ -66,59 +66,67 @@ string getSplitTileId(string tile_id, string way)
 int main(int argc, char **argv) {
     if (argc < 2)
     {
-        cerr << "Usage: " << argv[0]<< " [data2] < input"<<endl;
-        return -1; 
+	cerr << "Usage: " << argv[0]<< " [data2] < input"<<endl;
+	return -1; 
     }
 
     ifstream infile(argv[1]);
 
     string input_line;
     vector<string> fields;
-    vector<string> sp;
 
     gf = new GeometryFactory(new PrecisionModel(),PAIS_SRID);
     wkt_reader= new WKTReader(gf);
 
     string tile_id ;
     string part_id;
+    int line_number =0;
     // index data from Kai
     while (std::getline(infile, input_line))
     {
-        boost::split(fields, input_line, boost::is_any_of(TAB));
-        tile_id = fields[1];
+	boost::split(fields, input_line, boost::is_any_of(TAB));
+	tile_id = fields[1];
 
-        if (tilePartitionMap.count(tile_id) == 0)
-            tilePartitionMap[tile_id]=fields[0]; // TILE_ID ---> Partition_ID
+	if (tilePartitionMap.count(tile_id) == 0)
+	    tilePartitionMap[tile_id]=fields[0]; // TILE_ID ---> Partition_ID
 
-        if (std::count(tile_id.begin(), tile_id.end(), '_')>1)  // the ones got split 
-            processSplitTile(tile_id, sp[2]);
-        
-        fields.clear();
+	if (std::count(tile_id.begin(), tile_id.end(), '_')>1)  // the ones got split 
+	{
+	    processSplitTile(tile_id, fields[2]);
+	}
+	fields.clear();
     }
 
     // osm europe data 
     while(cin && getline(cin, input_line) && !cin.eof()){
-        boost::split(fields, input_line, boost::is_any_of(BAR));
-        if (fields[OSM_TILEID].size()>2)  // if this object is not on the boundary 
-        {
-            if (tilePartitionMap.count(fields[OSM_TILEID])>0) // the tile is in the partition
-            {
-                tile_id = fields[OSM_TILEID] ;
-            }
-            else if (splitTileMap.count(fields[OSM_TILEID])>0) // the tile is split
-            {
-                tile_id = getSplitTileId(fields[OSM_TILEID], fields[OSM_POLYGON]);
-            }
-            else {
-                cerr << "ERROR: [" << fields[OSM_TILEID] << "]" <<endl;
-            }
+	boost::split(fields, input_line, boost::is_any_of(BAR));
+	//cerr <<"LINE: " << ++line_number<<endl;
+	++line_number;
 
-            if (tile_id.compare("NULL") !=0 ){
-                part_id = tilePartitionMap[tile_id];
-                cout << part_id << TAB << tile_id << TAB << fields[OSM_ID] << TAB << fields[OSM_POLYGON] <<endl;
-            }
-        }
-        fields.clear();
+	if (fields[OSM_TILEID].size()>2)  // if this object is not on the boundary 
+	{
+	    if (tilePartitionMap.count(fields[OSM_TILEID])>0) // the tile is in the partition
+	    {
+		tile_id = fields[OSM_TILEID] ;
+	    }
+	    else if (splitTileMap.count(fields[OSM_TILEID])>0) // the tile is split
+	    {
+		tile_id = getSplitTileId(fields[OSM_TILEID], fields[OSM_POLYGON]);
+	    }
+	    else {
+		cerr << "ERROR:"<< line_number <<":" << fields[OSM_TILEID]<<endl;
+		tile_id = "NULL";
+	    }
+
+	    if (tile_id.compare("NULL") !=0 ){
+		part_id = tilePartitionMap[tile_id];
+		cout << part_id << TAB << tile_id << TAB << fields[OSM_ID] << TAB << fields[OSM_POLYGON] <<endl;
+	    }
+	}
+	else 
+	    cerr<< "EMPTY TILE_ID:" << line_number<<endl;
+
+	fields.clear();
     }
 
     delete wkt_reader;
