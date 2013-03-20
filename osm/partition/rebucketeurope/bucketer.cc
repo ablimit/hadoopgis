@@ -55,7 +55,10 @@ string getSplitTileId(string tile_id, string way)
 	++idx;
     }
     if (idx<4)
-	ss << tile_id << idx ;
+    {
+	ss << tile_id << UNDERSCORE <<idx ;
+	//cerr << ss.str() <<endl;
+    }
     else 
 	ss << "NULL";
 
