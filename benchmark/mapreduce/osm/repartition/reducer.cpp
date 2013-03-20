@@ -7,6 +7,7 @@ bool readSpatialInput() {
     string value;
     vector<string> fields;
     size_t pos;
+    size_t pos2;
 
     GeometryFactory *gf = new GeometryFactory(new PrecisionModel(),OSM_SRID);
     WKTReader *wkt_reader= new WKTReader(gf);
@@ -14,11 +15,14 @@ bool readSpatialInput() {
     
     while(cin && getline(cin, input_line) && !cin.eof()) {
 
-	pos = input_line.find_first_of(tab);
-	key = input_line.substr(0,pos);
+	pos2 = input_line.find_first_of(tab);
+	pos = input_line.find_first_of(tab,pos2+1);
+	key = input_line.substr(pos2+1,pos-pos2-1);
 	value = input_line.substr(pos+1) ;
 	boost::split(fields, value, boost::is_any_of(bar));
 	index = boost::lexical_cast< int >( fields[0]);
+
+	cerr <<key <<"|" << index <<"|"<< value<<endl;
 
 	infodata[key][index].push_back(fields[1]);
 

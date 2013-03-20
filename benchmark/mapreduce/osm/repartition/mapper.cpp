@@ -3,7 +3,6 @@
 int getJoinIndex ()
 {
     char * filename = getenv("map_input_file");
-    //char * filename = "astroII.1.1";
     if ( NULL == filename ){
 	cerr << "map.input.file is NULL." << endl;
 	return 1 ;
@@ -29,8 +28,8 @@ int main(int argc, char **argv) {
     while(cin && getline(cin, input_line) && !cin.eof()){
 	
 	boost::split(fields, input_line, boost::is_any_of(BAR));
-	if (fields[OSM_TILEID].size()> 2 )
-	    cout << fields[OSM_TILEID]<< TAB << index<< BAR << fields[OSM_ID] << BAR <<fields[OSM_POLYGON]<< endl;
+	if (fields[OSM_TILEID].size()> 2 && fields[OSM_TILEID].compare("NULL") !=0)
+	    cout << fields[OSM_ZORDER] << TAB <<fields[OSM_TILEID] << TAB << index<< BAR << fields[OSM_ID] << BAR <<fields[OSM_POLYGON]<< endl;
 	fields.clear();
     }
     cout.flush();
