@@ -25,7 +25,7 @@ else
     CC = g++
 endif
 
-all: loader processor query part
+all: loader processor query part mbb
 
 loader: RTreeBulkLoad.cc
 	$(CC) RTreeBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o rtreeloader
@@ -39,7 +39,10 @@ query: RTreeQuery.cc
 part: RTreePartitionFromIndex.cc
 	$(CC) RTreePartitionFromIndex.cc $(CFLAGS) $(LDFLAGS) -o partitioner
 
+mbb: RTreePartitionMBB.cc
+	$(CC) RTreePartitionMBB.cc $(CFLAGS) $(LDFLAGS) -o genPartitionRegionFromIndex
+
 
 clean:
-	@rm -f rtreeloader preprocess rquery partitioner
+	@rm -f rtreeloader preprocess rquery partitioner genPartitionRegionFromIndex
 
