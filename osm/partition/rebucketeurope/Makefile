@@ -25,10 +25,14 @@ else
     CC = g++
 endif
 
-all: remap
+all: remap rebuck
 
 remap: bucketer.cc hadoopgis.h
 	$(CC) bucketer.cc $(CFLAGS) $(LDFLAGS) -o rebucket
+
+rebuck: bucketmyeurope.cc hadoopgis.h
+	$(CC) bucketer.cc $(CFLAGS) $(LDFLAGS) -o rebucketmyeurope
+
 
 clean:
 	@rm -f rebucket
