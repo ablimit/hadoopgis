@@ -37,6 +37,9 @@ public:
                 cerr << n->getIdentifier() << " --- " << children_count <<endl;
 
             }
+	    else {
+		cerr <<"What the hell is this ? " <<endl;
+	    }
         }
 
         if (! ids.empty())
