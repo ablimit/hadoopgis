@@ -5,6 +5,7 @@ const int tile_size  = 4096;
 const string region ="POLYGON((22528 8192,67584 8192,67584 24576,22528 24576,22528 8192))";
 vector<string> geometry_collction ; 
 vector<string> id_collction ; 
+int cc=0;
 double plow[2], phigh[2];
 polygon poly;
 

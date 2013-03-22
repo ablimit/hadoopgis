@@ -7,13 +7,15 @@
 
 make -f Makefile
 
+reco=baseline
+# reco=$1
 export HADOOP_HOME=/usr/lib/hadoop-0.20-mapreduce
 
 hdfsoutdir=/user/aaji/osmjoinout
 
 sudo -u hdfs hdfs dfs -rm -r ${hdfsoutdir}
 
-date >> osm.repart.log
+date >> osm.${reco}.log
 
 for j in 1 2 3
 do
@@ -22,16 +24,16 @@ do
     do
 	START=$(date +%s)
 
-	sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -mapper mapper -reducer reducer -file mapper -file reducer -input /user/aaji/osm/repart -output ${hdfsoutdir} -numReduceTasks ${reducecount} -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="repart_osm_join_${reducecount}"  -jobconf mapred.task.timeout=36000000
+	sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -mapper mapper -reducer reducer -file mapper -file reducer -input /user/aaji/osm/repart -output ${hdfsoutdir} -numReduceTasks ${reducecount} -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="osm_join_base_${reducecount}"  -jobconf mapred.task.timeout=36000000
 
 
 	END=$(date +%s)
 	DIFF=$(( $END - $START ))
-	echo "${reducecount},${DIFF}" >> osm.repart.log
+	echo "BASE,${reducecount},${DIFF}" >> osm.${reco}.log
 
 	# sudo -u hdfs hdfs dfs -copyToLocal /user/aaji/joinout ${OUTDIR}/mjoin_${1}_${reducecount}
 	sudo -u hdfs hdfs dfs -rm -r ${hdfsoutdir}
     done
-    echo "" >>osm.repart.log
+    echo "" >>osm.${reco}.log
 done
 

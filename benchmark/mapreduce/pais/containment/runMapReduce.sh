@@ -48,18 +48,18 @@ for query in q3 qc
 do
     for j in 1 2 3
     do
-	for maxmap in 6 4 2 1
+	for maxmap in 20 10 6 4 2 1
 	do
 	    echo "round ${j}"
-	    expres=`expr ${maxmap} \\* 5`
+	    reducecount=`expr ${maxmap} \\* 5`
 	    START=$(date +%s)
 
-	    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.reduce.tasks=0 -D mapred.tasktracker.map.tasks.maximum=${maxmap} -mapper ${query} -file ${query} ${optinput} -output /user/aaji/paiscontout -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="pais_cont_${query}_${expres}"  -jobconf mapred.task.timeout=36000000
+	    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.reduce.tasks=0 -D mapred.tasktracker.map.tasks.maximum=${maxmap} -mapper ${query} -file ${query} ${optinput} -output /user/aaji/paiscontout -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="pais_cont_$1_${query}_${reducecount}"  -jobconf mapred.task.timeout=36000000
 
 
 	    END=$(date +%s)
 	    DIFF=$(( $END - $START ))
-	    echo "${query},${expres},${DIFF}" >> ${logfile}
+	    echo "${query},$1,${reducecount},${DIFF}" >> ${logfile}
 
 	    # sudo -u hdfs hdfs dfs -copyToLocal /user/aaji/joinout ${OUTDIR}/mjoin_${1}_${reducecount}
 	    sudo -u hdfs hdfs dfs -rm -r /user/aaji/paiscontout

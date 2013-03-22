@@ -41,5 +41,5 @@ aggr: aggregator.cpp hadoopgis.h
 	$(CC) aggregator.cpp $(CFLAGS) $(LDFLAGS) -o aggr
 
 clean:
-	@rm -f q1 q2 q3 aggregator
+	@rm -f q1 q2 q3 aggr
 

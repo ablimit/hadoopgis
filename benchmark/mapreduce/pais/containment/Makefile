@@ -39,5 +39,5 @@ qc: querycount.cpp hadoopgis.h vecstreamcount.h
 	$(CC) querycount.cpp $(CFLAGS) $(LDFLAGS) -o qc
 
 clean:
-	@rm -f q1 q2 q3 q4
+	@rm -f q1 q2 q3 q4 qc
 

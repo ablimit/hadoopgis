@@ -4,10 +4,10 @@
 #include <boost/algorithm/string/join.hpp>
 
 /* local vars  */
-double plow[2], phigh[2];
+double low[2], high[2];
 
 
-map<int,Geometry*> partition_boundary;
+map<int,Envelope*> partition_boundary;
 
 GeometryFactory *gf = NULL;
 WKTReader *wkt_reader = NULL;
@@ -30,8 +30,8 @@ void constructGeom(string line){
 int getPartition(string wkt){
     int val = -2;
     //cerr<< tile_id << TAB << wkt << TAB;
-    Geometry * geom = wkt_reader->read(wkt);
-    for (map<int,Geometry*>::iterator it = partition_boundary.begin() ; it != partition_boundary.end(); ++it)
+    const Envelope * geom = (wkt_reader->read(wkt))->getEnvelopeInternal () ;
+    for (map<int,Envelope*>::iterator it = partition_boundary.begin() ; it != partition_boundary.end(); ++it)
     {
         if (it->second->intersects(geom))
         {
@@ -62,7 +62,6 @@ int main(int argc, char **argv) {
     ifstream infile(argv[1]);
     string input_line;
     vector<string> fields;
-    Geometry * way = NULL; 
     int p = -1;
     int bobjects=0;
 
@@ -72,7 +71,6 @@ int main(int argc, char **argv) {
     while (std::getline(infile, input_line)){ 
         constructGeom(input_line);
     }
-    
     infile.close();
 
     while(cin && getline(cin, input_line) && !cin.eof()){
@@ -82,7 +80,7 @@ int main(int argc, char **argv) {
 
         p = getPartition(fields[OSM_POLYGON]);
 
-        if (p >0 )// find a partition 
+        if (p >=0 )// find a partition 
         {
             ostringstream convert;   // stream used for the conversion
             convert << p;
@@ -90,14 +88,18 @@ int main(int argc, char **argv) {
             cout << boost::algorithm::join(fields, BAR)<<endl;
 
         }
-        else 
+        else if (p == -1)
         {
             bobjects++;
             //cerr << "Candi: " << fields[OSM_ID] <<endl;
         }
+	else {
+	    cerr << "what the hell is this ? " << endl;
+	}
         fields.clear();
     }
 
+    cerr << "Number of objects on the partition boundary: " << bobjects << endl;
     cerr.flush();
 
     delete wkt_reader;

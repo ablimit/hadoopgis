@@ -48,7 +48,7 @@ for query in q3 q5
 do
     for j in 1 2 3
     do
-	for maxmap in 6 4 2 1
+	for maxmap in 20 10 6 4 2 1
 	do
 	    echo "round ${j}"
 	    reducecount=`expr ${maxmap} \\* 5`
@@ -59,7 +59,7 @@ do
 
 	    END=$(date +%s)
 	    DIFF=$(( $END - $START ))
-	    echo "${query},${reducecount},${DIFF}" >> ${logfile}
+	    echo "${query},$1,${reducecount},${DIFF}" >> ${logfile}
 
 	    # sudo -u hdfs hdfs dfs -copyToLocal /user/aaji/joinout ${OUTDIR}/mjoin_${1}_${reducecount}
 	    sudo -u hdfs hdfs dfs -rm -r /user/aaji/paisaggrout

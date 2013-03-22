@@ -1,5 +1,6 @@
 extern vector<string> geometry_collction ; 
 extern vector<string> id_collction ; 
+extern int cc ; 
 class ContainmentDataStream : public IDataStream
 {
     public:
@@ -87,7 +88,6 @@ class ContainmentDataStream : public IDataStream
 class MyVisitor : public IVisitor
 {
     public:
-	int cc =0;
 	void getCount() {
 	    cout << "Number of Record: " <<cc << endl;
 	}
