@@ -16,6 +16,14 @@
 #include <boost/algorithm/string.hpp>
 #include <spatialindex/SpatialIndex.h>
 
+// geos 
+#include <geos/geom/PrecisionModel.h>
+#include <geos/geom/GeometryFactory.h>
+#include <geos/geom/Geometry.h>
+#include <geos/geom/Point.h>
+#include <geos/io/WKTReader.h>
+
+
 #define FillFactor 0.7
 #define IndexCapacity 100
 #define LeafCapacity 50
@@ -26,11 +34,19 @@
 using namespace std;
 using namespace SpatialIndex;
 
+using namespace geos;
+using namespace geos::io;
+using namespace geos::geom;
 
-const string bar= "|";
-const string tab = "\t";
-const string comma = ",";
-const string space = " ";
+// using boost::lexical_cast;
+// using boost::bad_lexical_cast;
+
+
+
+const string BAR = "|";
+const string TAB = "\t";
+const string COMMA = ",";
+const string SPACE = " ";
 
 const string shapebegin = "POLYGON((";
 const string shapeend = "))";

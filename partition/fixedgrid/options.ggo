@@ -3,10 +3,10 @@ version "0.01"
 
 description "Mapper operation for tiler command."
 
-option "min-x"  w  "Minimum horizontal coordinate of the spatial universe" int required
-option "max-x"  e	"Maximum horizontal coordinate of the spatial universe" int required
-option "min-y"  s  "Minimum vertical coordinate of the spatial universe" int required
-option "max-y"  n	"Maximum vertical coordinate of the spatial universe" int required
-option "x-split"  x	"Number of split in horizontal direction" int required
-option "y-split"  y	"Number of split in vertical direction" int required
+option "min-x"  w "Minimum horizontal coordinate of the spatial universe" int required
+option "max-x"  e "Maximum horizontal coordinate of the spatial universe" int required
+option "min-y"  s "Minimum vertical coordinate of the spatial universe" int required
+option "max-y"  n "Maximum vertical coordinate of the spatial universe" int required
+option "x-split"  x "Number of split in horizontal direction" int required
+option "y-split"  y "Number of split in vertical direction" int required
 

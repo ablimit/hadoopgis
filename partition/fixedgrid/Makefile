@@ -26,7 +26,7 @@ else
     CC = g++
 endif
 
-all: opts map reduce
+all: opts map
 
 opts: options.ggo
 	gengetopt -i options.ggo
@@ -34,7 +34,7 @@ opts: options.ggo
 
 map: opts mapper.cpp hadoopgis.h  cmdline.h cmdline.c
 	$(CC) mapper.cpp -c $(CFLAGS) $(LDFLAGS) -o mapper.o
-	$(CC) mapper.o cmdline.o -o mapper
+	$(CC) $(CFLAGS) $(LDFLAGS) mapper.o cmdline.o -o mapper
 
 reduce: opts reducer.cpp MReducerx.h
 	$(CC) reducer.cpp $(CFLAGS) $(LDFLAGS) -o reducer
