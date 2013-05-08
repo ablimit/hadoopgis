@@ -24,9 +24,9 @@
 #include <geos/io/WKTReader.h>
 
 
-#define FillFactor 0.7
-#define IndexCapacity 100
-#define LeafCapacity 50
+#define FillFactor 1.0
+#define IndexCapacity 5
+#define LeafCapacity 1
 #define COMPRESS true
 #define TILE_SIZE 4096
 
