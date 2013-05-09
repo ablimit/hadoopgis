@@ -1,0 +1,8 @@
+package "Hadoop-GIS"
+version "0.01"
+
+description "Mapper operation for tiler command."
+
+option "x-split"  x "Number of split in horizontal direction" int required
+option "y-split"  y "Number of split in vertical direction" int required
+

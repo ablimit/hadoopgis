@@ -28,19 +28,22 @@ endif
 
 all: map reduce
 
-cmdline.o: options.ggo
-	gengetopt -i options.ggo
-	$(CC) -c cmdline.c -o cmdline.o
+cmdline_mapper.o: options_mapper.ggo
+	gengetopt -i options_mapper.ggo -F cmdline_mapper
+	$(CC) -c cmdline_mapper.c -o cmdline_mapper.o
 
-map: cmdline.o mapper.cpp hadoopgis.h
-	$(CC) mapper.cpp cmdline.o $(CFLAGS) $(LDFLAGS) -o mapper
+cmdline_reducer.o: options_reducer.ggo
+	gengetopt -i options_reducer.ggo -F cmdline_reducer
+	$(CC) -c cmdline_reducer.c -o cmdline_reducer.o
 
-reduce: reducer.cpp MReducerx.h
-	$(CC) reducer.cpp $(CFLAGS) $(LDFLAGS) -o reducer
+map: cmdline_mapper.o mapper.cpp hadoopgis.h
+	$(CC) mapper.cpp cmdline_mapper.o $(CFLAGS) $(LDFLAGS) -o mapper
+
+reduce: cmdline_reducer.o reducer.cpp hadoopgis.h
+	$(CC) reducer.cpp cmdline_reducer.o $(CFLAGS) $(LDFLAGS) -o reducer
 
 clean:
 	@rm -f mapper reducer
-	@rm -f reducer
-	@rm -f cmdline.c cmdline.h
+	@rm -f cmdline*
 	@rm -f *.o
 

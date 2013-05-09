@@ -1,13 +1,14 @@
 #include "hadoopgis.h"
-#include "cmdline.h"
+#include "cmdline_mapper.h"
 
 
 GeometryFactory *gf = NULL;
 WKTReader *wkt_reader = NULL;
 IStorageManager * storage = NULL;
 ISpatialIndex * spidx = NULL;
-map<int,string> id_tid ;
+map<int,string> id_polygon ;
 vector<int> hits ; 
+
 
 RTree::Data* parseInputPolygon(Geometry *p, id_type m_id) {
     double low[2], high[2];
@@ -21,7 +22,7 @@ RTree::Data* parseInputPolygon(Geometry *p, id_type m_id) {
 
     Region r(low, high, 2);
 
-    //std::cerr << " parseInputPolygon m_id: "  << m_id << std::endl;
+    //std::cerr << "parseInputPolygon m_id: "  << m_id << std::endl;
     return new RTree::Data(0, 0 , r, m_id);// store a zero size null poiter.
 }
 
@@ -37,7 +38,6 @@ class GEOSDataStream : public IDataStream
         len = vec->size();
         readNextEntry();
     }
-
         virtual ~GEOSDataStream()
         {
             if (m_pNext != 0) delete m_pNext;
@@ -81,7 +81,7 @@ class GEOSDataStream : public IDataStream
         {
             if (index < len)
             {
-                //std::cout << "readNextEntry m_id == " << m_id << std::endl;
+                //std::cerr<< "readNextEntry m_id == " << m_id << std::endl;
                 m_pNext = parseInputPolygon((*vec)[index], m_id);
                 index++;
                 m_id++;
@@ -104,8 +104,8 @@ class MyVisitor : public IVisitor
 
         void visitData(const IData& d)
         {
-	    hits.push_back(d.getIdentifier());
-            //std::cout << geometry_collction[d.getIdentifier()] << std::endl;
+            hits.push_back(d.getIdentifier());
+            //std::cout << d.getIdentifier()<< std::endl;
         }
 
         void visitData(std::vector<const IData*>& v) {}
@@ -114,9 +114,8 @@ class MyVisitor : public IVisitor
 
 
 
-void doQuery(string polygon) {
+void doQuery(Geometry* poly) {
     double low[2], high[2];
-    Geometry * poly = wkt_reader->read(polygon);
     const Envelope * env = poly->getEnvelopeInternal();
 
     low [0] = env->getMinX();
@@ -127,8 +126,12 @@ void doQuery(string polygon) {
 
     Region r(low, high, 2);
 
+    // clear the result container 
+    hits.clear();
+
     MyVisitor vis ; 
     spidx->containsWhatQuery(r, vis);
+    //spidx->intersectsWithQuery(r, vis);
 
 }
 
@@ -141,7 +144,6 @@ vector<Geometry*> genTiles(double min_x, double max_x, double min_y, double  max
     double height = (max_y - min_y)/y_split ;
     //cerr << "Tile height" << SPACE << height <<endl;
 
-    int index = 0 ;
 
     for (int i =0 ; i< x_split ; i++)
     {
@@ -155,11 +157,9 @@ vector<Geometry*> genTiles(double min_x, double max_x, double min_y, double  max
             ss << min_x + (i+1) * width ; ss << SPACE ; ss << min_y + j * height;     ss << COMMA;
             ss << min_x + i * width ;     ss << SPACE ; ss << min_y + j * height;
             ss << shapeend ;
-            // cerr << ss.str() << endl;
-	    id_tid[index] =ss.str();
-	    tiles.push_back(wkt_reader->read(ss.str()));
+            //cerr << ss.str() << endl;
+            tiles.push_back(wkt_reader->read(ss.str()));
             ss.str(string()); // clear the content
-	    index++;
         }
     }
 
@@ -179,6 +179,8 @@ vector<string> parsePAIS(string & line) {
     vec.push_back(line.substr(pos+1,pos2-pos-1)); // object_id
     pos=pos2;
     vec.push_back(shapebegin + line.substr(pos+2,line.length()- pos - 3) + shapeend);
+    
+    return vec;
 }
 
 void freeObjects() {
@@ -187,6 +189,48 @@ void freeObjects() {
     delete gf ; 
     delete spidx;
     delete storage;
+}
+
+void emitHits(Geometry* poly) {
+    double low[2], high[2];
+    const Envelope * env = poly->getEnvelopeInternal();
+
+    low [0] = env->getMinX();
+    low [1] = env->getMinY();
+
+    high [0] = env->getMaxX();
+    high [1] = env->getMaxY();
+
+    stringstream ss; // tile_id ; 
+    ss << low[0] ;
+    ss << DASH ;
+    ss << low[1] ;
+    ss << DASH ;
+    ss << high[0] ;
+    ss << DASH ;
+    ss<< high[1] ;
+
+    for (int i = 0 ; i < hits.size(); i++ ) 
+    {
+        cout << ss.str() << TAB << hits[i]  << TAB << id_polygon[hits[i]] << TAB << endl ;
+    }
+}
+
+
+bool buildIndex(vector<Geometry*> & geom_polygons) {
+    // build spatial index on tile boundaries 
+    id_type  indexIdentifier;
+    GEOSDataStream stream(&geom_polygons);
+    storage = StorageManager::createNewMemoryStorageManager();
+    spidx   = RTree::createAndBulkLoadNewRTree(RTree::BLM_STR, stream, *storage, 
+            FillFactor,
+            IndexCapacity,
+            LeafCapacity,
+            2, 
+            RTree::RV_RSTAR, indexIdentifier);
+
+    // Error checking 
+    return spidx->isIndexValid();
 }
 
 int main(int argc, char **argv) {
@@ -213,39 +257,37 @@ int main(int argc, char **argv) {
     gf = new GeometryFactory(new PrecisionModel(),0);
     wkt_reader= new WKTReader(gf);
 
-    // genrate tile boundaries 
-    vector <Geometry*> geom_tiles= genTiles(min_x, max_x, min_y, max_y,x_split,y_split);
-
-    // build spatial index on tile boundaries 
-    id_type  indexIdentifier ;
-    GEOSDataStream stream(&geom_tiles);
-    storage = StorageManager::createNewMemoryStorageManager();
-    spidx   = RTree::createAndBulkLoadNewRTree(RTree::BLM_STR, stream, *storage, 
-            1.0, // FillFactor
-            4,   // IndexCapacity 
-            4,   // LeafCapacity
-            2, 
-            RTree::RV_RSTAR, indexIdentifier);
-
-    // Error checking 
-    bool ret = spidx->isIndexValid();
-    if (ret == false) 
-        std::cerr << "ERROR: Structure is invalid!" << std::endl;
-
 
     // process input data 
+    vector <Geometry*> geom_polygons;
     string input_line;
     vector<string> fields;
-    cerr << "Reading input from stdin..." <<endl;
-    string tid ;
+    cerr << "Reading input from stdin..." <<endl; 
+    int i =0; 
+
     while(cin && getline(cin, input_line) && !cin.eof()){
         fields = parsePAIS(input_line);
-        doQuery(fields[2]);
-	for (int i = 0 ; i < hits.size(); i++ ) 
-	{
-	    cout << id_tid[hits[i]] << TAB << fields[1] <<TAB <<fields[2]<< endl; // objects on the boundary will appear in multiple tiles.
-	}
-	hits.clear();
+        geom_polygons.push_back(wkt_reader->read(fields[2]));
+        id_polygon[i++] = fields[2]; 
+    }
+
+    // build spatial index for input polygons 
+    bool ret = buildIndex(geom_polygons);
+    if (ret == false) 
+        std::cerr << "ERROR: Structure is invalid!" << std::endl;
+    else 
+        cerr << "GRIDIndex Generated successfully." << endl;
+
+
+    // genrate tile boundaries 
+    vector <Geometry*> geom_tiles= genTiles(min_x, max_x, min_y, max_y,x_split,y_split);
+    cerr << "Number of tiles: " << geom_tiles.size() << endl;
+
+
+
+    for(std::vector<Geometry*>::iterator it = geom_tiles.begin(); it != geom_tiles.end(); ++it) {
+        doQuery(*it);
+        emitHits(*it);
     }
 
     cout.flush();

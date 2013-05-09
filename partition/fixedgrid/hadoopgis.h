@@ -25,9 +25,9 @@
 #include <geos/geom/Point.h>
 #include <geos/io/WKTReader.h>
 
-#define FillFactor 1.0
-#define IndexCapacity 5
-#define LeafCapacity 1
+#define FillFactor 0.9
+#define IndexCapacity 10 
+#define LeafCapacity 50
 #define COMPRESS true
 #define TILE_SIZE 4096
 
@@ -45,6 +45,7 @@ using boost::lexical_cast;
 
 
 const string BAR = "|";
+const string DASH= "-";
 const string TAB = "\t";
 const string COMMA = ",";
 const string SPACE = " ";
