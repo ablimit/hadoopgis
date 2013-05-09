@@ -14,6 +14,8 @@
 
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+
 #include <spatialindex/SpatialIndex.h>
 
 // geos 
@@ -22,7 +24,6 @@
 #include <geos/geom/Geometry.h>
 #include <geos/geom/Point.h>
 #include <geos/io/WKTReader.h>
-
 
 #define FillFactor 1.0
 #define IndexCapacity 5
@@ -38,7 +39,7 @@ using namespace geos;
 using namespace geos::io;
 using namespace geos::geom;
 
-// using boost::lexical_cast;
+using boost::lexical_cast;
 // using boost::bad_lexical_cast;
 
 
