@@ -130,9 +130,8 @@ void doQuery(Geometry* poly) {
     hits.clear();
 
     MyVisitor vis ; 
-    spidx->containsWhatQuery(r, vis);
-    //spidx->intersectsWithQuery(r, vis);
-
+    //spidx->containsWhatQuery(r, vis);
+    spidx->intersectsWithQuery(r, vis);
 }
 
 
@@ -143,7 +142,6 @@ vector<Geometry*> genTiles(double min_x, double max_x, double min_y, double  max
     //cerr << "Tile width" << SPACE <<width <<endl;
     double height = (max_y - min_y)/y_split ;
     //cerr << "Tile height" << SPACE << height <<endl;
-
 
     for (int i =0 ; i< x_split ; i++)
     {
@@ -197,6 +195,8 @@ void emitHits(Geometry* poly) {
     ss << DASH ;
     ss<< high[1] ;
 
+    cerr << "Hit size: " << hits.size() <<endl ;
+
     for (int i = 0 ; i < hits.size(); i++ ) 
     {
         cout << ss.str() << TAB << hits[i]  << TAB << id_polygon[hits[i]] << TAB << endl ;
@@ -207,11 +207,12 @@ void extractSpatialUniverse(string tid, double & min_x, double & max_x, double &
     vector<string> strs ; 
     boost::split(strs,tid, boost::is_any_of(DASH));
     min_x  = boost::lexical_cast< double >( strs[0] ); 
-    max_x  = boost::lexical_cast< double >( strs[1] ); 
-    min_y  = boost::lexical_cast< double >( strs[2] ); 
+    min_y  = boost::lexical_cast< double >( strs[1] ); 
+    max_x  = boost::lexical_cast< double >( strs[2] ); 
     max_y  = boost::lexical_cast< double >( strs[3] ); 
     //return true ;
 }
+
 
 bool buildIndex(vector<Geometry*> & geom_polygons) {
     // build spatial index on tile boundaries 
@@ -219,26 +220,51 @@ bool buildIndex(vector<Geometry*> & geom_polygons) {
     GEOSDataStream stream(&geom_polygons);
     storage = StorageManager::createNewMemoryStorageManager();
     spidx   = RTree::createAndBulkLoadNewRTree(RTree::BLM_STR, stream, *storage, 
-            FillFactor,
-            IndexCapacity,
-            LeafCapacity,
-            2, 
-            RTree::RV_RSTAR, indexIdentifier);
+	    FillFactor,
+	    IndexCapacity,
+	    LeafCapacity,
+	    2, 
+	    RTree::RV_RSTAR, indexIdentifier);
 
     // Error checking 
     return spidx->isIndexValid();
 }
 
+
+void process(vector<Geometry*> & geom_polygons, string & tid, int x_split, int y_split) {
+    double min_x, max_x, min_y, max_y ;
+    // build spatial index for input polygons
+    cerr << "Number of objects: " << geom_polygons.size() << endl;
+
+    bool ret = buildIndex(geom_polygons);
+    if (ret == false ) 
+	std::cerr << "ERROR: Structure is invalid!" << std::endl;
+    //else 
+	//cerr << "GRIDIndex Generated successfully." << endl;
+
+    // genrate tile boundaries 
+    extractSpatialUniverse(tid,min_x,max_x,min_y,max_y);
+    vector <Geometry*> geom_tiles= genTiles(min_x, max_x, min_y, max_y,x_split,y_split);
+    cerr << "Number of tiles: " << geom_tiles.size() << endl;
+
+    // retrive objects which are intersects with this tile 
+    for(std::vector<Geometry*>::iterator it = geom_tiles.begin(); it != geom_tiles.end(); ++it) {
+	doQuery(*it);
+	emitHits(*it);
+    }
+
+}
+
 int main(int argc, char **argv) {
     gengetopt_args_info args_info;
     if (cmdline_parser (argc, argv, &args_info) != 0)
-        exit(1) ;
-     
+	exit(1) ;
+
     double min_x, max_x, min_y, max_y ;
     int x_split = args_info.x_split_arg;
     int y_split = args_info.y_split_arg;
-    
-    
+
+
     // initlize the GEOS ibjects
     gf = new GeometryFactory(new PrecisionModel(),0);
     wkt_reader= new WKTReader(gf);
@@ -252,44 +278,30 @@ int main(int argc, char **argv) {
     string tid = "";
 
     while(cin && getline(cin, input_line) && !cin.eof()){
-        fields = parsePAIS(input_line,TAB);
-        
-        if (fields[0] != tid && tid.length() > 0 ){
+	fields = parsePAIS(input_line,TAB);
 
-            // build spatial index for input polygons
-            bool ret = buildIndex(geom_polygons);
-            if (ret == false ) 
-                std::cerr << "ERROR: Structure is invalid!" << std::endl;
-            else 
-                cerr << "GRIDIndex Generated successfully." << endl;
+	if (fields[0] != tid && tid.length() > 0 ){
 
-            // genrate tile boundaries 
-            extractSpatialUniverse(tid,min_x,max_x,min_y,max_y);
-            vector <Geometry*> geom_tiles= genTiles(min_x, max_x, min_y, max_y,x_split,y_split);
-            cerr << "Number of tiles: " << geom_tiles.size() << endl;
+	    process(geom_polygons, tid, x_split, y_split);
+	    
+	    // reset allocated resources 
+	    freeObjects();
+	    geom_polygons.clear();
+	    id_polygon.clear();
+	    i =0; 
 
-            // retrive objects which are intersects with this tile 
-            for(std::vector<Geometry*>::iterator it = geom_tiles.begin(); it != geom_tiles.end(); ++it) {
-                doQuery(*it);
-                emitHits(*it);
-            }
+	}
 
-            // reset allocated resources 
-            freeObjects();
-            geom_polygons.clear();
-            id_polygon.clear();
-            i =0;
-        }
-        else 
-        { 
-            geom_polygons.push_back(wkt_reader->read(fields[2]));
-            id_polygon[i++] = fields[2]; 
-        }
-
-        tid = fields[0];
+	geom_polygons.push_back(wkt_reader->read(fields[2]));
+	id_polygon[i] = fields[2];
+	tid = fields[0];
+	i++;
 
     }
-
+    
+    // last tile 
+    process(geom_polygons, tid, x_split, y_split);
+    freeObjects();
 
     cout.flush();
     cerr.flush();
