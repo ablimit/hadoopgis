@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="build" basedir="." default="jar">
+	
+	<target name="init">
+		<!-- set values ! -->
+		<property name="temp" value="temp"/>
+		<property name="src" value="./src"/>
+		<property name="bin" value="${temp}/bin"/>
+		
+		<property name="jar" value="xxl-core-2.0.beta.jar"/>
+	</target>	
+	
+	<target name="clean" depends="init">
+		<delete dir="${temp}"/>
+	</target>
+		
+	<target name="compile" depends="init">
+		<delete dir="${bin}"/>
+		<mkdir dir="${bin}"/>		
+		<javac 	srcdir="${src}"	destdir="${bin}"
+				source="1.6" 	target="1.6"					 
+				debug="on" debuglevel="lines,vars,source" 
+				nowarn="on"	verbose="off"/>
+	</target>	
+
+	<target name="jar" depends="compile">
+		<jar basedir="${bin}" destfile="${temp}/${jar}" update="false" compress="true"/>			
+	</target>
+		
+</project>
