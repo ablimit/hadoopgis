@@ -65,6 +65,8 @@ import xxl.core.spatial.histograms.MHistograms.STHistForest;
 import xxl.core.spatial.histograms.PHist2L.HistType;
 import xxl.core.spatial.histograms.PartitionerUtils.ProcessorType;
 import xxl.core.spatial.histograms.RGOhist;
+import xxl.core.spatial.histograms.WeightedDoublePointRectangle;
+import xxl.core.spatial.points.Point;
 import xxl.core.spatial.rectangles.DoublePointRectangle;
 import xxl.core.spatial.rectangles.Rectangles;
 
@@ -733,4 +735,24 @@ public class HistogramEval {
 	 *  End Histogram Test Part
 	 * ***************************************************************************
 	 */
+	
+	/**
+	 *
+	 * @param mhistogram
+	 */
+	public void dumpHistogram(MHistogram mhistogram){
+		List<WeightedDoublePointRectangle> buckets = mhistogram.getBuckets();
+		String TAB = "\t";
+		int i = 0;  
+		for (WeightedDoublePointRectangle bucket :buckets)
+		{
+			Point left = bucket.getCorner(false);
+			Point right = bucket.getCorner(true);
+			System.out.println(i+ TAB+ left.getValue(0)+TAB + left.getValue(1) + TAB + right.getValue(0)+TAB+right.getValue(1) );	
+			i++;
+		}
+		
+		}
+	
+	
 }

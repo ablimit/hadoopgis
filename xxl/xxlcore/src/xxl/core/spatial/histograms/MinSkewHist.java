@@ -306,7 +306,6 @@ public class MinSkewHist {
 				dimensions);
 
 		// 2. initial bucket berechnen
-		// TODO: sollte geändert werden
 		Bucket initialBucket = new Bucket(
 				new DoublePointRectangle(dimensions)
 						.normalize(new DoublePointRectangle(dimensions)));
