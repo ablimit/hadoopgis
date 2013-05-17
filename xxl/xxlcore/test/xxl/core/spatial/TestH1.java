@@ -38,14 +38,10 @@ import xxl.core.cursors.sources.io.FileInputCursor;
 import xxl.core.io.converters.ConvertableConverter;
 import xxl.core.spatial.histograms.MHistogram;
 import xxl.core.spatial.histograms.RGOhist;
-import xxl.core.spatial.histograms.WeightedDoublePointRectangle;
-import xxl.core.spatial.points.Point;
 import xxl.core.spatial.rectangles.DoublePointRectangle;
 
 
 public class TestH1 {
-
-
 
 	public static PrintStream getPrintStream(String output) throws IOException{
 		return new PrintStream(new File(output)); 
@@ -66,10 +62,11 @@ public class TestH1 {
 			BufferedReader br = new BufferedReader(new FileReader (path));
 			String line ;
 			rectangles = new ArrayList<>();
-			double [] leftCorner = new double [2];
-			double [] rightCorner = new double [2];
+			
 			while (null != (line = br.readLine()))
 			{
+				double [] leftCorner = new double [2];
+				double [] rightCorner = new double [2];
 				String [] sp = line.split("\t");
 				
 				leftCorner[0] = Double.parseDouble(sp[1]);
@@ -90,10 +87,13 @@ public class TestH1 {
 	
 
 	public static void main(String[] args) throws IOException {
-		if (args.length <3 )
+		if (args.length <4 )
 		{
-			System.err.println("Usage: "+ TestH1.class.getSimpleName()+ 
-					" [number of buckets] [input Data] [output File]");
+			System.err.println("Usage: "
+					+ TestH1.class.getSimpleName() 
+					+" [number of buckets] [input Data] [output File] " 
+					+" [histogram type = [RTree | rkHist | RV | MinSkewI | MinSkewII | stHist | soptHist]"
+					+" [show]");
 			System.exit(0);
 		}
 
@@ -101,44 +101,66 @@ public class TestH1 {
 		String inPath = args[1]; // data path
 		String outPath = args[2]; // data path
 		String tempPath =  "/tmp/hist/"; 
-
+		String histogram_type = args[3].trim().toLowerCase();
+		boolean showPlot = false;
+		if (args.length > 4 && args[4].equalsIgnoreCase("show"))
+			showPlot = true;  
+		
 		System.err.println("++++++++++++++++++++++++++++++++++++\n");
 		System.err.println("Data: " + inPath);
 		
-		
-
 		HistogramEval eval = new HistogramEval(getData(inPath),tempPath);
-
+		MHistogram histogram  = null;
+		
 		System.err.println("Buckets " + numberOfBuckets);
 
-		eval.buildRTreeHist(numberOfBuckets, true); // rtree loaded bulk loaded using hilbert curve equi sized partitioning 
+		switch (histogram_type){
+			case "rtree": 
+				// rtree loaded bulk loaded using hilbert curve equi sized partitioning
+				eval.buildRTreeHist(numberOfBuckets, true);
+				histogram = eval.getRTreeHist();
+				break;
+			case "rkhist": 
+				eval.buildRKHist(numberOfBuckets, 0.1, HistogramEval.BLOCKSIZE , true); // rkHist Method
+				histogram = eval.getRkHist();
+				break;
+			case "rv":
+				eval.buildRHistogramV(numberOfBuckets, 0.4, true); // RV histogram
+				histogram = eval.getRhistogram_V();
+				break;
+			case "minskewi": 
+				eval.buildMinSkewHist(numberOfBuckets*2, 8, true); // standard min skew 2^7 x 2^7 grid
+				histogram = eval.getMinSkewHist();
+				break;
+			case "minskewii": 
+				// standard min skew 2^7 x 2^7 grid and three refinerment steps
+				eval.buildMinSkewProgressiveHist(numberOfBuckets*2, 8, 3, true);
+				histogram = eval.getMinSkewProgressiveRefinementHistogram();
+				break;
+			case "sthist": 
+				// standard min skew 2^7 x 2^7 grid and three refinerment steps
+				eval.buildSTForestHist(numberOfBuckets, 0.9 , true);
+				histogram = eval.getSTHistForest();
+				break;
+			case "sopthist": 
+				// standard min skew 2^7 x 2^7 grid and three refinerment steps
+				eval.buildSOPTRtreeHist(numberOfBuckets, true);
+				histogram = eval.getSoptHist();
+				break;
+			default: 
+				System.err.println("Unrecognized histogram type: " + histogram);
+				System.exit(0);
+			}
 
-		//eval.buildRKHist(numberOfBuckets, 0.1, HistogramEval.BLOCKSIZE , true); // rkHist Method
-		//eval.buildRHistogramV(numberOfBuckets, 0.4, true); // RV histogram
-		//eval.buildMinSkewHist(numberOfBuckets*2, 8, true); // standard min skew 2^7 x 2^7 grid
-		//eval.buildMinSkewProgressiveHist(numberOfBuckets*2, 8, 3, true); // standard min skew 2^7 x 2^7 grid and three refinerment steps 
-
-		eval.dumpHistogram(eval.getRTreeHist(),getPrintStream(outPath));
+		
+		eval.dumpHistogram(histogram,getPrintStream(outPath));
+		
+		if (showPlot) 
+			eval.showHist(histogram_type, histogram);
+		
 		
 		System.err.println("Done.");
 		System.err.println("++++++++++++++++++++++++++++++++++++\n");
 	}
-	
-	/*
-	 * public void dumpHistogram(MHistogram mhistogram, PrintStream out){
-		List<WeightedDoublePointRectangle> buckets = mhistogram.getBuckets();
-		String TAB = "\t";
-		int i = 0;  
-		for (WeightedDoublePointRectangle bucket :buckets)
-		{
-			Point left = bucket.getCorner(false);
-			Point right = bucket.getCorner(true);
-			out.println(i+ TAB+ left.getValue(0)+TAB + left.getValue(1) + TAB + right.getValue(0)+TAB+right.getValue(1) );	
-			i++;
-		}
-		
-		}
-	 * 
-	 */
 
 }
