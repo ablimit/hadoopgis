@@ -21,77 +21,124 @@ License along with this library;  If not, see <http://www.gnu.org/licenses/>.
 
     http://code.google.com/p/xxl/
 
-*/
+ */
 package xxl.core.spatial;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import xxl.core.cursors.Cursor;
-import xxl.core.cursors.Cursors;
+import xxl.core.cursors.sources.CollectionCursor;
 import xxl.core.cursors.sources.io.FileInputCursor;
 import xxl.core.io.converters.ConvertableConverter;
+import xxl.core.spatial.histograms.MHistogram;
 import xxl.core.spatial.histograms.RGOhist;
+import xxl.core.spatial.histograms.WeightedDoublePointRectangle;
+import xxl.core.spatial.points.Point;
 import xxl.core.spatial.rectangles.DoublePointRectangle;
 
 
 public class TestH1 {
-	
-	
-	
+
+
+
 	public static PrintStream getPrintStream(String output) throws IOException{
 		return new PrintStream(new File(output)); 
 	}
-
-	/**
-	 * 
-	 * Assumption data is a set of 2 Dim doublePointRectangles 
-	 * 
-	 * Test data can be obtained from:
-	 * 
-	 * www.mathematik.uni-marburg.de/~achakeye/data/data
-	 * 
-	 * Query rectangles from:
-	 * 
-	 * www.mathematik.uni-marburg.de/~achakeye/data/query_100
-	 * 
-	 * @param args
-	 * @throws IOException 
-	 */
-	public static void main(String[] args) throws IOException {
-		String dataPath = "/"; // data path change for your 
-		String queryPath ="/"; // change 
-		String path = "f:/hist/"; // change
-		String[] prefix  = {
-			"rea", // rea data set 
-		};
-		int[] buckets = {1000, 2000};
-		for(String p :prefix){
-			System.out.println("++++++++++++++++++++++++++++++++++++\n");
-			System.out.println("Data: " + p);
-			FileInputCursor<DoublePointRectangle> data = new FileInputCursor<DoublePointRectangle>(
+	
+	
+	public static Cursor<DoublePointRectangle> getData(String path) throws IOException {
+		Cursor<DoublePointRectangle> data ;
+		List<DoublePointRectangle> rectangles ;
+		
+		if (path.endsWith("rec"))
+		{
+			data = new FileInputCursor<DoublePointRectangle>(
 					new ConvertableConverter<DoublePointRectangle>(RGOhist.factoryFunction(2)), 
-					new File(dataPath + "/" + p +"02.rec"));
-			HistogramEval eval = new HistogramEval(data, path);
-			
-			int numberOfBuckets = buckets[0] ;
-			
-			System.out.println("Buckets " + numberOfBuckets);
-			
-			
-			eval.buildRTreeHist(numberOfBuckets, true); // rtree loaded bulk loaded using hilbert curve equi sized partitioning 
-			
-			//eval.buildRKHist(numberOfBuckets, 0.1, HistogramEval.BLOCKSIZE , true); // rkHist Method
-			//eval.buildRHistogramV(numberOfBuckets, 0.4, true); // RV histogram
-			//eval.buildMinSkewHist(numberOfBuckets*2, 8, true); // standard min skew 2^7 x 2^7 grid
-			//eval.buildMinSkewProgressiveHist(numberOfBuckets*2, 8, 3, true); // standard min skew 2^7 x 2^7 grid and three refinerment steps 
-				
-			eval.dumpHistogram(eval.getRTreeHist());
-
-			}
+					new File(path));
 		}
+		else {
+			BufferedReader br = new BufferedReader(new FileReader (path));
+			String line ;
+			rectangles = new ArrayList<>();
+			double [] leftCorner = new double [2];
+			double [] rightCorner = new double [2];
+			while (null != (line = br.readLine()))
+			{
+				String [] sp = line.split("\t");
+				
+				leftCorner[0] = Double.parseDouble(sp[1]);
+				leftCorner[1] = Double.parseDouble(sp[2]);
+				rightCorner[0] = Double.parseDouble(sp[3]);
+				rightCorner[1] = Double.parseDouble(sp[4]);
+				
+				rectangles.add(new DoublePointRectangle(leftCorner, rightCorner));
+			}
+			
+			br.close();
+			System.err.println("Collection size: " + rectangles.size());
+			data = new CollectionCursor<DoublePointRectangle>(rectangles);
+		}
+		
+		return data ;
 	}
+	
+
+	public static void main(String[] args) throws IOException {
+		if (args.length <3 )
+		{
+			System.err.println("Usage: "+ TestH1.class.getSimpleName()+ 
+					" [number of buckets] [input Data] [output File]");
+			System.exit(0);
+		}
+
+		int numberOfBuckets = Integer.parseInt(args[0]) ;
+		String inPath = args[1]; // data path
+		String outPath = args[2]; // data path
+		String tempPath =  "/tmp/hist/"; 
+
+		System.err.println("++++++++++++++++++++++++++++++++++++\n");
+		System.err.println("Data: " + inPath);
+		
+		
+
+		HistogramEval eval = new HistogramEval(getData(inPath),tempPath);
+
+		System.err.println("Buckets " + numberOfBuckets);
+
+		eval.buildRTreeHist(numberOfBuckets, true); // rtree loaded bulk loaded using hilbert curve equi sized partitioning 
+
+		//eval.buildRKHist(numberOfBuckets, 0.1, HistogramEval.BLOCKSIZE , true); // rkHist Method
+		//eval.buildRHistogramV(numberOfBuckets, 0.4, true); // RV histogram
+		//eval.buildMinSkewHist(numberOfBuckets*2, 8, true); // standard min skew 2^7 x 2^7 grid
+		//eval.buildMinSkewProgressiveHist(numberOfBuckets*2, 8, 3, true); // standard min skew 2^7 x 2^7 grid and three refinerment steps 
+
+		eval.dumpHistogram(eval.getRTreeHist(),getPrintStream(outPath));
+		
+		System.err.println("Done.");
+		System.err.println("++++++++++++++++++++++++++++++++++++\n");
+	}
+	
+	/*
+	 * public void dumpHistogram(MHistogram mhistogram, PrintStream out){
+		List<WeightedDoublePointRectangle> buckets = mhistogram.getBuckets();
+		String TAB = "\t";
+		int i = 0;  
+		for (WeightedDoublePointRectangle bucket :buckets)
+		{
+			Point left = bucket.getCorner(false);
+			Point right = bucket.getCorner(true);
+			out.println(i+ TAB+ left.getValue(0)+TAB + left.getValue(1) + TAB + right.getValue(0)+TAB+right.getValue(1) );	
+			i++;
+		}
+		
+		}
+	 * 
+	 */
 
 }

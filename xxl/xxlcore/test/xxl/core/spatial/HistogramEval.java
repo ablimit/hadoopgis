@@ -740,7 +740,7 @@ public class HistogramEval {
 	 *
 	 * @param mhistogram
 	 */
-	public void dumpHistogram(MHistogram mhistogram){
+	public void dumpHistogram(MHistogram mhistogram, PrintStream out){
 		List<WeightedDoublePointRectangle> buckets = mhistogram.getBuckets();
 		String TAB = "\t";
 		int i = 0;  
@@ -748,7 +748,7 @@ public class HistogramEval {
 		{
 			Point left = bucket.getCorner(false);
 			Point right = bucket.getCorner(true);
-			System.out.println(i+ TAB+ left.getValue(0)+TAB + left.getValue(1) + TAB + right.getValue(0)+TAB+right.getValue(1) );	
+			out.println(i+ TAB+ left.getValue(0)+TAB + left.getValue(1) + TAB + right.getValue(0)+TAB+right.getValue(1) );	
 			i++;
 		}
 		
