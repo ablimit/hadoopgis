@@ -34,7 +34,7 @@ public:
                 {
                     cout << n->getChildIdentifier(cChild) << "\t" << n->getIdentifier()<<endl;
                 }
-                cerr << n->getIdentifier() << " --- " << children_count <<endl;
+                //cerr << n->getIdentifier() << " --- " << children_count <<endl;
 
             }
 	    else {
