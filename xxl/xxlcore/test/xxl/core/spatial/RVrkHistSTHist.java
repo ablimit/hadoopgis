@@ -41,8 +41,12 @@ import xxl.core.spatial.histograms.RGOhist;
 import xxl.core.spatial.rectangles.DoublePointRectangle;
 
 
-public class TestH1 {
-
+public class RVrkHistSTHist {
+	
+	public static double alpha = 0.1;
+	public static double sampleRate = 0.9;
+	public static double rTreeRatio= 0.4;
+	
 	public static PrintStream getPrintStream(String output) throws IOException{
 		return new PrintStream(new File(output)); 
 	}
@@ -90,9 +94,10 @@ public class TestH1 {
 		if (args.length <4 )
 		{
 			System.err.println("Usage: "
-					+ TestH1.class.getSimpleName() 
+					+ RVrkHistSTHist.class.getSimpleName() 
 					+" [number of buckets] [input Data] [output File] " 
-					+" [histogram type = [RTree | rkHist | RV | MinSkewI | MinSkewII | stHist | soptHist]"
+					+" [histogram type = [rkHist | RV | stHist ]"
+					+" [par [rkHist=alpha | RV=rtreeratio | sthist=sampleRate]]"
 					+" [show]");
 			System.exit(0);
 		}
@@ -102,8 +107,11 @@ public class TestH1 {
 		String outPath = args[2]; // data path
 		String tempPath =  "/tmp/hist/"; 
 		String histogram_type = args[3].trim().toLowerCase();
+		double  par  = -1.0; 
+		if (args.length > 4)
+			par = Double.parseDouble(args[4]);
 		boolean showPlot = false;
-		if (args.length > 4 && args[4].equalsIgnoreCase("show"))
+		if (args.length > 5 && args[5].equalsIgnoreCase("show"))
 			showPlot = true;  
 		
 		System.err.println("++++++++++++++++++++++++++++++++++++\n");
@@ -115,35 +123,21 @@ public class TestH1 {
 		System.err.println("Buckets " + numberOfBuckets);
 
 		switch (histogram_type){
-			case "rtree": 
-				// rtree loaded bulk loaded using hilbert curve equi sized partitioning
-				eval.buildRTreeHist(numberOfBuckets, true);
-				histogram = eval.getRTreeHist();
-				break;
-			case "rkhist": 
-				eval.buildRKHist(numberOfBuckets, 0.1, HistogramEval.BLOCKSIZE , true); // rkHist Method
+			case "rkhist":
+				if (par > 0.0) alpha =par;
+				eval.buildRKHist(numberOfBuckets, alpha, HistogramEval.BLOCKSIZE , true); // rkHist Method
 				histogram = eval.getRkHist();
 				break;
 			case "rv":
-				eval.buildRHistogramV(numberOfBuckets, 0.4, true); // RV histogram
+				if (par > 0.0) rTreeRatio =par;
+				eval.buildRHistogramV(numberOfBuckets, rTreeRatio, true); // RV histogram
 				histogram = eval.getRhistogram_V();
 				break;
-			case "minskewi": 
-				eval.buildMinSkewHist(numberOfBuckets*2, 8, true); // standard min skew 2^7 x 2^7 grid
-				histogram = eval.getMinSkewHist();
-				break;
-			case "minskewii": 
+			case "sthist": 
 				// standard min skew 2^7 x 2^7 grid and three refinerment steps
-				eval.buildMinSkewProgressiveHist(numberOfBuckets*2, 8, 3, true);
-				histogram = eval.getMinSkewProgressiveRefinementHistogram();
-				break;
-			case "sthist":
-				eval.buildSTForestHist(numberOfBuckets, 0.9 , true);
+				if (par > 0.0) sampleRate =par;
+				eval.buildSTForestHist(numberOfBuckets, sampleRate, true);
 				histogram = eval.getSTHistForest();
-				break;
-			case "sopthist":
-				eval.buildSOPTRtreeHist(numberOfBuckets, true);
-				histogram = eval.getSoptHist();
 				break;
 			default: 
 				System.err.println("Unrecognized histogram type: " + histogram);

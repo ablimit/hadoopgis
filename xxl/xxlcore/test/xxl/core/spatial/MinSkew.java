@@ -41,7 +41,7 @@ import xxl.core.spatial.histograms.RGOhist;
 import xxl.core.spatial.rectangles.DoublePointRectangle;
 
 
-public class TestH1 {
+public class MinSkew {
 
 	public static PrintStream getPrintStream(String output) throws IOException{
 		return new PrintStream(new File(output)); 
@@ -65,16 +65,18 @@ public class TestH1 {
 			
 			while (null != (line = br.readLine()))
 			{
-				double [] leftCorner = new double [2];
-				double [] rightCorner = new double [2];
-				String [] sp = line.split("\\s+");
-				
-				leftCorner[0] = Double.parseDouble(sp[1]);
-				leftCorner[1] = Double.parseDouble(sp[2]);
-				rightCorner[0] = Double.parseDouble(sp[3]);
-				rightCorner[1] = Double.parseDouble(sp[4]);
-				
-				rectangles.add(new DoublePointRectangle(leftCorner, rightCorner));
+				double[] leftCorner = new double[2];
+				double[] rightCorner = new double[2];
+				String[] sp = line.split("\\s+");
+				if (sp.length >= 5) {
+					leftCorner[0] = Double.parseDouble(sp[1]);
+					leftCorner[1] = Double.parseDouble(sp[2]);
+					rightCorner[0] = Double.parseDouble(sp[3]);
+					rightCorner[1] = Double.parseDouble(sp[4]);
+					
+					rectangles.add(new DoublePointRectangle(leftCorner,
+							rightCorner));
+				}
 			}
 			
 			br.close();
@@ -87,12 +89,13 @@ public class TestH1 {
 	
 
 	public static void main(String[] args) throws IOException {
-		if (args.length <4 )
+		if (args.length <5 )
 		{
 			System.err.println("Usage: "
-					+ TestH1.class.getSimpleName() 
+					+ MinSkew.class.getSimpleName() 
 					+" [number of buckets] [input Data] [output File] " 
-					+" [histogram type = [RTree | rkHist | RV | MinSkewI | MinSkewII | stHist | soptHist]"
+					+" [histogram type = [ I | II ]"
+					+" [X = grid size 2^(x-1)]"
 					+" [show]");
 			System.exit(0);
 		}
@@ -102,8 +105,9 @@ public class TestH1 {
 		String outPath = args[2]; // data path
 		String tempPath =  "/tmp/hist/"; 
 		String histogram_type = args[3].trim().toLowerCase();
+		int gridSize = Integer.parseInt(args[4]);
 		boolean showPlot = false;
-		if (args.length > 4 && args[4].equalsIgnoreCase("show"))
+		if (args.length > 5 && args[5].equalsIgnoreCase("show"))
 			showPlot = true;  
 		
 		System.err.println("++++++++++++++++++++++++++++++++++++\n");
@@ -115,39 +119,15 @@ public class TestH1 {
 		System.err.println("Buckets " + numberOfBuckets);
 
 		switch (histogram_type){
-			case "rtree": 
-				// rtree loaded bulk loaded using hilbert curve equi sized partitioning
-				eval.buildRTreeHist(numberOfBuckets, true);
-				histogram = eval.getRTreeHist();
-				break;
-			case "rkhist": 
-				eval.buildRKHist(numberOfBuckets, 0.1, HistogramEval.BLOCKSIZE , true); // rkHist Method
-				histogram = eval.getRkHist();
-				break;
-			case "rv":
-				eval.buildRHistogramV(numberOfBuckets, 0.4, true); // RV histogram
-				histogram = eval.getRhistogram_V();
-				break;
-			case "minskewi": 
-				eval.buildMinSkewHist(numberOfBuckets*2, 8, true); // standard min skew 2^7 x 2^7 grid
+			case "i": 
+				eval.buildMinSkewHist(numberOfBuckets*2, gridSize, true); // standard min skew 2^7 x 2^7 grid
 				histogram = eval.getMinSkewHist();
 				break;
-			case "minskewii": 
+			case "ii": 
 				// standard min skew 2^7 x 2^7 grid and three refinerment steps
-				eval.buildMinSkewProgressiveHist(numberOfBuckets*2, 8, 3, true);
+				eval.buildMinSkewProgressiveHist(numberOfBuckets*2, gridSize, 3, true);
 				histogram = eval.getMinSkewProgressiveRefinementHistogram();
 				break;
-			case "sthist":
-				eval.buildSTForestHist(numberOfBuckets, 0.9 , true);
-				histogram = eval.getSTHistForest();
-				break;
-			case "sopthist":
-				eval.buildSOPTRtreeHist(numberOfBuckets, true);
-				histogram = eval.getSoptHist();
-				break;
-			default: 
-				System.err.println("Unrecognized histogram type: " + histogram);
-				System.exit(0);
 			}
 
 		
