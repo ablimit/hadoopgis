@@ -9,7 +9,7 @@
 
 // boost 
 #include <boost/algorithm/string.hpp>
-
+#include <boost/lexical_cast.hpp>
 
 using namespace std;
 using namespace geos;
@@ -36,7 +36,8 @@ int main(int argc, char** argv)
         low [1] = env->getMinY();
         high [0] = env->getMaxX();
         high [1] = env->getMaxY();
-        cout << fields[1] << DEL << low[0] << DEL << low[1] << DEL << high[0] << DEL << high[1] << endl;
+        int id = boost::lexical_cast< int >(fields[1]);
+        cout << id << DEL << low[0] << DEL << low[1] << DEL << high[0] << DEL << high[1] << endl;
 
         fields.clear();
     }
