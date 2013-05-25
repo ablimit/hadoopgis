@@ -14,13 +14,13 @@ def normx(x):
     if osm:
         return (x + 180.0)/360.0 
     else:
-        return x/30000.0
+        return x/110592.0
 
 def normy(y):
     if osm:
         return (y + 90.0)/180.0
     else:
-        return y/25000.0
+        return y/57344.0
 
 def main():
     if len(sys.argv) <2:
