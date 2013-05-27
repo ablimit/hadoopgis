@@ -120,12 +120,12 @@ public class MinSkew {
 
 		switch (histogram_type){
 			case "i": 
-				eval.buildMinSkewHist(numberOfBuckets*2, gridSize, true); // standard min skew 2^7 x 2^7 grid
+				eval.buildMinSkewHist(numberOfBuckets, gridSize, true); // standard min skew 2^7 x 2^7 grid
 				histogram = eval.getMinSkewHist();
 				break;
 			case "ii": 
 				// standard min skew 2^7 x 2^7 grid and three refinerment steps
-				eval.buildMinSkewProgressiveHist(numberOfBuckets*2, gridSize, 3, true);
+				eval.buildMinSkewProgressiveHist(numberOfBuckets, gridSize, 3, true);
 				histogram = eval.getMinSkewProgressiveRefinementHistogram();
 				break;
 			}

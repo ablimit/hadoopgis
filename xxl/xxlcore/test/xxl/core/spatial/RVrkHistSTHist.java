@@ -43,9 +43,9 @@ import xxl.core.spatial.rectangles.DoublePointRectangle;
 
 public class RVrkHistSTHist {
 	
-	public static double alpha = 0.1;
 	public static double sampleRate = 0.9;
-	public static double rTreeRatio= 0.4;
+	public static double alpha = 0.1; // under sampling ratio 
+	public static double rTreeRatio= 0.4; 
 	
 	public static PrintStream getPrintStream(String output) throws IOException{
 		return new PrintStream(new File(output)); 
