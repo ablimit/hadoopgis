@@ -12,5 +12,5 @@ histotype=$4
 grid=$5
 show=$6
 
-java -Xmx2048M -cp xxlcore-2.1-SNAPSHOT.jar:xxlcore-2.1-SNAPSHOT-tests.jar:. xxl.core.spatial.MinSkew $1 $2 $3 $4 $5 $6
+java -Xmx4000M -cp xxlcore-2.1-SNAPSHOT.jar:xxlcore-2.1-SNAPSHOT-tests.jar:. xxl.core.spatial.MinSkew $1 $2 $3 $4 $5 $6
 

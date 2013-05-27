@@ -19,9 +19,9 @@ def main():
 
     for line in open(sys.argv[1],'r'):
         sp = line.strip().split("|")
-	oid = int(sp[1])
-	pid = dic[oid]
-	print "|".join((sp[0],str(pid),str(oid),sp2]))
+        oid = int(sp[1])
+        pid = dic[oid]
+        print "|".join((sp[0],str(pid),str(oid),sp[2]))
 
     sys.stdout.flush()
     sys.stderr.flush()
