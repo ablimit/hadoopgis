@@ -93,7 +93,7 @@ public class SimpleLoadMVBTree {
 				deletesInserts[i] = 1;
 			}
 		}
-		List<Integer> liveSet = new ArrayList<>(remainNumber);
+		List<Integer> liveSet = new ArrayList<Integer>(remainNumber);
 		//populate live set and generate first inserts 
 		Permutator permutator = new Permutator(overallInsertNumber, random);
 		long ts = 0;
@@ -111,7 +111,7 @@ public class SimpleLoadMVBTree {
 					isOpened = true;
 			}
 		};
-		List<Integer> deletes = new ArrayList<>();
+		List<Integer> deletes = new ArrayList<Integer>();
 		while(remainPermutator.hasNext()){
 			Integer opsType = remainPermutator.next();
 			if(opsType == 3){ //delete
@@ -160,7 +160,7 @@ public class SimpleLoadMVBTree {
 				deletesInserts[i] = 1;
 			}
 		}
-		List<Integer> liveSet = new ArrayList<>();
+		List<Integer> liveSet = new ArrayList<Integer>();
 		//populate live set and generate first inserts 
 		Permutator permutator = new Permutator(overallInsertNumber, random);
 		long ts = 0;

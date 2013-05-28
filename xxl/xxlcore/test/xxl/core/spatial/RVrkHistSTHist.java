@@ -65,7 +65,7 @@ public class RVrkHistSTHist {
 		else {
 			BufferedReader br = new BufferedReader(new FileReader (path));
 			String line ;
-			rectangles = new ArrayList<>();
+			rectangles = new ArrayList<DoublePointRectangle>();
 			
 			while (null != (line = br.readLine()))
 			{

@@ -680,7 +680,7 @@ public class HistogramEval {
 		double overallSum = 0; 
 		double absSum = 0; // x
 		double absSumQ = 0;
-		List<Double> abss = new ArrayList<>();
+		List<Double> abss = new ArrayList<Double>();
 		
 		while(queryIn.hasNext()){
 			DoublePointRectangle queryRec = queryIn.next();
@@ -750,7 +750,7 @@ public class HistogramEval {
 			Point right = bucket.getCorner(true);
 			out.println(i+ TAB 
 					+ left.getValue(0) + TAB + left.getValue(1) + TAB + right.getValue(0) + TAB + right.getValue(1) +TAB
-					+ bucket.area()    + TAB + bucket.getWeight());	
+					+ bucket.area()    + TAB + bucket.getWeight());
 			i++;
 		}
 		
