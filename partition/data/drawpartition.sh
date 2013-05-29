@@ -5,7 +5,7 @@ tempf=/tmp/zahide.gnu
 for f in astroII.1 astroII.2 gbm0.1 gbm0.2 gbm1.1 gbm1.2 gbm2.1 gbm2.2 normal.2 normal.3 oligoastroII.1 oligoastroII.2 oligoastroIII.1 oligoastroIII.2 oligoII.1 oligoII.2 oligoIII.1 oligoIII.2
 do
     echo "drawing ${f} .."
-    for method in minskew rv rkHist sthist 
+    for method in rtree minskew rv rkHist sthist 
     do
         if [ -e partres/${f}.${method}.txt ]
         then
@@ -14,7 +14,7 @@ do
             echo "unset xtics" >> ${tempf}
             echo "unset ytics" >> ${tempf}
 
-            cat partres/${f}.${method}.txt | while read oid x y xx yy;
+            cat partres/${f}.${method}.txt | while read oid x y xx yy a;
         do
             oid=`expr $oid + 1`
             echo "set object ${oid} rect from ${x}, ${y} to ${xx}, ${yy}" >> ${tempf}

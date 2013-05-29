@@ -10,13 +10,13 @@ do
     #rtree.sh
     ./rtree.sh $p data/pais/${f}.mbb.txt data/partres/${f}.rtree.txt
     #minskew.sh
-    ./minskew.sh $p data/pais/${f}.mbb.txt data/partres/${f}.minskew.txt I 8
+    #./minskew.sh $p data/pais/${f}.mbb.txt data/partres/${f}.minskew.txt I 8
     #rkHist.sh
-    ./rkHist.sh $p data/pais/${f}.mbb.txt data/partres/${f}.rkHist.txt 0.1
+    #./rkHist.sh $p data/pais/${f}.mbb.txt data/partres/${f}.rkHist.txt 0.1
     #rv.sh
-    ./rv.sh $p data/pais/${f}.mbb.txt data/partres/${f}.rv.txt 0.4 
+    #./rv.sh $p data/pais/${f}.mbb.txt data/partres/${f}.rv.txt 0.4 
     #stHist.sh
-    ./stHist.sh $p data/pais/${f}.mbb.txt data/partres/${f}.sthist.txt 0.9
+    #./stHist.sh $p data/pais/${f}.mbb.txt data/partres/${f}.sthist.txt 0.9
 done
 
 #rv.sh

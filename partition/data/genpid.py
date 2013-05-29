@@ -24,6 +24,8 @@ def intersects(a,b):
 
 
 def update_partition(oid,object_mbb):
+    global dic
+    global pid_oid
     for pid, partition_mbb in dic.items():
 	if intersects(object_mbb,partition_mbb):
 	    #print "\t".join((oid,pid))
@@ -35,6 +37,9 @@ def main():
         sys.exit(1)
 
 
+    global dic
+    global pid_oid
+    
     for line in open(sys.argv[1],'r'):
         sp = line.strip().split()
         if (len(sp)>4):
