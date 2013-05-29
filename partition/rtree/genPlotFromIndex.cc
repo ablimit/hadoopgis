@@ -24,14 +24,14 @@ class MyQueryStrategy : public SpatialIndex::IQueryStrategy
 
             // traverse only index nodes at levels 2 and higher.
             if (n != NULL) {
-                if (n->getLevel() > 0)
+                if (n->getLevel() > 1)
                 {
                     for (uint32_t cChild = 0; cChild < n->getChildrenCount(); cChild++)
                     {
                         ids.push(n->getChildIdentifier(cChild));
                     }
                 }
-                else if (n->getLevel() ==0)
+                else if (n->getLevel() == 1)
                 {
                     IShape* ps;
                     entry.getShape(&ps);
@@ -102,9 +102,9 @@ int main(int argc, char** argv)
         ISpatialIndex* tree = RTree::loadRTree(*file, 1);
 
 
-        MyQueryStrategy2 qs;
+        MyQueryStrategy qs;
         tree->queryStrategy(qs);
-        cerr << "Indexed space: " << qs.m_indexedSpace << endl;
+        //cerr << "Indexed space: " << qs.m_indexedSpace << endl;
 
         cerr << *tree;
         //cerr << "Buffer hits: " << file->getHits() << endl;

@@ -25,7 +25,7 @@ else
     CC = g++
 endif
 
-all: process loader plot part mbb
+all: process loader plot part mbb view
 
 process: pais/GeneratePAISMBB.cc osm/GenerateOSMMBB.cc
 	$(CC) pais/GeneratePAISMBB.cc $(CFLAGS) $(LDFLAGS) -o pais/genmbb
@@ -43,7 +43,10 @@ part: RTreePartitionFromIndex.cc
 mbb: RTreePartitionMBB.cc
 	$(CC) RTreePartitionMBB.cc $(CFLAGS) $(LDFLAGS) -o genPartitionRegionFromIndex
 
+view: RTreeView.cc
+	$(CC) RTreeView.cc $(CFLAGS) $(LDFLAGS) -o viewRTree
+
 clean:
-	@rm -f genRtreeIndex genPlotFromIndex genPartitionFromIndex genPartitionRegionFromIndex
+	@rm -f genRtreeIndex genPlotFromIndex genPartitionFromIndex genPartitionRegionFromIndex viewRTree
 	@rm -f pais/genpaismbb osm/genosmmbb
 
