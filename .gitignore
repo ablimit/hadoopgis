@@ -94,3 +94,6 @@ utility/dostuff.sh*
 *.err
 *.out
 *.dat
+*.bz2
+*.gz
+

@@ -9,15 +9,6 @@ dic = {}
 
 pid_oid = defaultdict(list)
 
-# Calculate standard deviation
-def stddev(values, mean):
-    size = len(values)
-    sum = 0.0
-    for n in range(0, size):
-	sum += math.sqrt((values[n] - mean)**2)
-    return math.sqrt((1.0/(size-1))*(sum/size))
-
-
 # Calculate mean of the values
 def intersects(a,b):
     return not(a[2] <= b[0] or b[2]<=a[0] or a[1] >= b[3] or b[1] >= a[3])
@@ -26,10 +17,15 @@ def intersects(a,b):
 def update_partition(oid,object_mbb):
     global dic
     global pid_oid
+    flag = False
     for pid, partition_mbb in dic.items():
-	if intersects(object_mbb,partition_mbb):
-	    #print "\t".join((oid,pid))
-	    pid_oid[pid].append(oid)
+        if intersects(object_mbb,partition_mbb):
+            #print "\t".join((oid,pid))
+            pid_oid[pid].append(oid)
+            flag =True
+
+    if not flag:
+        sys.stderr.write("This is Ridiculous [" + oid + "]\n")
 
 def main():
     if len(sys.argv) <2:
@@ -63,19 +59,8 @@ def main():
         #else:
         #print len(sp)
     
-    cardins =[]
     for pid, oid_list in pid_oid.items():
-	cardins.append(len(oid_list))
-	print "\t".join((pid,"\t".join(oid_list)))
-
-    cardins.sort()
-    min_val = min(cardins)
-    max_val = max(cardins)
-    avg_val = int(float(sum(cardins))/float(len(cardins)))
-    median = cardins[len(cardins)/2]
-    deviation  = stddev(cardins,avg_val)
-
-    sys.stderr.write("\t".join((str(min_val),str(max_val),str(avg_val),str(median),str(deviation),"\n")))
+        print "\t".join((pid,"\t".join(oid_list)))
 
     sys.stdout.flush()
     sys.stderr.flush()

@@ -13,8 +13,8 @@ def main():
     for line in sys.stdin:
         sp = line.strip().split()
         if (len(sp) >= 2):
-	    for i in xrange(1,len(sp)):
-		dic[int(sp[i])] = sp[0]
+            for i in xrange(1,len(sp)):
+                dic[int(sp[i])] = int(sp[0])
 
 
     for line in open(sys.argv[1],'r'):
