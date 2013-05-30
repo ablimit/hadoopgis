@@ -23,7 +23,10 @@ def intersects(a,b):
     return not(a[2] <= b[0] or b[2]<=a[0] or a[1] >= b[3] or b[1] >= a[3])
 
 def intersection(a,b):
-    width = abs((a[2]- b[0]) if a[2] >= b[0] >= a[0] else (b[))
+    width  = abs((a[2]- b[0]) if a[2] >= b[0] >= a[0] else (b[2]-a[0]))
+    height = abs((a[3]- b[1]) if a[3] >= b[1] >= a[1] else (b[3]-a[1]))
+    area = width * height
+    return area
 
 def update_partition(oid,object_mbb):
     global dic
