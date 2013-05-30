@@ -42,7 +42,13 @@ import xxl.core.spatial.rectangles.DoublePointRectangle;
 
 
 public class TestH1 {
-
+	
+	public static double sampleRate = 0.9;
+	public static double alpha = 0.1; // under sampling ratio 
+	public static double rTreeRatio= 0.4;
+	public static int gridSize= 9;
+	
+	
 	public static PrintStream getPrintStream(String output) throws IOException{
 		return new PrintStream(new File(output)); 
 	}
@@ -87,24 +93,28 @@ public class TestH1 {
 	
 
 	public static void main(String[] args) throws IOException {
-		if (args.length <4 )
+		if (args.length <8 )
 		{
 			System.err.println("Usage: "
 					+ TestH1.class.getSimpleName() 
 					+" [number of buckets] [input Data] [output File] " 
-					+" [histogram type = [RTree | rkHist | RV | MinSkewI | MinSkewII | stHist | soptHist]"
-					+" [show]");
+					+" [temp_path = [temoprary path] "
+					+" [minskew grid size = 10] "
+					+" [minskew grid size = 10] "
+					+" [minskew grid size = 10] "
+					+" []");
 			System.exit(0);
 		}
 
 		int numberOfBuckets = Integer.parseInt(args[0]) ;
 		String inPath = args[1]; // data path
 		String outPath = args[2]; // data path
-		String tempPath =  "/tmp/hist/"; 
-		String histogram_type = args[3].trim().toLowerCase();
-		boolean showPlot = false;
-		if (args.length > 4 && args[4].equalsIgnoreCase("show"))
-			showPlot = true;  
+		String tempPath =  args[3];
+		gridSize = Integer.parseInt(args[4]);
+		alpha = Double.parseDouble(args[5]);
+		rTreeRatio = Double.parseDouble(args[6]);
+		sampleRate = Double.parseDouble(args[7]);
+		
 		
 		System.err.println("++++++++++++++++++++++++++++++++++++\n");
 		System.err.println("Data: " + inPath);
@@ -113,49 +123,47 @@ public class TestH1 {
 		MHistogram histogram  = null;
 		
 		System.err.println("Buckets " + numberOfBuckets);
+		
+		// rtree loaded bulk loaded using hilbert curve equi sized partitioning
+		System.err.println("Building RTree histogram..");
+		eval.buildRTreeHist(numberOfBuckets, true);
+		histogram = eval.getRTreeHist();
+		eval.dumpHistogram(histogram,getPrintStream(outPath+".rtree.txt"));
+		
+		// minskew 
+		System.err.println("Building minSkew histogram..");
+		eval.buildMinSkewHist(numberOfBuckets, gridSize, true);														// 2^7 grid
+		histogram = eval.getMinSkewHist();
+		eval.dumpHistogram(histogram,getPrintStream(outPath+".minskew.txt"));
+		
+		// standard min skew 2^7 x 2^7 grid and three refinerment steps
+		System.err.println("Building Progressive minSkew histogram..");
+		eval.buildMinSkewProgressiveHist(numberOfBuckets, gridSize, 3, true);
+		histogram = eval.getMinSkewProgressiveRefinementHistogram();
+		eval.dumpHistogram(histogram,getPrintStream(outPath+".minskewrefine.txt"));
+		
+		//rkHist
+		System.err.println("Building rkHist histogram..");
+		eval.buildRKHist(numberOfBuckets, alpha, HistogramEval.BLOCKSIZE, true); // rkHist																		// Method
+		histogram = eval.getRkHist();
+		eval.dumpHistogram(histogram,getPrintStream(outPath+".rkhist.txt"));
 
-		switch (histogram_type){
-			case "rtree": 
-				// rtree loaded bulk loaded using hilbert curve equi sized partitioning
-				eval.buildRTreeHist(numberOfBuckets, true);
-				histogram = eval.getRTreeHist();
-				break;
-			case "rkhist": 
-				eval.buildRKHist(numberOfBuckets, 0.1, HistogramEval.BLOCKSIZE , true); // rkHist Method
-				histogram = eval.getRkHist();
-				break;
-			case "rv":
-				eval.buildRHistogramV(numberOfBuckets, 0.4, true); // RV histogram
-				histogram = eval.getRhistogram_V();
-				break;
-			case "minskewi": 
-				eval.buildMinSkewHist(numberOfBuckets*2, 8, true); // standard min skew 2^7 x 2^7 grid
-				histogram = eval.getMinSkewHist();
-				break;
-			case "minskewii": 
-				// standard min skew 2^7 x 2^7 grid and three refinerment steps
-				eval.buildMinSkewProgressiveHist(numberOfBuckets*2, 8, 3, true);
-				histogram = eval.getMinSkewProgressiveRefinementHistogram();
-				break;
-			case "sthist":
-				eval.buildSTForestHist(numberOfBuckets, 0.9 , true);
-				histogram = eval.getSTHistForest();
-				break;
-			case "sopthist":
-				eval.buildSOPTRtreeHist(numberOfBuckets, true);
-				histogram = eval.getSoptHist();
-				break;
-			default: 
-				System.err.println("Unrecognized histogram type: " + histogram);
-				System.exit(0);
-			}
-
+		// RV histogram
+		System.err.println("Building RV histogram..");
+		eval.buildRHistogramV(numberOfBuckets, rTreeRatio, true); 
+		histogram = eval.getRhistogram_V();
+		eval.dumpHistogram(histogram,getPrintStream(outPath+".rv.txt"));
 		
-		eval.dumpHistogram(histogram,getPrintStream(outPath));
+		//STForest 
+		System.err.println("Building STForest histogram..");
+		eval.buildSTForestHist(numberOfBuckets, sampleRate, true);
+		histogram = eval.getSTHistForest();
+		eval.dumpHistogram(histogram,getPrintStream(outPath+".stforest.txt"));
 		
-		if (showPlot) 
-			eval.showHist(histogram_type, histogram);
-		
+		System.err.println("Building soptRTree histogram..");
+		eval.buildSOPTRtreeHist(numberOfBuckets, true);
+		histogram = eval.getSoptHist();
+		eval.dumpHistogram(histogram,getPrintStream(outPath+".soptrtree.txt"));
 		
 		System.err.println("Done.");
 		System.err.println("++++++++++++++++++++++++++++++++++++\n");
