@@ -9,11 +9,7 @@ dic = defaultdict(list)
 
 # Calculate mean of the values
 def mean(values):
-    size = len(values)
-    sum = 0.0
-    for n in range(0, size):
-	sum += values[n]
-	return sum / size;
+    return sum(values)/len(values)
 
 # Calculate standard deviation
 def stddev(values, mean):

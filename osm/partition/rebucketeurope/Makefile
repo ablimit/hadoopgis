@@ -35,5 +35,5 @@ rebuck: bucketmyeurope.cc hadoopgis.h
 
 
 clean:
-	@rm -f rebucket
+	@rm -f rebucket rebucketmyeurope
 

@@ -21,6 +21,7 @@ int getJoinIndex ()
 }
 
 int main(int argc, char **argv) {
+    int rep = atoi(argv[1]);
 
     int index = getJoinIndex();
     // cerr << "Index: " << index << endl; 
@@ -46,7 +47,8 @@ int main(int argc, char **argv) {
 	pos=input_line.find_first_of(comma,pos+1);
 	value= input_line.substr(pos+2,input_line.length()-pos-3);
 	// cout << index << key<< tab << value << endl;
-	cout << key<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
+	for (int i=0; i < rep ; i++)
+	cout << key<< "_" <<i<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
     }
     cout.flush();
 
