@@ -25,7 +25,7 @@ def update_partition(oid,object_mbb):
             flag =True
 
     if not flag:
-        sys.stderr.write("This is Ridiculous [" + oid + "]\n")
+        sys.stderr.write("cell id [" + oid + "]\n")
 
 def main():
     if len(sys.argv) <2:
