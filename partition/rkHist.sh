@@ -1,16 +1,16 @@
 #! /bin/bash
 
-#if [ ! $# < 5 ]; then
-#    echo "Usage:  [number of buckets] [input path] [output path] [I | II] [Grid Size]"
-#    exit 0
-#fi
+if [ $# -lt 5 ]; then
+    echo "Usage: $0 [-Xss4m -Xmx3500M] [number of buckets] [input path] [output path] [alpha]"
+    exit 0
+fi
 
-buckets=$1
-inPath=$2
-outPath=$3
-alpha=$4
-show=$5
+jvm=$1
+buckets=$2
+inPath=$3
+outPath=$4
+alpha=$5
+show=$6
 
-java -Xss4m -Xmx80000M -cp xxlcore-2.1-SNAPSHOT.jar:xxlcore-2.1-SNAPSHOT-tests.jar:. xxl.core.spatial.RVrkHistSTHist $1 $2 $3 rkhist $4 $5
-
+java ${jvm} -cp xxlcore-2.1-SNAPSHOT.jar:xxlcore-2.1-SNAPSHOT-tests.jar:. xxl.core.spatial.RVrkHistSTHist ${buckets} ${inPath} ${outPath} rkhist ${alpha} ${show}
 

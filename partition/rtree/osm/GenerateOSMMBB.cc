@@ -26,6 +26,12 @@ using namespace geos::geom;
 
 int main(int argc, char** argv)
 {
+    char * tag ;
+    if (argc>1)
+    {
+        tag= argv[1];
+    }
+
     GeometryFactory *gf = new GeometryFactory(new PrecisionModel(),4326);
     WKTReader *wkt_reader= new WKTReader(gf);
     Geometry *poly ; 
@@ -42,13 +48,11 @@ int main(int argc, char** argv)
         low [1] = env->getMinY();
         high [0] = env->getMaxX();
         high [1] = env->getMaxY();
-        cout << fields[OSM_ID] << DEL << low[0] << DEL << low[1] << DEL << high[0] << DEL << high[1] << endl;
-
+        cout << fields[OSM_ID] << DEL ;
+        if (NULL != tag )  cout << tag << DEL ;
+        cout << low[0] << DEL << low[1] << DEL << high[0] << DEL << high[1] << endl;
         fields.clear();
     }
     cout.flush();
-
     return 0;
 }
-
-

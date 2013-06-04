@@ -20,6 +20,11 @@ using namespace geos::geom;
 
 int main(int argc, char** argv)
 {
+    char * tag ;
+    if (argc>1)
+    {
+        tag= argv[1];
+    }
     GeometryFactory *gf = new GeometryFactory(new PrecisionModel(),4326);
     WKTReader *wkt_reader= new WKTReader(gf);
     Geometry *poly ; 
@@ -37,13 +42,13 @@ int main(int argc, char** argv)
         high [0] = env->getMaxX();
         high [1] = env->getMaxY();
         int id = boost::lexical_cast< int >(fields[1]);
-        cout << id << DEL << low[0] << DEL << low[1] << DEL << high[0] << DEL << high[1] << endl;
-
+        
+        cout << id << DEL ;
+        if (NULL != tag ) cout << tag << DEL ;
+        cout << low[0] << DEL << low[1] << DEL << high[0] << DEL << high[1] << endl;
         fields.clear();
     }
     cout.flush();
-
     return 0;
 }
-
 
