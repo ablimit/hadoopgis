@@ -1,4 +1,4 @@
-#! /home/aaji/softs/bin/python
+#! /usr/bin/python
 
 import sys
 import math
