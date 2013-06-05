@@ -49,12 +49,15 @@ def main():
     # readin object mbb data 
     for line in sys.stdin:
         sp = line.strip().split()
-        if (len(sp)>5):
-            x1 = float(sp[2])
-            y1 = float(sp[3])
-            x2 = float(sp[4])
-            y2 = float(sp[5])
-            update_partition("-".join((sp[0],sp[1])),(x1,y1,x2,y2))
+        idx = 0
+        if (len(sp)==6):
+            idx = 1
+        x1 = float(sp[1+idx])
+        y1 = float(sp[2+idx])
+        x2 = float(sp[3+idx])
+        y2 = float(sp[4+idx])
+        oid = "-".join((sp[0],sp[1])) if idx ==1 else sp[0]
+        update_partition(oid,(x1,y1,x2,y2))
 	    #print "\t".join((sp[0],str(x1),str(y1),str(x2),str(y2)))
         #else:
         #print len(sp)

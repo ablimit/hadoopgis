@@ -6,10 +6,10 @@ do
 
     for seq in 1 2
     do
-        genmbb < algo${seq}/${f}.markup.ablet.${seq} | python normolize.py pais > /dev/shm/mbb.${seq}.txt
+        genmbb ${seq} < algo${seq}/${f}.markup.ablet.${seq} | python normalize.py pais > /dev/shm/mbb.${seq}.txt
     done
 
-    echo "Re-Partition the image .."
+    # echo "Re-Partition the image .."
     for method in rtree minskew rv rkHist sthist 
     do
         if [ -e partres/${f}.${method}.txt ]

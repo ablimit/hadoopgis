@@ -33,18 +33,23 @@ def main():
 
     for line in sys.stdin:
         sp = line.strip().split()
-        if (len(sp)>4):
-            x1 = normx(float(sp[1]),osm)
-            y1 = normy(float(sp[2]),osm)
-            x2 = normx(float(sp[3]),osm)
-            y2 = normy(float(sp[4]),osm)
+        idx = 0
+        if (len(sp)==6):
+            idx = 1
+        x1 = normx(float(sp[1+idx]),osm)
+        y1 = normy(float(sp[2+idx]),osm)
+        x2 = normx(float(sp[3+idx]),osm)
+        y2 = normy(float(sp[4+idx]),osm)
 	    # print "after norm: %f" % x1
+        if idx ==0:
             print "\t".join((sp[0],str(x1),str(y1),str(x2),str(y2)))
+        else:
+            print "\t".join((sp[0],sp[1],str(x1),str(y1),str(x2),str(y2)))
+
         #else:
         #print len(sp)
     sys.stdout.flush()
 
 if __name__ == '__main__':
     main()
-
 

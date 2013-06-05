@@ -74,7 +74,7 @@ def main():
             y1 = float(sp[2])
             x2 = float(sp[3])
             y2 = float(sp[4])
-            cardin.append(int(sp[5]))
+            cardins.append(int(sp[-1]))
             dic[int(sp[0])]=(x1,y1,x2,y2)
 
     # sys.stderr.write("Partition Size: " + str(len(dic))+"\n")
