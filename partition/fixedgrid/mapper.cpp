@@ -8,7 +8,7 @@ IStorageManager * storage = NULL;
 ISpatialIndex * spidx = NULL;
 map<int,string> id_polygon ;
 vector<int> hits ; 
-
+char * prefix;
 
 RTree::Data* parseInputPolygon(Geometry *p, id_type m_id) {
     double low[2], high[2];
@@ -206,6 +206,7 @@ void emitHits(Geometry* poly) {
     high [1] = env->getMaxY();
 
     stringstream ss; // tile_id ; 
+    if (NULL != prefix) ss << prefix << DASH;
     ss << low[0] ;
     ss << DASH ;
     ss << low[1] ;
@@ -248,6 +249,15 @@ int main(int argc, char **argv) {
     double max_y = args_info.max_y_arg;
     int x_split = args_info.x_split_arg;
     int y_split = args_info.y_split_arg;
+
+    if ( args_info.prefix_given )
+    {
+        prefix = args_info.prefix_arg;
+        //cerr << "Prefix:" << prefix << endl;
+    }
+    else 
+        prefix = NULL;
+
     /* 
        cerr << "min_x "<< min_x << endl; 
        cerr << "max_x "<< max_x << endl; 
