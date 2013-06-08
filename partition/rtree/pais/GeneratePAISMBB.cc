@@ -20,7 +20,7 @@ using namespace geos::geom;
 
 int main(int argc, char** argv)
 {
-    char * tag ;
+    char * tag = NULL;
     if (argc>1)
     {
         tag= argv[1];
