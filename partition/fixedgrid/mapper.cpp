@@ -8,7 +8,7 @@ IStorageManager * storage = NULL;
 ISpatialIndex * spidx = NULL;
 map<int,string> id_polygon ;
 vector<int> hits ; 
-
+char * prefix;
 
 RTree::Data* parseInputPolygon(Geometry *p, id_type m_id) {
     double low[2], high[2];
@@ -30,12 +30,13 @@ RTree::Data* parseInputPolygon(Geometry *p, id_type m_id) {
 class GEOSDataStream : public IDataStream
 {
     public:
-        GEOSDataStream(vector<Geometry*> * invec) : m_pNext(0), index(0), len(0),m_id(0)
+        GEOSDataStream(map<int,Geometry*> * inputColl ) : m_pNext(0), len(0),m_id(0)
     {
-        if ( invec->empty())
+        if (inputColl->empty())
             throw Tools::IllegalArgumentException("Input size is ZERO.");
-        vec = invec;
-        len = vec->size();
+        shapes = inputColl;
+        len = inputColl->size();
+        iter = shapes->begin();
         readNextEntry();
     }
         virtual ~GEOSDataStream()
@@ -60,7 +61,7 @@ class GEOSDataStream : public IDataStream
 
         virtual uint32_t size()
         {
-            return vec->size();
+            return len;
             //throw Tools::NotSupportedException("Operation not supported.");
         }
 
@@ -72,26 +73,27 @@ class GEOSDataStream : public IDataStream
                 m_pNext = 0;
             }
 
-            index = 0;
             m_id  = 0;
+            iter = shapes->begin();
             readNextEntry();
         }
 
         void readNextEntry()
         {
-            if (index < len)
+            if (iter != shapes->end())
             {
                 //std::cerr<< "readNextEntry m_id == " << m_id << std::endl;
-                m_pNext = parseInputPolygon((*vec)[index], m_id);
-                index++;
-                m_id++;
+                m_id = iter->first;
+                m_pNext = parseInputPolygon(iter->second, m_id);
+                iter++;
             }
         }
 
         RTree::Data* m_pNext;
-        vector<Geometry*> * vec; 
+        map<int,Geometry*> * shapes; 
+        map<int,Geometry*>::iterator iter; 
+
         int len;
-        int index ;
         id_type m_id;
 };
 
@@ -168,18 +170,20 @@ vector<Geometry*> genTiles(double min_x, double max_x, double min_y, double  max
 
 vector<string> parsePAIS(string & line) {
     vector<string> vec ;
-    size_t pos = line.find_first_of(COMMA,0);
-    size_t pos2;
-    if (pos == string::npos){
-        return vec; // failure
-    }
+    /*
+       size_t pos = line.find_first_of(COMMA,0);
+       size_t pos2;
+       if (pos == string::npos){
+       return vec; // failure
+       }
 
-    vec.push_back(line.substr(0,pos)); // tile_id
-    pos2=line.find_first_of(COMMA,pos+1);
-    vec.push_back(line.substr(pos+1,pos2-pos-1)); // object_id
-    pos=pos2;
-    vec.push_back(shapebegin + line.substr(pos+2,line.length()- pos - 3) + shapeend);
-    
+       vec.push_back(line.substr(0,pos)); // tile_id
+       pos2=line.find_first_of(COMMA,pos+1);
+       vec.push_back(line.substr(pos+1,pos2-pos-1)); // object_id
+       pos=pos2;
+       vec.push_back(shapebegin + line.substr(pos+2,line.length()- pos - 3) + shapeend);
+       */
+    boost::split(vec, line, boost::is_any_of(BAR));
     return vec;
 }
 
@@ -202,6 +206,7 @@ void emitHits(Geometry* poly) {
     high [1] = env->getMaxY();
 
     stringstream ss; // tile_id ; 
+    if (NULL != prefix) ss << prefix << DASH;
     ss << low[0] ;
     ss << DASH ;
     ss << low[1] ;
@@ -212,12 +217,12 @@ void emitHits(Geometry* poly) {
 
     for (int i = 0 ; i < hits.size(); i++ ) 
     {
-        cout << ss.str() << TAB << hits[i]  << TAB << id_polygon[hits[i]] << TAB << endl ;
+        cout << ss.str() << BAR << hits[i]  << BAR << id_polygon[hits[i]] << endl ;
     }
 }
 
 
-bool buildIndex(vector<Geometry*> & geom_polygons) {
+bool buildIndex(map<int,Geometry*> & geom_polygons) {
     // build spatial index on tile boundaries 
     id_type  indexIdentifier;
     GEOSDataStream stream(&geom_polygons);
@@ -244,6 +249,15 @@ int main(int argc, char **argv) {
     double max_y = args_info.max_y_arg;
     int x_split = args_info.x_split_arg;
     int y_split = args_info.y_split_arg;
+
+    if ( args_info.prefix_given )
+    {
+        prefix = args_info.prefix_arg;
+        //cerr << "Prefix:" << prefix << endl;
+    }
+    else 
+        prefix = NULL;
+
     /* 
        cerr << "min_x "<< min_x << endl; 
        cerr << "max_x "<< max_x << endl; 
@@ -259,22 +273,23 @@ int main(int argc, char **argv) {
 
 
     // process input data 
-    vector <Geometry*> geom_polygons;
+    map<int,Geometry*> geom_polygons;
     string input_line;
     vector<string> fields;
     cerr << "Reading input from stdin..." <<endl; 
-    int i =0; 
+    int i = -1; 
 
     while(cin && getline(cin, input_line) && !cin.eof()){
         fields = parsePAIS(input_line);
-        geom_polygons.push_back(wkt_reader->read(fields[2]));
-        id_polygon[i++] = fields[2]; 
+        i = boost::lexical_cast< int >( fields[1] ); 
+        geom_polygons[i]= wkt_reader->read(fields[2]);
+        id_polygon[i] = fields[2]; 
     }
 
     // build spatial index for input polygons 
     bool ret = buildIndex(geom_polygons);
     if (ret == false) 
-        std::cerr << "ERROR: Structure is invalid!" << std::endl;
+        cerr << "ERROR: Structure is invalid!" << std::endl;
     else 
         cerr << "GRIDIndex Generated successfully." << endl;
 

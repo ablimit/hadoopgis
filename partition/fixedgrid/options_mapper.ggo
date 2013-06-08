@@ -9,4 +9,5 @@ option "min-y"  s "Minimum vertical coordinate of the spatial universe" double r
 option "max-y"  n "Maximum vertical coordinate of the spatial universe" double required
 option "x-split"  x "Number of split in horizontal direction" int required
 option "y-split"  y "Number of split in vertical direction" int required
+option "prefix"  p "Partition prefix to add " string optional
 
