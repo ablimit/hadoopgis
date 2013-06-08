@@ -28,8 +28,8 @@ endif
 all: process loader plot part mbb view
 
 process: pais/GeneratePAISMBB.cc osm/GenerateOSMMBB.cc
-	$(CC) pais/GeneratePAISMBB.cc $(CFLAGS) $(LDFLAGS) -o pais/genpaismbb
-	$(CC) osm/GenerateOSMMBB.cc $(CFLAGS) $(LDFLAGS) -o osm/genosmmbb
+	$(CC) -g pais/GeneratePAISMBB.cc $(CFLAGS) $(LDFLAGS) -o pais/genpaismbb
+	$(CC) -g osm/GenerateOSMMBB.cc $(CFLAGS) $(LDFLAGS) -o osm/genosmmbb
 
 loader: RTreeBulkLoad.cc
 	$(CC) RTreeBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndex
