@@ -10,6 +10,29 @@ map<int,string> id_polygon ;
 vector<int> hits ; 
 char * prefix;
 
+int GEOM_IDX = -1;
+int ID_IDX = -1;
+int TILE_IDX = -1;
+
+bool assignIndex(char * dataset) {
+    bool flag = false;
+    if(0 == strcmp(dataset,"osm"))
+    {
+	GEOM_IDX = 4;
+	ID_IDX = 0;
+	TILE_IDX = 1;
+	flag =true;
+    }
+    else if(0 == strcmp(dataset,"pais"))
+    {
+	GEOM_IDX = 2;
+	ID_IDX = 1;
+	TILE_IDX = 0;
+	flag =true;
+    }
+    return flag;
+}
+
 RTree::Data* parseInputPolygon(Geometry *p, id_type m_id) {
     double low[2], high[2];
     const Envelope * env = p->getEnvelopeInternal();
@@ -168,21 +191,8 @@ vector<Geometry*> genTiles(double min_x, double max_x, double min_y, double  max
     return tiles;
 }
 
-vector<string> parsePAIS(string & line) {
+vector<string> parse(string & line) {
     vector<string> vec ;
-    /*
-       size_t pos = line.find_first_of(COMMA,0);
-       size_t pos2;
-       if (pos == string::npos){
-       return vec; // failure
-       }
-
-       vec.push_back(line.substr(0,pos)); // tile_id
-       pos2=line.find_first_of(COMMA,pos+1);
-       vec.push_back(line.substr(pos+1,pos2-pos-1)); // object_id
-       pos=pos2;
-       vec.push_back(shapebegin + line.substr(pos+2,line.length()- pos - 3) + shapeend);
-       */
     boost::split(vec, line, boost::is_any_of(BAR));
     return vec;
 }
@@ -249,6 +259,12 @@ int main(int argc, char **argv) {
     double max_y = args_info.max_y_arg;
     int x_split = args_info.x_split_arg;
     int y_split = args_info.y_split_arg;
+    // if the dataset is not PAIS or OSM, then exit.
+    if (!assignIndex(args_info.dataset_arg)) 
+    {
+        cerr << "Unknown dataset: " << args_info.dataset_arg << endl;
+	exit(1); 
+    }
 
     if ( args_info.prefix_given )
     {
@@ -280,10 +296,10 @@ int main(int argc, char **argv) {
     int i = -1; 
 
     while(cin && getline(cin, input_line) && !cin.eof()){
-        fields = parsePAIS(input_line);
-        i = boost::lexical_cast< int >( fields[1] ); 
-        geom_polygons[i]= wkt_reader->read(fields[2]);
-        id_polygon[i] = fields[2]; 
+        fields = parse(input_line);
+        i = boost::lexical_cast< int >( fields[ID_IDX] ); 
+        geom_polygons[i]= wkt_reader->read(fields[GEOM_IDX]);
+        id_polygon[i] = fields[GEOM_IDX]; 
     }
 
     // build spatial index for input polygons 

@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # jvm params 
-jvm="-Xss4m -Xmx80000M"
+jvm="-Xss4m -Xmx100G"
 
 # file path
 path=/data2/ablimit/Data/spatialdata/osmout
@@ -28,9 +28,11 @@ then
     mkdir -p ${temp}
 fi
 
+rm ${temp}/*
+
 echo "calculating MBRs for dataset."
 # co-partition the dataset 
-cat ${f1} ${f2} | genosmmbb | python data/normalize.py osm | python data/filterosm.py >  /scratch/aaji/osmmbb.txt
+# cat ${f1} ${f2} | genosmmbb | python data/normalize.py osm | python data/filterosm.py >  /scratch/aaji/osmmbb.txt
 # mv /scratch/aaji/osmmbb.txt /scratch/aaji/osmmbb.txt.bak
 # head -n 10000000 /scratch/aaji/osmmbb.txt.bak > /scratch/aaji/osmmbb.txt
 
