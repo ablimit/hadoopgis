@@ -66,70 +66,70 @@ string current_key = "" ;
 class MRJVisitor : public IVisitor
 {
     public:
-	size_t m_indexIO;
-	size_t m_leafIO;
-	vector<string> coll;
+        size_t m_indexIO;
+        size_t m_leafIO;
+        vector<string> coll;
 
     private: 
-	int m_count;
+        int m_count;
 
     public:
-	MRJVisitor() : m_indexIO(0), m_leafIO(0) {m_count=0;}
+        MRJVisitor() : m_indexIO(0), m_leafIO(0) {m_count=0;}
 
-	void visitNode(const INode& n)
-	{   
-	    if (n.isLeaf()) m_leafIO++;
-	    else m_indexIO++;
-	}  
-	  
-	void getInfo(){
-	    cerr << "[intersecting pairs=" <<coll.size() <<"]" << endl;
-	    for (int i=0; i< coll.size();i++)
-	    {
-		std::vector<std::string> strs;
-		std::vector<int> indices;
+        void visitNode(const INode& n)
+        {   
+            if (n.isLeaf()) m_leafIO++;
+            else m_indexIO++;
+        }  
 
-		boost::split(strs, coll[i], boost::is_any_of(comma));
-		for (int j=0; j< strs.size();j++)
-		    indices.push_back(boost::lexical_cast<int>(strs[j]));
+        void getInfo(){
+            cerr << "[Candidate MBR pairs=" <<coll.size() <<"]" << endl;
+            for (int i=0; i< coll.size();i++)
+            {
+                std::vector<std::string> strs;
+                std::vector<int> indices;
 
-		for (int j=1; j<indices.size();j++){ 
-		    if (polydata[current_key][0][indices[0]]->intersects(polydata[current_key][j][indices[j]]))
-			cout << current_key << tab << infodata[current_key][0][indices[0]]<< bar <<infodata[current_key][j][indices[j]] <<endl;
-		}
-	    }
-	}
+                boost::split(strs, coll[i], boost::is_any_of(comma));
+                for (int j=0; j< strs.size();j++)
+                    indices.push_back(boost::lexical_cast<int>(strs[j]));
 
-	void visitData(const IData& d)
-	{   
-	    // data should be an array of characters representing a Region as a string.
-	    byte* pData = 0;
-	    uint32_t cLen = 0;
-	    d.getData(cLen, &pData);
-	    // do something.
-	    //string s = reinterpret_cast<char*>(pData);
-	    //cout << s << endl;
-	    delete[] pData;
+                for (int j=1; j<indices.size();j++){ 
+                    if (polydata[current_key][0][indices[0]]->intersects(polydata[current_key][j][indices[j]]))
+                        cout << current_key << tab << infodata[current_key][0][indices[0]]<< bar <<infodata[current_key][j][indices[j]] <<endl;
+                }
+            }
+        }
 
-	    cout << "answer: "<<d.getIdentifier() << endl;
-	    // the ID of this data entry is an answer to the query. I will just print it to stdout.
-	}
+        void visitData(const IData& d)
+        {   
+            // data should be an array of characters representing a Region as a string.
+            byte* pData = 0;
+            uint32_t cLen = 0;
+            d.getData(cLen, &pData);
+            // do something.
+            //string s = reinterpret_cast<char*>(pData);
+            //cout << s << endl;
+            delete[] pData;
 
-	void visitData(std::vector<const IData*>& v)
-	{
-	    // to be filled with logic ;
-	}
+            cout << "answer: "<<d.getIdentifier() << endl;
+            // the ID of this data entry is an answer to the query. I will just print it to stdout.
+        }
 
-	void visitData(std::vector<uint32_t>& v)
-	{
-	    v.push_back(1);
-	    //coll.push_back(v);
-	}
+        void visitData(std::vector<const IData*>& v)
+        {
+            // to be filled with logic ;
+        }
 
-	void visitData(string & s)
-	{
-	    coll.push_back(s);
-	}
+        void visitData(std::vector<uint32_t>& v)
+        {
+            v.push_back(1);
+            //coll.push_back(v);
+        }
+
+        void visitData(string & s)
+        {
+            coll.push_back(s);
+        }
 
 };
 
@@ -156,71 +156,71 @@ RTree::Data* parseInputPolygon(Geometry *p, id_type m_id) {
 class MRJDataStream : public IDataStream
 {
     public:
-	MRJDataStream(vector<Geometry*> * invec, int tag ) : m_pNext(0), index(0), len(0),m_id(0)
+        MRJDataStream(vector<Geometry*> * invec, int tag ) : m_pNext(0), index(0), len(0),m_id(0)
     {
-	if ( invec->empty())
-	    throw Tools::IllegalArgumentException("Input size is ZERO.");
-	vec = invec;
-	len = vec->size();
-	readNextEntry();
-	tagg= tag;
+        if ( invec->empty())
+            throw Tools::IllegalArgumentException("Input size is ZERO.");
+        vec = invec;
+        len = vec->size();
+        readNextEntry();
+        tagg= tag;
     }
 
-	virtual ~MRJDataStream()
-	{
-	    if (m_pNext != 0) delete m_pNext;
-	}
+        virtual ~MRJDataStream()
+        {
+            if (m_pNext != 0) delete m_pNext;
+        }
 
-	virtual IData* getNext()
-	{
-	    if (m_pNext == 0) return 0;
+        virtual IData* getNext()
+        {
+            if (m_pNext == 0) return 0;
 
-	    RTree::Data* ret = m_pNext;
-	    m_pNext = 0;
-	    readNextEntry();
-	    return ret;
-	}
+            RTree::Data* ret = m_pNext;
+            m_pNext = 0;
+            readNextEntry();
+            return ret;
+        }
 
-	virtual bool hasNext()
-	{
-	    return (m_pNext != 0);
-	}
+        virtual bool hasNext()
+        {
+            return (m_pNext != 0);
+        }
 
-	virtual uint32_t size()
-	{
-	    return vec->size();
-	    //throw Tools::NotSupportedException("Operation not supported.");
-	}
+        virtual uint32_t size()
+        {
+            return vec->size();
+            //throw Tools::NotSupportedException("Operation not supported.");
+        }
 
-	virtual void rewind()
-	{
-	    if (m_pNext != 0)
-	    {
-		delete m_pNext;
-		m_pNext = 0;
-	    }
+        virtual void rewind()
+        {
+            if (m_pNext != 0)
+            {
+                delete m_pNext;
+                m_pNext = 0;
+            }
 
-	    index = 0;
-	    m_id  = 0;
-	    readNextEntry();
-	}
+            index = 0;
+            m_id  = 0;
+            readNextEntry();
+        }
 
-	void readNextEntry()
-	{
-	    if (index < len)
-	    {
-		//std::cout << "readNextEntry m_id == " << m_id << std::endl;
-		m_pNext = parseInputPolygon((*vec)[index], m_id);
-		index++;
-		m_id++;
-	    }
-	}
+        void readNextEntry()
+        {
+            if (index < len)
+            {
+                //std::cout << "readNextEntry m_id == " << m_id << std::endl;
+                m_pNext = parseInputPolygon((*vec)[index], m_id);
+                index++;
+                m_id++;
+            }
+        }
 
-	RTree::Data* m_pNext;
-	vector<Geometry*> * vec; 
-	int len;
-	int index ;
-	id_type m_id;
-	int tagg ;
+        RTree::Data* m_pNext;
+        vector<Geometry*> * vec; 
+        int len;
+        int index ;
+        id_type m_id;
+        int tagg ;
 };
 
