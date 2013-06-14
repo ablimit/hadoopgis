@@ -6,7 +6,6 @@
 #include <boost/algorithm/string.hpp>
 
 using namespace std;
-//using boost::lexical_cast;
 
 int GEOM_IDX = 4;
 int ID_IDX = 3;

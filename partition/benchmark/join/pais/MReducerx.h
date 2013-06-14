@@ -5,77 +5,62 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include <iostream>
+#include <vector>
+#include <map>
+
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/geometry.hpp>
-//#include <boost/geometry/geometry.hpp>
-#include <boost/geometry/geometries/point_xy.hpp>
-#include <boost/geometry/geometries/polygon.hpp>
-#include <boost/geometry/geometries/box.hpp>
-#include <boost/geometry/domains/gis/io/wkt/wkt.hpp>
+#include <boost/lexical_cast.hpp>
+
+// geos 
+#include <geos/geom/PrecisionModel.h>
+#include <geos/geom/GeometryFactory.h>
+#include <geos/geom/Geometry.h>
+#include <geos/geom/Point.h>
+#include <geos/io/WKTReader.h>
 
 #include <spatialindex/SpatialIndex.h>
-#include "IndexParam.h"
 
 
-using namespace SpatialIndex;
+#define PAIS_SRID 4326
+#define OSM_SRID 4326
+
+#define FillFactor 0.7
+#define IndexCapacity 100
+#define LeafCapacity 100
+#define COMPRESS true
+
+
 using namespace std;
+using namespace SpatialIndex;
+
+using namespace geos;
+using namespace geos::io;
+using namespace geos::geom;
+
 using boost::lexical_cast;
 using boost::bad_lexical_cast;
 
-typedef boost::geometry::model::d2::point_xy<int> point;
-typedef boost::geometry::model::polygon<point> polygon;
-typedef boost::geometry::model::box<point> box;
 
-typedef map<string,map<int,vector<polygon> > > polymap;
-typedef map<string,map<int,vector<box> > > boxmap;
+typedef map<string,map<int,vector<string> > > infomap;
+
+typedef map<string,map<int,vector<Geometry*> > > polymap;
 
 
 const string bar= "|";
 const string tab = "\t";
-const char comma = ',';
+const string comma = ",";
 
 polymap polydata;
-box mbb;
+infomap infodata;
 
 
 vector<string> joinresults;
-vector<double> values(4,0.0);
 
 const int DEBUG=0;
 
 string current_key = "" ;
-
-void update_join(double overlap_area, double union_area, double squared_distance) {
-    values[0] += overlap_area/union_area;
-    values[1] += squared_distance;
-    values[2] += overlap_area;
-    values[3] += union_area;
-}
-
-void reset () {
-    values[0] =0.0;
-    values[1] =0.0;
-    values[2] =0.0;
-    values[3] =0.0;
-}
-
-string summarize() {
-    stringstream oss;
-    oss << values[0] << bar<< values[1] << bar << values[2] << bar << values[3];
-    reset();
-    return oss.str();
-}
-
-std::string getDataString(const IData* d) {
-    byte* pData = 0;
-    uint32_t cLen = 0;
-    d->getData(cLen, &pData);
-    string s = reinterpret_cast<char*>(pData);
-    delete[] pData;
-    return s;
-}
-
 
 // example of a Visitor pattern.
 class MRJVisitor : public IVisitor
@@ -96,59 +81,27 @@ class MRJVisitor : public IVisitor
 	    if (n.isLeaf()) m_leafIO++;
 	    else m_indexIO++;
 	}  
-	/*
-	   void getInfo(){
-	   for (int i=0; i< coll.size();i++)
-	   {
-	   std::cerr << coll[i][0] ;
-	   for (int j=1 ;j < coll[i].size() ; j++)
-	   {
-	   std::cerr << ", " <<coll[i][j] ;
-	   }
-	   std::cerr << std::endl;
-	   }
-	   }
-	   */
-
+	  
 	void getInfo(){
-
-	    double overlap [] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-
 	    cerr << "[intersecting pairs=" <<coll.size() <<"]" << endl;
-	    std::vector<polygon> polyvec;
-	    std::vector<polygon> temp;
 	    for (int i=0; i< coll.size();i++)
 	    {
-
 		std::vector<std::string> strs;
 		std::vector<int> indices;
 
-		boost::split(strs, coll[i], boost::is_any_of(","));
+		boost::split(strs, coll[i], boost::is_any_of(comma));
 		for (int j=0; j< strs.size();j++)
-		    indices.push_back(lexical_cast<int>(strs[j]));
+		    indices.push_back(boost::lexical_cast<int>(strs[j]));
 
 		for (int j=1; j<indices.size();j++){ 
-
-		    if (boost::geometry::intersects(polydata[current_key][0][indices[0]],polydata[current_key][j][indices[j]]))
-		    {
-			boost::geometry::intersection(polydata[current_key][0][indices[0]],polydata[current_key][j][indices[j]],temp);
-			BOOST_FOREACH(polygon const& p, temp)
-			{
-			    overlap[j] += boost::geometry::area(p);
-			}
-			temp.resize(0);
-		    }
+		    if (polydata[current_key][0][indices[0]]->intersects(polydata[current_key][j][indices[j]]))
+			cout << current_key << tab << infodata[current_key][0][indices[0]]<< bar <<infodata[current_key][j][indices[j]] <<endl;
 		}
 	    }
-		cout << current_key << tab << "["<<overlap[1]<<bar<<overlap[2]<<bar<<overlap[3]<<bar<<overlap[4]<<bar<<overlap[5]<<"]"<< endl;
 	}
+
 	void visitData(const IData& d)
 	{   
-	    IShape* pS; 
-	    d.getShape(&pS);
-	    // do something.
-	    delete pS; 
-
 	    // data should be an array of characters representing a Region as a string.
 	    byte* pData = 0;
 	    uint32_t cLen = 0;
@@ -183,15 +136,15 @@ class MRJVisitor : public IVisitor
 
 
 
-RTree::Data* parseInputPolygon(polygon &p, id_type m_id) {
+RTree::Data* parseInputPolygon(Geometry *p, id_type m_id) {
     double low[2], high[2];
+    const Envelope * env = p->getEnvelopeInternal();
 
-    boost::geometry::envelope(p, mbb);
-    low [0] = boost::geometry::get<boost::geometry::min_corner, 0>(mbb);
-    low [1] = boost::geometry::get<boost::geometry::min_corner, 1>(mbb);
+    low [0] = env->getMinX();
+    low [1] = env->getMinY();
 
-    high [0] = boost::geometry::get<boost::geometry::max_corner, 0>(mbb);
-    high [1] = boost::geometry::get<boost::geometry::max_corner, 1>(mbb);
+    high [0] = env->getMaxX();
+    high [1] = env->getMaxY();
 
     Region r(low, high, 2);
 
@@ -203,7 +156,7 @@ RTree::Data* parseInputPolygon(polygon &p, id_type m_id) {
 class MRJDataStream : public IDataStream
 {
     public:
-	MRJDataStream(vector<polygon> * invec, int tag ) : m_pNext(0), index(0), len(0),m_id(0)
+	MRJDataStream(vector<Geometry*> * invec, int tag ) : m_pNext(0), index(0), len(0),m_id(0)
     {
 	if ( invec->empty())
 	    throw Tools::IllegalArgumentException("Input size is ZERO.");
@@ -247,7 +200,8 @@ class MRJDataStream : public IDataStream
 		m_pNext = 0;
 	    }
 
-	    index =0 ;
+	    index = 0;
+	    m_id  = 0;
 	    readNextEntry();
 	}
 
@@ -263,7 +217,7 @@ class MRJDataStream : public IDataStream
 	}
 
 	RTree::Data* m_pNext;
-	vector<polygon> * vec; 
+	vector<Geometry*> * vec; 
 	int len;
 	int index ;
 	id_type m_id;

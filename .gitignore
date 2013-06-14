@@ -44,7 +44,6 @@ partition/fixedgrid/gbm0.1.markup
 partition/fixedgrid/mapper
 partition/fixedgrid/shit
 partition/fixedgrid/temp.txt
-partition/fixedgrid/test.sh
 partition/fixedgrid/tmp.txt
 partition/rtree/genPartitionFromIndex
 partition/rtree/genPartitionRegionFromIndex
@@ -96,4 +95,4 @@ utility/dostuff.sh*
 *.dat
 *.bz2
 *.gz
-
+*.png

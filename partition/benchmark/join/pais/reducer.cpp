@@ -1,48 +1,37 @@
-#include <iostream>
-#include <vector>
-#include <map>
-
 #include "MReducerx.h"
-
-
-using namespace SpatialIndex;
-using namespace std;
-
-const char offset = '1';
-
-
-//map<string,map<int,vector<string> > > data;
 
 bool readSpatialInput() {
     string input_line;
     int index =0;
     string key ;
     string value;
-    polygon shape;
+    vector<string> fields;
+    size_t pos;
+
+    GeometryFactory *gf = new GeometryFactory(new PrecisionModel(),OSM_SRID);
+    WKTReader *wkt_reader= new WKTReader(gf);
+    Geometry *poly = NULL; 
+    
     while(cin && getline(cin, input_line) && !cin.eof()) {
-	size_t pos = input_line.find_first_of(tab);
+
+	pos = input_line.find_first_of(tab);
 	key = input_line.substr(0,pos);
-	index = input_line[pos+1] - offset;   // the very first character denotes join index
-	pos = input_line.find_first_of(tab, pos+1);
-	value = input_line.substr(pos+1); 
+	value = input_line.substr(pos+1) ;
+	boost::split(fields, value, boost::is_any_of(bar));
+	index = boost::lexical_cast< int >( fields[0]);
 
-	//cerr<< "Key: " << key << endl;
-	//cerr<< ""Value: " <<value << endl;
-	//data[key][index].push_back(value);
+	infodata[key][index].push_back(fields[1]);
 
-	boost::geometry::read_wkt(value, shape);
-	boost::geometry::correct(shape);
-	polydata[key][index].push_back(shape);
+	poly = wkt_reader->read(fields[2]);
+	polydata[key][index].push_back(poly);
+
+	fields.clear();
+	cerr.flush();
     }
 
-    //cerr << "size" << "\t" << polydata.size() << endl;
+    cerr << "size" << "\t" << polydata.size() << endl;
     return true;
 }
-
-
-
-
-
 
 
 int main(int argc, char** argv)
@@ -61,7 +50,6 @@ int main(int argc, char** argv)
     if (! readSpatialInput()) 
     {
 	cerr << "Reduce input parsing error...." << endl;
-	cerr.flush();
 	return 1;
     }
 
@@ -70,7 +58,8 @@ int main(int argc, char** argv)
 	if (polydata[iter->first].size() > joincar){
 	    joincar=polydata[iter->first].size();
 	    cerr << "|join|=" << joincar << endl;
-	    cerr << "  Note: if this prints more than once then probably there is a bug." << endl;
+	    cerr << "|T|=" << polydata.size() << endl;
+	    // cerr << "  Note: if this prints more than once then probably there is a bug." << endl;
 	}
 	//cerr << "size=" <<polydata[iter->first].size() << endl;
     }
@@ -84,12 +73,12 @@ int main(int argc, char** argv)
 	    key  = iter->first;
 	    cerr << "[" << key <<"]"<<endl;
 	    current_key =key;
-	    map<int,vector<polygon> > & images = polydata[key];
+	    map<int,vector<Geometry*> > & images = polydata[key];
 	    size = images.size();   // join size
 
 	    if (size< joincar)
 	    {
-	    cerr << "skipping [" << key <<"] "<<endl;
+		cerr << "skipping [" << key <<"] "<<endl;
 		continue ;
 	    }
 
@@ -108,24 +97,17 @@ int main(int argc, char** argv)
 		storages[i]= StorageManager::createNewMemoryStorageManager();
 		MRJDataStream stream(&(images[i]), i+1);
 
-		// Create and bulk load a new RTree with dimensionality 2, using memory as the StorageManager and the RSTAR splitting policy.
+		// Create and bulk load a new RTree with dimensionality 2, 
+		// using memory as the StorageManager and the RSTAR splitting policy.
 		forest[i]= RTree::createAndBulkLoadNewRTree( 
 			RTree::BLM_STR, stream, *storages[i], FillFactor, IndexCapacity, LeafCapacity, 2, 
 			SpatialIndex::RTree::RV_RSTAR, indexIdentifier[i]);
 
-		// std::cerr << *forest[i];
-		//std::cerr << "Buffer hits: " << file->getHits() << std::endl;
-		//cerr << "Index ID: " << indexIdentifier[i] << endl;
-
 		bool ret = forest[i]->isIndexValid();
 		if (ret == false) 
 		    cerr << "ERROR: Structure is invalid!" << endl;
-		//else 
-		//cerr << "The stucture is O.K." << endl;
 	    }
-	    /*Spatial Join 
-	     * Query Type: Clique Query --> One standard baseline is compared against multiple allgorithms.
-	     * Then the intersection result is reported individually */
+
 	    MRJVisitor vis;
 	    forest[0]->joinMQuery(vis, forest, size);
 	    vis.getInfo();
@@ -154,5 +136,4 @@ int main(int argc, char** argv)
 
     return 0;
 }
-
 
