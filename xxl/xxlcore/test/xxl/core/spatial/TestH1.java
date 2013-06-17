@@ -142,20 +142,20 @@ public class TestH1 {
 		histogram = eval.getMinSkewProgressiveRefinementHistogram();
 		eval.dumpHistogram(histogram,getPrintStream(outPath+".minskewrefine.txt"));
 		
-		//rkHist
-		System.err.println("Building rkHist histogram..");
-		eval.buildRKHist(numberOfBuckets, alpha, HistogramEval.BLOCKSIZE, true); // rkHist																		// Method
-		histogram = eval.getRkHist();
-		eval.dumpHistogram(histogram,getPrintStream(outPath+".rkhist.txt"));
-
 		// RV histogram
 		System.err.println("Building RV histogram..");
 		eval.buildRHistogramV(numberOfBuckets, rTreeRatio, true); 
 		histogram = eval.getRhistogram_V();
 		eval.dumpHistogram(histogram,getPrintStream(outPath+".rv.txt"));
 		
+		//rkHist
+		System.err.println("Building rkHist histogram..");
+		eval.buildRKHist(numberOfBuckets, alpha, HistogramEval.BLOCKSIZE, true); // rkHist																		// Method
+		histogram = eval.getRkHist();
+		eval.dumpHistogram(histogram,getPrintStream(outPath+".rkhist.txt"));
+
 		//STForest 
-		System.err.println("Building STForest histogram..");
+		/* System.err.println("Building STForest histogram..");
 		eval.buildSTForestHist(numberOfBuckets, sampleRate, true);
 		histogram = eval.getSTHistForest();
 		eval.dumpHistogram(histogram,getPrintStream(outPath+".stforest.txt"));
@@ -164,7 +164,8 @@ public class TestH1 {
 		eval.buildSOPTRtreeHist(numberOfBuckets, true);
 		histogram = eval.getSoptHist();
 		eval.dumpHistogram(histogram,getPrintStream(outPath+".soptrtree.txt"));
-		
+		*/
+
 		System.err.println("Done.");
 		System.err.println("++++++++++++++++++++++++++++++++++++\n");
 	}

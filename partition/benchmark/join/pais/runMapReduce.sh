@@ -4,18 +4,18 @@ logfile=join.log
 
 # reco=$(date +%F-%k-%M)
 
-make -f Makefile
+# make -f Makefile
 
 export HADOOP_HOME=/usr/lib/hadoop-0.20-mapreduce
 sudo -u hdfs hdfs dfs -rm -r /user/aaji/paisjoinout
 
 date >> ${logfile}
 
-for batch in oc2500 #oc5000 oc10000 oc15000 oc20000 oc25000 oc30000 oc50000
+for batch in oc2500 oc5000 oc10000 oc15000 oc20000 oc25000 oc30000 oc50000
 do
-    for method in minskew # rkHist rv rtree
+    for method in minskew rkHist rv rtree
     do
-        for reducecount in 190 # 140 100 80 60 40 20
+        for reducecount in 190 140 100 80 60 40 20
         do
             #reducecount=`expr ${maxmap} \\* 5`
             START=$(date +%s)
