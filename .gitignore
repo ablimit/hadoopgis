@@ -96,3 +96,5 @@ utility/dostuff.sh*
 *.bz2
 *.gz
 *.png
+*.eps
+

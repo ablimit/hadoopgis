@@ -46,7 +46,12 @@ mbb: RTreePartitionMBB.cc
 view: RTreeView.cc
 	$(CC) RTreeView.cc $(CFLAGS) $(LDFLAGS) -o viewRTree
 
+genpid: oidmatchpid.cc
+	$(CC) oidmatchpid.cc $(CFLAGS) $(LDFLAGS) -o genpid
+
 clean:
 	@rm -f genRtreeIndex genPlotFromIndex genPartitionFromIndex genPartitionRegionFromIndex viewRTree
 	@rm -f pais/genpaismbb osm/genosmmbb
+	@rm -f genpid
+
 
