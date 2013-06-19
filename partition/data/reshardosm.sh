@@ -18,29 +18,34 @@ then
     mkdir -p ${outpath}
 fi
 
-# echo "Generating MBRs for planet"
-# genosmmbb 1 < ${f1} | python normalize.py osm | bzip2 > ${outpath}/mbb.planet.txt.bz2 
+echo "Generating MBRs for planet"
+echo "genosmmbb 1 < ${f1} | python normalize.py osm | gzip > ${outpath}/mbb.planet.txt.gz "
 
-# echo "Generating MBRs for europe"
-# genosmmbb 2 < ${f2} | python normalize.py osm | bzip2 > ${outpath}/mbb.europe.txt.bz2
+echo "Generating MBRs for europe"
+echo "genosmmbb 2 < ${f2} | python normalize.py osm | gzip > ${outpath}/mbb.europe.txt.gz"
+# exit 0;
 
-mark=1201
 
-echo "Re-Partition the map"
-
-for method in rtree minskew minskewrefine rv rkHist sthist 
+# echo "Re-Partition the map"
+for size in 50000 100000 200000 300000 400000 500000
 do
-    if [ -e partres/osm/osm.${mark}.${method}.txt ]
-    then
-	echo "resharding for method ${method} .."
-	outdir=${outpath}/partition/part${method}
-	if [ ! -e ${outdir} ]
+    mark=${size%000}
+    dir=partres/osm/oc${mark}k
+
+    for method in rtree minskew minskewrefine rv rkHist sthist 
+    do
+	if [ -e ${dir}/osm.${method}.txt ]
 	then
-	    mkdir -p ${outdir}
+	    echo "resharding for method ${method} .."
+	    outdir=${outpath}/partition/oc${mark}k
+	    if [ ! -e ${outdir} ]
+	    then
+		mkdir -p ${outdir}
+	    fi
+
+	    zcat ${outpath}/mbb.planet.txt.gz  ${outpath}/mbb.europe.txt.gz | python genpid.py ${dir}/osm.${method}.txt | python reshardosm.py ${f1} ${f2} | gzip > ${outdir}/osm.${method}.txt.gz 
 	fi
 
-	bzcat ${outpath}/mbb.planet.txt.bz2  ${outpath}/mbb.europe.txt.bz2 | python genpid.py partres/osm/osm.${mark}.${method}.txt | python reshardosm.py ${f1} ${f2} | bzip2 > ${outdir}/osm.txt.bz2 
-    fi
-
+    done
 done
 

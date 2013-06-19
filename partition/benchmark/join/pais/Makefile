@@ -26,13 +26,16 @@ else
     CC = g++
 endif
 
-all: map reduce
+all: map reduce fgmap
 
 map: mapper.cpp
 	$(CC) mapper.cpp $(CFLAGS) $(LDFLAGS) -o mapper
 
 reduce: reducer.cpp MReducerx.h
 	$(CC) reducer.cpp $(CFLAGS) $(LDFLAGS) -o reducer
+
+fgmap: fgmapper.cpp
+	$(CC) fgmapper.cpp $(CFLAGS) $(LDFLAGS) -o fgmapper
 
 clean:
 	@rm -f mapper reducer
