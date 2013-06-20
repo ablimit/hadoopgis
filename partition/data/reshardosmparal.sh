@@ -6,9 +6,13 @@ outpath=/scratch/aaji/osm
 f1=${path}/planet.1000x1000.dat.1
 f2=${path}/europe.1000x1000.dat.2
 
-if [ ! -e genosmmbb ] ;
-then 
+if [ ! -e genosmmbb ] ; then 
     echo "MBR calculator [genosmmbb] is missing."
+    exit 0;
+fi
+
+if [ ! -e genpid ] ; then 
+    echo "oid -- > pid Mapper is missing. [genpid]"
     exit 0;
 fi
 
@@ -33,22 +37,17 @@ do
     dir=partres/osm/oc${mark}k
     outdir=${outpath}/partition/oc${mark}k
 
-    if [ ! -e ${outdir} ]
-    then 
-	echo "processing set oc${mark}k"
-	mkdir -p ${outdir}
+    echo "processing set oc${mark}k"
+    mkdir -p ${outdir}
 
-	for method in rtree minskew minskewrefine rv rkHist sthist 
-	do
-	    if [ -e ${dir}/osm.${method}.txt ]
-	    then
-		
-		echo "resharding for method ${method} .."
+    for method in rtree minskew minskewrefine rv rkHist sthist 
+    do
+	if [ -e ${dir}/osm.${method}.txt ] && [ ! -e ${outdir}/osm.${method}.txt.gz ] ; then
 
-		zcat ${outpath}/mbb.planet.txt.gz  ${outpath}/mbb.europe.txt.gz | python genpid.py ${dir}/osm.${method}.txt | python reshardosm.py ${f1} ${f2} | gzip > ${outdir}/osm.${method}.txt.gz 
-	    fi
+	    echo "resharding for method ${method} .."
 
-	done
-    fi
+	    zcat ${outpath}/mbb.planet.txt.gz  ${outpath}/mbb.europe.txt.gz | genpid ${dir}/osm.${method}.txt | python reshardosm.py ${f1} ${f2} | gzip > ${outdir}/osm.${method}.txt.gz 
+	fi
+    done
 done
 

@@ -1,11 +1,19 @@
 #include <spatialindex/SpatialIndex.h>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/lexical_cast.hpp>
+#include <string>
+#include <vector>
+#include <map>
 
 using namespace std;
 using namespace SpatialIndex;
 
+const unsigned int CHUNCK= 1000000 ;
 const string TAB  = "\t";
 const string DASH = "-";
-int sid = 0 ; 
+string soid ;
+
+map<id_type,vector<string> > poMap ; // pid --> oid vector
 
 class MyVisitor : public IVisitor
 {
@@ -24,29 +32,23 @@ public:
 
 	void visitData(const IData& d)
 	{
-        /*
-		IShape* pS;
-		d.getShape(&pS);
-			// do something.
-		delete pS;
-
-		// data should be an array of characters representing a Region as a string.
-		byte* pData = 0;
-		uint32_t cLen = 0;
-		d.getData(cLen, &pData);
-		// do something.
-		//string s = reinterpret_cast<char*>(pData);
-		//cout << s << endl;
-		delete[] pData;
-        */
-
-		cout << TAB << d.getIdentifier() << DASH << sid<<endl;
-			// the ID of this data entry is an answer to the query. I will just print it to stdout.
+	    poMap[d.getIdentifier()].push_back(soid);
+		//cout << TAB << d.getIdentifier() << DASH << sid;
 	}
 
 	void visitData(std::vector<const IData*>& v)
 	{
 		cout << v[0]->getIdentifier() << " " << v[1]->getIdentifier() << endl;
+	}
+	void visitData(std::vector<uint32_t>& v)
+	{
+	    //v.push_back(1);
+	    //coll.push_back(v);
+	}
+
+	void visitData(string & s)
+	{
+	    //coll.push_back(s);
 	}
 };
 
@@ -116,7 +118,7 @@ class MyDataStream : public IDataStream
             if (m_fin.good()){
                 Region r(low, high, 2);
                 m_pNext = new RTree::Data(0, 0 , r, m_id);// store a zero size null poiter.
-                cout << m_id <<TAB << low[0] <<TAB << low[1] <<TAB << high[0] <<TAB << high[1] <<TAB << area <<TAB << volume <<endl;
+               // cout << m_id <<TAB << low[0] <<TAB << low[1] <<TAB << high[0] <<TAB << high[1] <<TAB << area <<TAB << volume <<endl;
             }
         }
 
@@ -146,7 +148,7 @@ int main(int argc, char** argv)
         IStorageManager* diskfile = StorageManager::createNewMemoryStorageManager();
 
         MyDataStream stream(argv[1]);
-        cerr << "okay" << endl; 
+        //cerr << "okay" << endl; 
         cerr.flush();
         // Create and bulk load a new RTree with dimensionality 2, using "file" as
         // the StorageManager and the RSTAR splitting policy.
@@ -154,39 +156,51 @@ int main(int argc, char** argv)
         ISpatialIndex* tree = RTree::createAndBulkLoadNewRTree(
                 RTree::BLM_STR, stream, *diskfile, fillFactor, indexCapacity, leafCapacity, 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
 
-        std::cerr << *tree;
-        std::cerr << "Index ID: " << indexIdentifier << std::endl;
+        //std::cerr << *tree;
+        //std::cerr << "Index ID: " << indexIdentifier << std::endl;
 
         bool ret = tree->isIndexValid();
         if (ret == false) std::cerr << "ERROR: Structure is invalid!" << std::endl;
-        else std::cerr << "The stucture seems O.K." << std::endl;
+        //else std::cerr << "The stucture seems O.K." << std::endl;
 
 
         /*****************************************************************/
         /*parse the input collection */
-		MyVisitor vis;
+	MyVisitor vis;
         double low[2], high[2];
-        int oid; 
-        
+	int oid =-1;
+	int sid =-1; 
+	unsigned int progress_counter = 0; 
         while(cin && !cin.eof())
         {
-            cin >> oid >> sid >> low[0] >> low[1] >> high[0] >> high[1];
-            Region r = Region(low, phigh, 2);
-            tree->intersectsWithQuery(r, vis);
-            cout << endl;
-        }
 
-        /*clean up memory */
-        delete tree;
-        delete diskfile;
+            cin >> oid >> sid >> low[0] >> low[1] >> high[0] >> high[1];
+	    soid.clear();
+	    soid = boost::lexical_cast<string>(oid)+ DASH+ boost::lexical_cast<string>(sid);
+	    
+            Region r = Region(low, high, 2);
+            tree->intersectsWithQuery(r, vis);
+	    progress_counter++ ; 
+	    if (0 ==progress_counter % CHUNCK)
+		cerr << TAB <<"Progress Update: " << int (progress_counter / CHUNCK )<< " Million objects passed." <<endl;
+	}
+
+	for( map<id_type,vector<string> >::iterator itor = poMap.begin(); itor != poMap.end(); itor++) {
+	    cout << itor->first << TAB << boost::algorithm::join(itor->second, TAB) << endl;
+	}
+
+	cout.flush();
+	/*clean up memory */
+	delete tree;
+	delete diskfile;
 
     }
     catch (Tools::Exception& e)
     {
-        std::cerr << "******ERROR******" << std::endl;
-        std::string s = e.what();
-        std::cerr << s << std::endl;
-        return -1;
+	std::cerr << "******ERROR******" << std::endl;
+	std::string s = e.what();
+	std::cerr << s << std::endl;
+	return -1;
     }
 
     return 0;
