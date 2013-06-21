@@ -3,7 +3,7 @@ boost=/home/aaji/softs/boost
 spatial=/home/aaji/softs
 
 UNAME		= $(shell uname)
-OPTFLAGS	= -O3
+OPTFLAGS	= -O2
 INCBASE		= -I.
 LIBBASE		= -lspatialindex -lgeos
 
