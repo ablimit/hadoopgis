@@ -1,18 +1,10 @@
 #! /bin/bash
 
-if [ $# -lt 1 ]; then
-    echo "Usage: $0 [partition size=100000]"
-    exit 0
-fi
-
 # jvm params 
-jvm="-Xss4m -Xmx100G"
+jvm="-Xss4m -Xmx10G"
 
 # file path
 path=/data2/ablimit/Data/spatialdata
-osmmbb=${path}/sigspatial2013/osm.mbb.filter.txt
-f1=${path}/osmout/planet.1000x1000.dat.1
-f2=${path}/osmout/europe.1000x1000.dat.2
 temp=/scratch/aaji/temp/
 outpath=/scratch/aaji/osm
 # partition parameters
@@ -28,7 +20,6 @@ then
 fi
 
 
-# lc=`wc -l ${outpath}/osm.mbb.filter.txt | cut -d' ' -f1 `
 lc=120167664
 
 size=$1
@@ -43,34 +34,49 @@ do
 
     for method in rtree minskew minskewrefine rv rkHist
     do
-        if [ -e ${dir}/osm.${method}.txt ]; then
+	if [ -e ${dir}/osm.${method}.txt ]; then
 
-            # get mbb 
-            subdir=data/partres/osm/oc${mark}k/sub
-            while read pid x y xx yy area cc 
-            do  
-                python ${osmmbb} 
-                for subsize in  500 1000 2000 3000 4000 5000
-                do
-                    echo "calculating the partition size."
-                    p=`expr $((lc/size))`
+	    # get mbb 
+	    mbbdir=${outpath}/oc${mark}k/${method}
+
+	    mkdir -p ${mbbdir}
+
+	    echo "Generating sub-partition MBB collecion."
+
+	    zcat ${outpath}/osm.mbb.filter.txt.gz | data/genpid ${dir}/osm.${method}.txt | python subpart.py ${outpath}/osm.mbb.filter.txt.gz ${mbbdir}
+
+	    for f in `ls ${mbbdir}`
+	    do
+		submbb=${mbbdir}/${f}
+		echo "submbb file is: ${submbb}"
+
+		for subsize in  500 1000 2000 3000 4000 5000
+		do
+		    submark=${subsize%00}
+		    echo "calculating the partition layout.."
+		    lc=`wc -l ${mbbdir}/${f} | cut -d' ' -f1 `
+		    p=`expr $((lc/subsize))`
 
 
-                    echo "partition size is: $p"
+		    echo "partition params: |input|=${lc} |size|=${subsize} |p|=${p}"
 
+		    if [ $# -ge 2 ]; then
 
-                    if [ ! -e ${dir} ] ;
-                    then
-                        echo "Partition dir ${dir} does not exist. Creating it..."
-                        mkdir -p ${dir}
-                    fi
+			#  c for centum
+			subdir=data/partres/osm/oc${mark}k/sub/oc${submark}c 
+			if [ ! -e ${subdir} ] ;
+			then
+			    echo "Partition dir ${dir} does not exist. Creating it..."
+			    mkdir -p ${dir}
+			fi
 
-                    rm -f /scratch/aaji/temp/*
-                    java ${jvm} -cp xxlcore-2.1-SNAPSHOT.jar:xxlcore-2.1-SNAPSHOT-tests.jar:. xxl.core.spatial.TestH1 $p ${osmmbb} ${dir}/osm ${temp} ${gridsize} ${alpha} ${ratio} ${sample}
-                done    
-            done < ${dir}/osm.${method}.txt
+			rm -f /scratch/aaji/temp/*
+			java ${jvm} -cp xxlcore-2.1-SNAPSHOT.jar:xxlcore-2.1-SNAPSHOT-tests.jar:. xxl.core.spatial.TestH1 $p ${osmmbb} ${subdir}/osm ${temp} ${gridsize} ${alpha} ${ratio} ${sample}
+		    fi
+		done    
+	    done < ${dir}/osm.${method}.txt
 
-        fi
+	fi
     done
 
 
