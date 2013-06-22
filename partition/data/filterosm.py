@@ -18,12 +18,12 @@ def main():
         x2 = float(sp[3+idx])
         y2 = float(sp[4+idx])
         area = (x2-x1)*(y2-y1)
-        items.append((sp[0],x1,y1,x2,y2,area))
+        items.append((sp[0],sp[1],x1,y1,x2,y2,area))
         #else:
         #print len(sp)
 
     # sort objects by area 
-    items.sort(key=lambda x: x[5], reverse=True)
+    items.sort(key=lambda x: x[-1], reverse=True)
     
     #omit first million items 
     for item in items[18000000:]:
