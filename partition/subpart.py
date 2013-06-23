@@ -16,7 +16,7 @@ def main():
     if outdir[-1] == '/':
 	outdir = outdir[0:-1]
 
-    if path[-1] != '.gz':
+    if not path.endswith('.gz'):
 	sys.stderr.write(path +" is not a gzipped file.\n")
 	exit(1)
 
@@ -38,17 +38,18 @@ def main():
 	sp = line.strip().split()
 	oid = "-".join((sp[ID_IDX],sp[TAG_IDX]))
 	if oid in dic:
-	    output_dic[dic[oid]].append(line.strip())
+	    output_dic[dic[oid]].append(line)
 	else:
 	    cc +=1
 
     for key,val in output_dic.items():
+	print "Processing partition  %r" % key
 	f = open(outdir+"/"+key, 'w')
 	for line in val:
-	    f.write('%r\n' % line)
+	    f.write(line)
 	f.close()
 
-    sys.stderr.write("["+str(cc)+"] objects is missing.\n")
+    sys.stderr.write("["+str(cc)+"] objects are missing.\n")
     sys.stdout.flush()
     sys.stderr.flush()
 

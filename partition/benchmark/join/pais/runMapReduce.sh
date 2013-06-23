@@ -24,9 +24,10 @@ do
 	    sudo -u hdfs hdfs dfs -rm -r /user/aaji/dedupout
 
 	    START=$(date +%s)
-
             sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.child.java.opts=-Xmx4096M -mapper mapper -reducer reducer -file mapper -file reducer ${optinput} -output ${hdfsoutdir} -numReduceTasks ${reducecount} -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="pj_${batch}_${method}_${reducecount}" -jobconf mapred.task.timeout=36000000
 
+	    END=$(date +%s)
+	    DIFF=$(( $END - $START ))
             echo "join,${batch},${method},${reducecount},${DIFF}" >> ${logfile}
 
 	    START=$(date +%s)

@@ -7,7 +7,7 @@
 
 dir=testdir
 
-if [ -e ${dir}/osm.rtree.sample.txt.gz ] && [ -e ${dir}/osm.rtree.sample.txt.gz ] 
+if [ -e ${dir}/osm.rtree.sample.txt.gz ] 
 then
     echo "All testing infrastructure is present."
 else 

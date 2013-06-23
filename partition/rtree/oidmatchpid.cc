@@ -8,7 +8,7 @@
 using namespace std;
 using namespace SpatialIndex;
 
-const unsigned int CHUNCK= 1000000 ;
+const unsigned int CHUNCK= 1000000;
 const string TAB  = "\t";
 const string DASH = "-";
 string soid ;
@@ -156,7 +156,7 @@ int main(int argc, char** argv)
         ISpatialIndex* tree = RTree::createAndBulkLoadNewRTree(
                 RTree::BLM_STR, stream, *diskfile, fillFactor, indexCapacity, leafCapacity, 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
 
-        //std::cerr << *tree;
+        std::cerr << *tree;
         //std::cerr << "Index ID: " << indexIdentifier << std::endl;
 
         bool ret = tree->isIndexValid();
@@ -168,13 +168,14 @@ int main(int argc, char** argv)
         /*parse the input collection */
 	MyVisitor vis;
         double low[2], high[2];
+	double temp;
 	int oid =-1;
 	int sid =-1; 
 	unsigned int progress_counter = 0; 
         while(cin && !cin.eof())
         {
 
-            cin >> oid >> sid >> low[0] >> low[1] >> high[0] >> high[1];
+            cin >> oid >> sid >> low[0] >> low[1] >> high[0] >> high[1] >> temp;
 	    soid.clear();
 	    soid = boost::lexical_cast<string>(oid)+ DASH+ boost::lexical_cast<string>(sid);
 	    

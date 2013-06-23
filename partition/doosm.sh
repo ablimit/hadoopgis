@@ -36,11 +36,11 @@ fi
 # echo "calculating MBRs for dataset."
 # co-partition the dataset 
 echo "MBB+Norm -- planet"
-cat ${f1}  | genosmmbb 1 | python data/normalize.py osm | gzip > ${outpath}/planet.mbb.dat.gz
+# cat ${f1}  | genosmmbb 1 | python data/normalize.py osm | gzip > ${outpath}/mbb.planet.txt.gz
 echo "MBB+Norm -- europe"
-cat ${f2}  | genosmmbb 2 | python data/normalize.py osm | gzip > ${outpath}/europe.mbb.dat.gz
+# cat ${f2}  | genosmmbb 2 | python data/normalize.py osm | gzip > ${outpath}/mbb.europe.txt.gz
 echo "Filter"
-zcat ${outpath}/planet.mbb.dat.gz ${outpath}/europe.mbb.dat.gz | python data/filterosm.py >  ${outpath}/osm.mbb.filter.txt
+zcat ${outpath}/mbb.planet.txt.gz ${outpath}/mbb.europe.txt.gz | python data/filterosm.py | gzip >  ${outpath}/osm.mbb.filter.txt.gz
 exit 0 ;
 
 # lc=`wc -l ${outpath}/osm.mbb.filter.txt | cut -d' ' -f1 `

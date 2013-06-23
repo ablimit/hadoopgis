@@ -32,7 +32,7 @@ do
 
 	    optinput="-input /user/aaji/partition/osm/${method}/osm.${batch}.txt"
 
-	    for reducecount in 140 40 
+	    for reducecount in 180 140 40 
 	    do
 		sudo -u hdfs hdfs dfs -rm -r ${hdfsoutdir}
 		sudo -u hdfs hdfs dfs -rm -r /user/aaji/dedupout
