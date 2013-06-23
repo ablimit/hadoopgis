@@ -137,10 +137,12 @@ public class TestH1 {
 		eval.dumpHistogram(histogram,getPrintStream(outPath+".minskew.txt"));
 		
 		// standard min skew 2^7 x 2^7 grid and three refinerment steps
+        /*
 		System.err.println("Building Progressive minSkew histogram..");
 		eval.buildMinSkewProgressiveHist(numberOfBuckets, gridSize, 3, true);
 		histogram = eval.getMinSkewProgressiveRefinementHistogram();
 		eval.dumpHistogram(histogram,getPrintStream(outPath+".minskewrefine.txt"));
+        */
 		
 		// RV histogram
 		System.err.println("Building RV histogram..");
@@ -150,7 +152,7 @@ public class TestH1 {
 		
 		//rkHist
 		System.err.println("Building rkHist histogram..");
-		eval.buildRKHist(numberOfBuckets, alpha, HistogramEval.BLOCKSIZE, true); // rkHist																		// Method
+		eval.buildRKHist(numberOfBuckets, alpha, HistogramEval.BLOCKSIZE, true); 
 		histogram = eval.getRkHist();
 		eval.dumpHistogram(histogram,getPrintStream(outPath+".rkhist.txt"));
 
