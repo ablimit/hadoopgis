@@ -156,7 +156,7 @@ int main(int argc, char** argv)
         ISpatialIndex* tree = RTree::createAndBulkLoadNewRTree(
                 RTree::BLM_STR, stream, *diskfile, fillFactor, indexCapacity, leafCapacity, 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
 
-        std::cerr << *tree;
+        //std::cerr << *tree;
         //std::cerr << "Index ID: " << indexIdentifier << std::endl;
 
         bool ret = tree->isIndexValid();

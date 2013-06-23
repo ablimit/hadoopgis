@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # jvm params 
-jvm="-Xss4m -Xmx10G"
+jvm="-Xss4m -Xmx20G"
 
 # file path
 path=/data2/ablimit/Data/spatialdata
@@ -27,18 +27,23 @@ do
 
     for method in rtree #minskew minskewrefine rv rkHist
     do
-	if [ -e ${dir}/osm.${method}.txt ]; then
+	mbbdir=${outpath}/oc${mark}k/${method}
 
-	    # get mbb 
-	    mbbdir=${outpath}/oc${mark}k/${method}
+	if [ -e ${dir}/osm.${method}.txt ] ; then
+	    # && [ ! -e ${mbbdir} ] ; then
 
-	    mkdir -p ${mbbdir}
+	    # mkdir -p ${mbbdir}
+	    echo "MBR output dir: ${mbbdir}"
 
-	    echo "Generating sub-partition MBB collecion at ${mbbdir}"
+	    if [ ! -e ${outpath}/op/oc${mark}k ]; then
+		mkdir -p ${outpath}/op/oc${mark}k 
+	    fi
 
-	    zcat ${outpath}/osm.mbb.filter.txt.gz | genpid ${dir}/osm.${method}.txt | python subpart.py ${outpath}/osm.mbb.filter.txt.gz ${mbbdir}
+	    echo "oid -- pid matching ..."
+	    zcat ${outpath}/osm.mbb.filter.txt.gz | genpid ${dir}/osm.${method}.txt | gzip > ${outpath}/op/oc${mark}k/${method}.tsv.gz
+	    echo "MBR hashing .."
+	    zcat ${outpath}/op/oc${mark}k/${method}.tsv.gz |  python subpart.py ${outpath}/osm.mbb.filter.txt.gz ${mbbdir}
 
-	    # exit 0;
 	    for f in `ls ${mbbdir}`
 	    do
 		submbb=${mbbdir}/${f}
@@ -51,10 +56,9 @@ do
 		    lc=`wc -l ${submbb} | cut -d' ' -f1 `
 		    p=`expr $((lc/subsize))`
 
+		    echo "partition params: |pid|=${f} |input|=${lc} |size|=${subsize} |p|=${p}"
 
-		    echo "partition params: |input|=${lc} |size|=${subsize} |p|=${p}"
-
-		    if [ $# -ge 2 ]; then
+		    if [ $p -ge 2 ]; then
 
 			#  c for centum
 			subdir=data/partres/osm/oc${mark}k/${method}/oc${submark}c
@@ -65,11 +69,10 @@ do
 			fi
 
 			rm -f /scratch/aaji/temp/*
-			java ${jvm} -cp xxlcore-2.1-SNAPSHOT.jar:xxlcore-2.1-SNAPSHOT-tests.jar:. xxl.core.spatial.TestH1 $p ${osmmbb} ${subdir}/osm ${temp} ${gridsize} ${alpha} ${ratio} ${sample}
+			java ${jvm} -cp xxlcore-2.1-SNAPSHOT.jar:xxlcore-2.1-SNAPSHOT-tests.jar:. xxl.core.spatial.TestH1 $p ${submbb} ${subdir}/osm ${temp} ${gridsize} ${alpha} ${ratio} ${sample}
 		    fi
 		done    
-	    done < ${dir}/osm.${method}.txt
-
+	    done
 	fi
     done
 

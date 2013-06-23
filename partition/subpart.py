@@ -43,7 +43,7 @@ def main():
 	    cc +=1
 
     for key,val in output_dic.items():
-	print "Processing partition  %r" % key
+	# print "Processing partition  %r" % key
 	f = open(outdir+"/"+key, 'w')
 	for line in val:
 	    f.write(line)

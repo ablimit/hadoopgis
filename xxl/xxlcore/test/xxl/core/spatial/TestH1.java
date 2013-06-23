@@ -75,10 +75,10 @@ public class TestH1 {
 				double [] rightCorner = new double [2];
 				String [] sp = line.split("\\s+");
 				
-				leftCorner[0] = Double.parseDouble(sp[1]);
-				leftCorner[1] = Double.parseDouble(sp[2]);
-				rightCorner[0] = Double.parseDouble(sp[3]);
-				rightCorner[1] = Double.parseDouble(sp[4]);
+				leftCorner[0] = Double.parseDouble(sp[2]);
+				leftCorner[1] = Double.parseDouble(sp[3]);
+				rightCorner[0] = Double.parseDouble(sp[4]);
+				rightCorner[1] = Double.parseDouble(sp[5]);
 				
 				rectangles.add(new DoublePointRectangle(leftCorner, rightCorner));
 			}
