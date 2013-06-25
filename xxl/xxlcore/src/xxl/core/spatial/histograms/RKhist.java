@@ -63,6 +63,8 @@ public class RKhist {
 		double overestimation =  (numberOfHyperBlocks-( numberOfHyperBlocks*ratio)); 
 		int hyperBlockSize = (int) Math.ceil(numberOfNodes/overestimation);
 		int floor = (int) Math.floor(numberOfNodes/overestimation);
+		if (floor ==0)
+			floor =1;
 		int maxHC = numberOfNodes /hyperBlockSize;
 		int maxHF = numberOfNodes /floor;
 		int penaltyNumber = (int) ((numberOfHyperBlocks*ratio)/2);
