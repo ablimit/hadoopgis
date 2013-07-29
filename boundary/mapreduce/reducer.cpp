@@ -40,11 +40,11 @@ bool readSpatialInput() {
 
     polygon * shape= NULL;
     box * mbb = NULL;
-	int index =0;
+    int index =0;
 
     string key ;
     string value;
-	string tmpid;
+    string tmpid;
     vector<string> fields;
 
     while(cin && getline(cin, input_line) && !cin.eof()) {
@@ -54,18 +54,18 @@ bool readSpatialInput() {
         index = boost::lexical_cast<int>(fields[1]) -1;
         tmpid = fields[2];
         value = fields[3];
-		shape = new polygon();
-		mbb = new box();
+        shape = new polygon();
+        mbb = new box();
 
-		/* Read/convert into polygon and mbb object */
-		boost::geometry::read_wkt(value,*shape);
-		boost::geometry::correct(*shape);
-		boost::geometry::envelope(*shape, *mbb);
-		
-		/* Push everything in a map so we can retrieve everything later */
-		outline[key][index].push_back(mbb);
-		markup[key][index].push_back(shape);
-		polyid[key][index].push_back(tmpid);
+        /* Read/convert into polygon and mbb object */
+        boost::geometry::read_wkt(value,*shape);
+        boost::geometry::correct(*shape);
+        boost::geometry::envelope(*shape, *mbb);
+
+        /* Push everything in a map so we can retrieve everything later */
+        outline[key][index].push_back(mbb);
+        markup[key][index].push_back(shape);
+        polyid[key][index].push_back(tmpid);
 
         fields.clear();
     }
@@ -76,72 +76,72 @@ int main(int argc, char** argv)
 {
     boxmap::iterator iter;
     string key;
-	string imageid;
+    string imageid;
     int size = -1;
-	int pos3;
+    int pos3;
 
-	double overlap_area;
+    double overlap_area;
 
-	int x1, y1, x2, y2;
-	x1 = 0;
-	y1 = 0;
-	x2 = 0;
-	y2 = 0;
+    int x1, y1, x2, y2;
+    x1 = 0;
+    y1 = 0;
+    x2 = 0;
+    y2 = 0;
 
     point a, b;
 
     if (readSpatialInput())
     {
-		/* for each key (tile-id) in the input stream */
-		for (iter= outline.begin(); iter != outline.end(); iter++)
-		{
-			key  = iter->first;
-			pos3 = key.find_first_of(minusS, 0);
-			imageid = key.substr(0, pos3);
-	
-			map<int ,vector<box*> > &mbbs = outline[key];
-			map<int ,vector<polygon*> > &shapes = markup[key];
+        /* for each key (tile-id) in the input stream */
+        for (iter= outline.begin(); iter != outline.end(); iter++)
+        {
+            key  = iter->first;
+            pos3 = key.find_first_of(minusS, 0);
+            imageid = key.substr(0, pos3);
 
-			size = mbbs.size(); /* join cardinality */
-			vector<polygon> output;
+            map<int ,vector<box*> > &mbbs = outline[key];
+            map<int ,vector<polygon*> > &shapes = markup[key];
 
-			int outerloop_size = (mbbs[0]).size(); /* source tile polygon size */
-			for (int i =1; i< size ;i++)
-			{
-			int innerloop_size = (mbbs[i]).size(); /* target tile polygon size */
-			for (int j =0; j< outerloop_size; j++)
-			{
-				for (int k=0; k< innerloop_size; k++)
-				{
-				if (boost::geometry::intersects( *(mbbs[0][j]), *(mbbs[i][k])) )
-				{
-					/* The two minimum bounding rectangles intersect */
+            size = mbbs.size(); /* join cardinality */
+            vector<polygon> output;
 
-					boost::geometry::intersection(*(shapes[0][j]),*(shapes[i][k]),output);
-					if (output.empty())
-					{
-						/* Skip if the two polygons do not intersect */
-						continue;
-					}
-					/* Read the overlap area */
-					BOOST_FOREACH(polygon & p, output)
-					{
-					boost::geometry::correct(p);
-					overlap_area += boost::geometry::area(p);
-					}
+            int outerloop_size = (mbbs[0]).size(); /* source tile polygon size */
+            for (int i =1; i< size ;i++)
+            {
+                int innerloop_size = (mbbs[i]).size(); /* target tile polygon size */
+                for (int j =0; j< outerloop_size; j++)
+                {
+                    for (int k=0; k< innerloop_size; k++)
+                    {
+                        if (boost::geometry::intersects( *(mbbs[0][j]), *(mbbs[i][k])) )
+                        {
+                            /* The two minimum bounding rectangles intersect */
 
-					/* Output statistics: overlap area */
-					cout << imageid << minusS << polyid[key][0][j] 
-						<< minusS << polyid[key][i][k] 
-						<< tab << overlap_area << endl;	
-					/* Reset the intersecting shapes  */		
-					output.clear();
-                    overlap_area = 0.0 ;
-				}
-				}
-			}
-			}
-		}
+                            boost::geometry::intersection(*(shapes[0][j]),*(shapes[i][k]),output);
+                            if (output.empty())
+                            {
+                                /* Skip if the two polygons do not intersect */
+                                continue;
+                            }
+                            /* Read the overlap area */
+                            BOOST_FOREACH(polygon & p, output)
+                            {
+                                boost::geometry::correct(p);
+                                overlap_area += boost::geometry::area(p);
+                            }
+
+                            /* Output statistics: overlap area */
+                            cout << imageid << minusS << polyid[key][0][j] << tab 
+                                 << imageid << minusS << polyid[key][i][k] << tab 
+                                 << overlap_area << endl;	
+                            /* Reset the intersecting shapes  */		
+                            output.clear();
+                            overlap_area = 0.0 ;
+                        }
+                    }
+                }
+            }
+        }
     }
     return 0;
 }

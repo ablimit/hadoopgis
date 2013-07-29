@@ -18,11 +18,11 @@ echo "" >> dup.log
 
 for round in 1
 do
-    #for factor in 2 3 4 5 6 7 8 9 
-    for factor in 2
+    for factor in 2 3 4 5 6 7 8 9 
+    # for factor in 2
     do
-	#for reducecount in 5 10 20 40 60 80 100 140 200
-	for reducecount in 100
+	for reducecount in 10 20 40 60 80 100 140 200
+	# for reducecount in 100
 	do
 	    sudo -u hdfs hdfs dfs -rm -r ${hdfsoutdir}
 	    sudo -u hdfs hdfs dfs -rm -r /user/aaji/dedupout
@@ -36,7 +36,7 @@ do
 	    echo "DupStep,${round},${reducecount},${DIFF}" >> dup.log
 
 	    START=$(date +%s)
-	    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.child.java.opts=-Xmx4096M -mapper 'cat - ' -file /bin/cat -reducer /usr/bin/uniq -input ${hdfsoutdir} -output /user/aaji/dedupout -numReduceTasks 1 -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="dedup_join_${reducecount}"  -jobconf mapred.task.timeout=36000000
+	    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.child.java.opts=-Xmx4096M -mapper 'cat - ' -reducer 'sort -u -k1,2 ' /usr/bin/uniq -input ${hdfsoutdir} -output /user/aaji/dedupout -numReduceTasks 1 -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="dedup_join_${reducecount}"  -jobconf mapred.task.timeout=36000000
 
 	    END=$(date +%s)
 	    DIFF=$(( $END - $START ))
@@ -44,8 +44,6 @@ do
 	done
     done
 done
-
-# sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.child.java.opts=-Xmx2048M -mapper org.apache.hadoop.mapred.lib.IndentityMapper -reducer "uniq" -input ${hdfsoutdir} -output /user/aaji/dedupout -numReduceTasks 1 -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="dedup_joi_${reducecount}"  -jobconf mapred.task.timeout=36000000
 
 make clean
 
