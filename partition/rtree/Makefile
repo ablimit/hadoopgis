@@ -25,11 +25,12 @@ else
     CC = g++
 endif
 
-all: process loader plot part mbb view
+# all: process loader plot part mbb view
+all: loader mbb query
 
 process: pais/GeneratePAISMBB.cc osm/GenerateOSMMBB.cc
-	$(CC) -g pais/GeneratePAISMBB.cc $(CFLAGS) $(LDFLAGS) -o pais/genpaismbb
-	$(CC) -g osm/GenerateOSMMBB.cc $(CFLAGS) $(LDFLAGS) -o osm/genosmmbb
+	$(CC) pais/GeneratePAISMBB.cc $(CFLAGS) $(LDFLAGS) -o pais/genpaismbb
+	$(CC) osm/GenerateOSMMBB.cc $(CFLAGS) $(LDFLAGS) -o osm/genosmmbb
 
 loader: RTreeBulkLoad.cc
 	$(CC) RTreeBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndex
@@ -42,6 +43,9 @@ part: RTreePartitionFromIndex.cc
 
 mbb: RTreePartitionMBB.cc
 	$(CC) RTreePartitionMBB.cc $(CFLAGS) $(LDFLAGS) -o genPartitionRegionFromIndex
+
+query: RTreeQuery.cc
+	$(CC) RTreeQuery.cc $(CFLAGS) $(LDFLAGS) -o rquery
 
 view: RTreeView.cc
 	$(CC) RTreeView.cc $(CFLAGS) $(LDFLAGS) -o viewRTree
