@@ -97,4 +97,5 @@ utility/dostuff.sh*
 *.gz
 *.png
 *.eps
-
+.DS_Store
+.pyc
