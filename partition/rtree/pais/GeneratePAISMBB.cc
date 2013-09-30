@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     {
         tag= argv[1];
     }
-    GeometryFactory *gf = new GeometryFactory(new PrecisionModel(),4326);
+    GeometryFactory *gf = new GeometryFactory(new PrecisionModel(),0);
     WKTReader *wkt_reader= new WKTReader(gf);
     Geometry *poly ; 
     string DEL = " ";
@@ -35,16 +35,14 @@ int main(int argc, char** argv)
     while(cin && getline(cin, input_line) && !cin.eof())
     {
         boost::split(fields, input_line, boost::is_any_of("|"));
-        poly = wkt_reader->read(fields[2]);
+        poly = wkt_reader->read(fields[4]);
         const Envelope * env = poly->getEnvelopeInternal();
         low [0] = env->getMinX();
         low [1] = env->getMinY();
         high [0] = env->getMaxX();
         high [1] = env->getMaxY();
-        int id = boost::lexical_cast< int >(fields[1]);
         
-        cout << id << DEL ;
-        if (NULL != tag ) cout << tag << DEL ;
+        cout << fields[0]<< "|" << fields[1] << "|" << fields[2] << "|" <<fields[3] << "|";
         cout << low[0] << DEL << low[1] << DEL << high[0] << DEL << high[1] << endl;
         fields.clear();
     }
