@@ -29,11 +29,11 @@ endif
 all: loader mbb query
 
 process: pais/GeneratePAISMBB.cc osm/GenerateOSMMBB.cc
-	$(CC) pais/GeneratePAISMBB.cc $(CFLAGS) $(LDFLAGS) -o pais/genpaismbb
+	#$(CC) pais/GeneratePAISMBB.cc $(CFLAGS) $(LDFLAGS) -o pais/genpaismbb
 	$(CC) osm/GenerateOSMMBB.cc $(CFLAGS) $(LDFLAGS) -o osm/genosmmbb
 
-loader: RTreeBulkLoad.cc RTreeBulkLoadPAIS.cc
-	$(CC) RTreeBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndex
+loader: RTreeBulkLoadOSM.cc RTreeBulkLoadPAIS.cc
+	$(CC) RTreeBulkLoadOSM.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndexOsm
 	$(CC) RTreeBulkLoadPAIS.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndexPais
 	
 plot: genPlotFromIndex.cc
