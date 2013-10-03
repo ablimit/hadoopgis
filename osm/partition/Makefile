@@ -36,13 +36,13 @@ processor: processor.cc
 query: RTreeQuery.cc
 	$(CC) RTreeQuery.cc $(CFLAGS) $(LDFLAGS) -o rquery
 
-part: RTreePartitionFromIndex.cc
-	$(CC) RTreePartitionFromIndex.cc $(CFLAGS) $(LDFLAGS) -o partitioner
+#part: RTreePartitionFromIndex.cc
+#	$(CC) RTreePartitionFromIndex.cc $(CFLAGS) $(LDFLAGS) -o partitioner
 
-mbb: RTreePartitionMBB.cc
-	$(CC) RTreePartitionMBB.cc $(CFLAGS) $(LDFLAGS) -o genPartitionRegionFromIndex
+#mbb: RTreePartitionMBB.cc
+#	$(CC) RTreePartitionMBB.cc $(CFLAGS) $(LDFLAGS) -o genPartitionRegionFromIndex
 
 
 clean:
-	@rm -f rtreeloader preprocess rquery partitioner genPartitionRegionFromIndex
+	@rm -f rtreeloader preprocess rquery
 
