@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # jvm params 
-jvm="-Xss4m -Xmx50G"
+jvm="-Xss4m -Xmx20G"
 
 # file path
 path=/data2/ablimit/Data/spatialdata
@@ -20,18 +20,18 @@ then
 fi
 
 
-for size in 50000 100000 200000 300000 400000 500000 
+for size in 50000
 do
     mark=${size%000}
     dir=data/partres/osm/oc${mark}k
 
-    for method in rtree minskew minskewrefine rv rkHist
+    for method in rtree 
     do
 	mbbdir=${outpath}/oc${mark}k/${method}
 
-	if [ -e ${dir}/osm.${method}.txt ] ; then
+	if [ -e ${dir}/osm.${method}.txt ]; then
 
-	    mkdir -p ${mbbdir}
+	    # mkdir -p ${mbbdir}
 	    echo "MBR output dir: ${mbbdir}"
 
 	    if [ ! -e ${outpath}/op/oc${mark}k ]; then

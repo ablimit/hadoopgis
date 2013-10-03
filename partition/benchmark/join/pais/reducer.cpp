@@ -21,9 +21,9 @@ bool readSpatialInput() {
         boost::split(fields, value, boost::is_any_of(bar));
 
         // join index 
-        index = boost::lexical_cast< int >( fields[0]);
-        index--;
-        // oid -- id of the spatial record 
+        index = boost::lexical_cast< int >( fields[0]) -1;
+        
+	// oid -- id of the spatial record 
         infodata[key][index].push_back(fields[1]);
 
         // wkt representation of the spatial object

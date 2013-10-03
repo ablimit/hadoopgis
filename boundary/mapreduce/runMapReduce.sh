@@ -5,7 +5,7 @@
 #    exit 0
 #fi
 
-make -f Makefile
+# make -f Makefile
 
 export HADOOP_HOME=/usr/lib/hadoop-0.20-mapreduce
 
@@ -33,14 +33,14 @@ do
 
 	    END=$(date +%s)
 	    DIFF=$(( $END - $START ))
-	    echo "DupStep,${round},${reducecount},${DIFF}" >> dup.log
+	    echo "DupStep,${factor},${reducecount},${DIFF}" >> dup.log
 
 	    START=$(date +%s)
-	    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.child.java.opts=-Xmx4096M -mapper 'cat - ' -reducer 'sort -u -k1,2 ' /usr/bin/uniq -input ${hdfsoutdir} -output /user/aaji/dedupout -numReduceTasks 1 -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="dedup_join_${reducecount}"  -jobconf mapred.task.timeout=36000000
+	    sudo -u hdfs hadoop jar ${HADOOP_HOME}/contrib/streaming/hadoop-streaming-*.jar -D mapred.child.java.opts=-Xmx4096M -mapper 'cat - ' -reducer 'sort -u -k1,2 ' /usr/bin/uniq -input ${hdfsoutdir} -output /user/aaji/dedupout -numReduceTasks 40 -verbose -cmdenv LD_LIBRARY_PATH=/home/aaji/softs/lib:$LD_LIBRARY_PATH -jobconf mapred.job.name="dedup_join_${reducecount}"  -jobconf mapred.task.timeout=36000000
 
 	    END=$(date +%s)
 	    DIFF=$(( $END - $START ))
-	    echo "deDupStep,${round},${reducecount},${DIFF}" >> dup.log
+	    echo "deDupStep,${factor},${reducecount},${DIFF}" >> dup.log
 	done
     done
 done

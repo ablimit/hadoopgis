@@ -1,38 +1,48 @@
 #! /bin/bash
 
-if [ ! $# == 1 ]; then
-    echo "Usage: $0 [Input File Path] "
-    exit
-fi
+leafCapacity=1000
+fillFactor=0.99
 
 
-inFile=`basename $1`
-echo $inFile
+ipath=/data2/ablimit/Data/spatialdata/pais/pais.mbb.dat
+# ipath=temp.txt
 
-dir=`dirname $1`
-echo $dir
+opath=/mnt/scratch1/aaji/partition/pais/rtree
 
-indexCapacity=100
-leafCapacity=500
-fillFactor=0.95
-# tempPath=/dev/shm
 tempPath=/tmp
+# tempPath=/dev/shm
 
-echo "generating approxmiation...."
-pais/genmbb < ${dir}/${inFile} > ${tempPath}/${inFile}.mbb
+# echo "generating approxmiation...."
+# pais/genmbb < ${dir}/${inFile} > ${tempPath}/${inFile}.mbb
 
+# for ic in 10 20 50 100 200 500
+for ic in 10000 20000 50000 100000 200000 500000
+do
+    if [ ! -e ${opath}/ic${ic}leaf ] ;
+    then 
+	mkdir -p ${opath}/ic${ic}leaf
+    fi
 
-echo "building index on data ...."
-./genRtreeIndex ${tempPath}/${inFile}.mbb ${tempPath}/${inFile}.idx $indexCapacity $leafCapacity $fillFactor
+    echo "Leaf capacity: ${ic}"
 
-echo "generating partition ...."
-./genPartitionFromIndex ${tempPath}/${inFile}.idx  > ${tempPath}/${inFile}.res
+    echo -e "\n####################################"
+    echo "building index on data ...."
+    ./genRtreeIndexPais ${ipath} ${tempPath}/paisspatial $ic $leafCapacity $fillFactor
+    # ./genRtreeIndexPais ${ipath} ${tempPath}/paisspatial 4 $ic $fillFactor
+    
+    echo -e "\n####################################"
+    echo "generating partition region..."
+    ./genPartitionRegionFromIndex  ${tempPath}/paisspatial > ${opath}/ic${ic}leaf/regionmbb.txt 2> ${opath}/ic${ic}leaf/idxmbb.gnu
 
-python pais/mappartition.py ${tempPath}/${inFile}.res < ${dir}/${inFile} > ${dir}/${inFile}.part
-# mv ${in}.part ${in}
+    echo -e "\n####################################"
+    echo "generate pid oid mapping ...."
+    ./rquery ${opath}/ic${ic}leaf/regionmbb.txt ${tempPath}/paisspatial  > ${tempPath}/paispidoid.txt
 
-./genPartitionRegionFromIndex  ${tempPath}/${inFile}.idx > ${dir}/${inFile}.regionmbb.txt 2> ${dir}/${inFile}.idxmbb.gnu
-
-
-rm ${tempPath}/${inFile}*
+    echo -e "\n####################################"
+    echo "remapping objects"
+    python pais/mappartition.py ${tempPath}/paispidoid.txt < ${ipath} > ${opath}/ic${ic}leaf/pais.part
+    
+    rm /tmp/paisspatial*
+    rm /tmp/paispidoid.txt 
+done
 

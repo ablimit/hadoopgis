@@ -67,12 +67,13 @@ public class RTree {
 			{
 				double[] leftCorner = new double[2];
 				double[] rightCorner = new double[2];
-				String[] sp = line.split("\\s+");
+				String[] sp = line.split("\\|");
 				if (sp.length >= 5) {
-					leftCorner[0] = Double.parseDouble(sp[1]);
-					leftCorner[1] = Double.parseDouble(sp[2]);
-					rightCorner[0] = Double.parseDouble(sp[3]);
-					rightCorner[1] = Double.parseDouble(sp[4]);
+				    sp = sp[4].split("\\s+");
+					leftCorner[0] = Double.parseDouble(sp[0]);
+					leftCorner[1] = Double.parseDouble(sp[1]);
+					rightCorner[0] = Double.parseDouble(sp[2]);
+					rightCorner[1] = Double.parseDouble(sp[3]);
 					
 					rectangles.add(new DoublePointRectangle(leftCorner,
 							rightCorner));

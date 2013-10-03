@@ -57,9 +57,10 @@ class MyDataStream : public IDataStream
         void readNextEntry()
         {
             double low[2], high[2];
+	    double area;
 
 
-            m_fin >> m_id >> low[0] >> low[1] >> high[0] >> high[1];
+            m_fin >> m_id >> low[0] >> low[1] >> high[0] >> high[1] >> area;
 
             if (m_fin.good())
             {
@@ -105,7 +106,7 @@ int main(int argc, char** argv)
         ISpatialIndex* tree = RTree::createAndBulkLoadNewRTree(
                 RTree::BLM_STR, stream, *file, fillFactor, indexCapacity, leafCapacity, 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
 
-        std::cerr << *tree;
+        // std::cerr << *tree;
         std::cerr << "Buffer hits: " << file->getHits() << std::endl;
         std::cerr << "Index ID: " << indexIdentifier << std::endl;
 

@@ -18,27 +18,36 @@ public:
     {
         const INode* n = dynamic_cast<const INode*>(&entry);
 
-        // traverse only index nodes at levels 0 and higher.
+        // traverse only index nodes at levels 1 .
         if (n != NULL) {
-            if (n->getLevel() > 0)
+            if (n->getLevel() > 1)
             {
                 for (uint32_t cChild = 0; cChild < n->getChildrenCount(); cChild++)
                 {
                     ids.push(n->getChildIdentifier(cChild));
                 }
             }
-            else if (n->getLevel() ==0)
+            else if (n->getLevel() ==1)
             {
                 int children_count = n->getChildrenCount();
-                for (uint32_t cChild = 0; cChild < children_count; cChild++)
+		
+		/* get the MBB info 
+		IShape* ps;
+		n->getShape(&ps);
+		Region* pr = dynamic_cast<Region*>(ps);
+                */ 
+
+		for (uint32_t cChild = 0; cChild < children_count; cChild++)
                 {
-                    cout << n->getChildIdentifier(cChild) << "\t" << n->getIdentifier()<<endl;
+                    
+		    //cout << n->getChildIdentifier(cChild) << "\t" << n->getIdentifier()<<endl;
                 }
                 //cerr << n->getIdentifier() << " --- " << children_count <<endl;
 
             }
 	    else {
-		cerr <<"What the hell is this ? " <<endl;
+		cerr << "leaf node child count " <<  n->getChildrenCount() << endl; 
+		// cerr <<"What the hell is this ? " <<endl;
 	    }
         }
 
@@ -82,7 +91,7 @@ int main(int argc, char** argv)
         MyQueryStrategy qs;
         tree->queryStrategy(qs);
 
-        cerr << *tree;
+        //cerr << *tree;
         //cerr << "Buffer hits: " << file->getHits() << endl;
 
         delete tree;

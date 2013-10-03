@@ -53,88 +53,88 @@ RTree::Data* parseInputPolygon(Geometry *p, id_type m_id) {
 class GEOSDataStream : public IDataStream
 {
     public:
-        GEOSDataStream(map<int,Geometry*> * inputColl ) : m_pNext(0), len(0),m_id(0)
+	GEOSDataStream(map<int,Geometry*> * inputColl ) : m_pNext(0), len(0),m_id(0)
     {
-        if (inputColl->empty())
-            throw Tools::IllegalArgumentException("Input size is ZERO.");
-        shapes = inputColl;
-        len = inputColl->size();
-        iter = shapes->begin();
-        readNextEntry();
+	if (inputColl->empty())
+	    throw Tools::IllegalArgumentException("Input size is ZERO.");
+	shapes = inputColl;
+	len = inputColl->size();
+	iter = shapes->begin();
+	readNextEntry();
     }
-        virtual ~GEOSDataStream()
-        {
-            if (m_pNext != 0) delete m_pNext;
-        }
+	virtual ~GEOSDataStream()
+	{
+	    if (m_pNext != 0) delete m_pNext;
+	}
 
-        virtual IData* getNext()
-        {
-            if (m_pNext == 0) return 0;
+	virtual IData* getNext()
+	{
+	    if (m_pNext == 0) return 0;
 
-            RTree::Data* ret = m_pNext;
-            m_pNext = 0;
-            readNextEntry();
-            return ret;
-        }
+	    RTree::Data* ret = m_pNext;
+	    m_pNext = 0;
+	    readNextEntry();
+	    return ret;
+	}
 
-        virtual bool hasNext()
-        {
-            return (m_pNext != 0);
-        }
+	virtual bool hasNext()
+	{
+	    return (m_pNext != 0);
+	}
 
-        virtual uint32_t size()
-        {
-            return len;
-            //throw Tools::NotSupportedException("Operation not supported.");
-        }
+	virtual uint32_t size()
+	{
+	    return len;
+	    //throw Tools::NotSupportedException("Operation not supported.");
+	}
 
-        virtual void rewind()
-        {
-            if (m_pNext != 0)
-            {
-                delete m_pNext;
-                m_pNext = 0;
-            }
+	virtual void rewind()
+	{
+	    if (m_pNext != 0)
+	    {
+		delete m_pNext;
+		m_pNext = 0;
+	    }
 
-            m_id  = 0;
-            iter = shapes->begin();
-            readNextEntry();
-        }
+	    m_id  = 0;
+	    iter = shapes->begin();
+	    readNextEntry();
+	}
 
-        void readNextEntry()
-        {
-            if (iter != shapes->end())
-            {
-                //std::cerr<< "readNextEntry m_id == " << m_id << std::endl;
-                m_id = iter->first;
-                m_pNext = parseInputPolygon(iter->second, m_id);
-                iter++;
-            }
-        }
+	void readNextEntry()
+	{
+	    if (iter != shapes->end())
+	    {
+		//std::cerr<< "readNextEntry m_id == " << m_id << std::endl;
+		m_id = iter->first;
+		m_pNext = parseInputPolygon(iter->second, m_id);
+		iter++;
+	    }
+	}
 
-        RTree::Data* m_pNext;
-        map<int,Geometry*> * shapes; 
-        map<int,Geometry*>::iterator iter; 
+	RTree::Data* m_pNext;
+	map<int,Geometry*> * shapes; 
+	map<int,Geometry*>::iterator iter; 
 
-        int len;
-        id_type m_id;
+	int len;
+	id_type m_id;
 };
 
 
 class MyVisitor : public IVisitor
 {
     public:
-        void visitNode(const INode& n) {}
-        void visitData(std::string &s) {}
+	void visitNode(const INode& n) {}
+	void visitData(std::string &s) {}
 
-        void visitData(const IData& d)
-        {
-            hits.push_back(d.getIdentifier());
-            //std::cout << d.getIdentifier()<< std::endl;
-        }
+	void visitData(const IData& d)
+	{
+	    hits.push_back(d.getIdentifier());
+	    //std::cout << d.getIdentifier()<< std::endl;
+	}
 
-        void visitData(std::vector<const IData*>& v) {}
-        void visitData(std::vector<uint32_t>& v){}
+	void visitData(std::vector<const IData*>& v) {}
+	void visitData(std::vector<uint32_t>& v){}
 };
 
 
@@ -155,8 +155,8 @@ void doQuery(Geometry* poly) {
     hits.clear();
 
     MyVisitor vis ; 
-    spidx->containsWhatQuery(r, vis);
-    //spidx->intersectsWithQuery(r, vis);
+    //spidx->containsWhatQuery(r, vis);
+    spidx->intersectsWithQuery(r, vis);
 
 }
 
@@ -172,20 +172,20 @@ vector<Geometry*> genTiles(double min_x, double max_x, double min_y, double  max
 
     for (int i =0 ; i< x_split ; i++)
     {
-        for (int j =0 ; j< y_split ; j++)
-        {
-            // construct a WKT polygon 
-            ss << shapebegin ;
-            ss << min_x + i * width ;     ss << SPACE ; ss << min_y + j * height;     ss << COMMA;
-            ss << min_x + i * width ;     ss << SPACE ; ss << min_y + (j+1) * height; ss << COMMA;
-            ss << min_x + (i+1) * width ; ss << SPACE ; ss << min_y + (j+1) * height; ss << COMMA;
-            ss << min_x + (i+1) * width ; ss << SPACE ; ss << min_y + j * height;     ss << COMMA;
-            ss << min_x + i * width ;     ss << SPACE ; ss << min_y + j * height;
-            ss << shapeend ;
-            //cerr << ss.str() << endl;
-            tiles.push_back(wkt_reader->read(ss.str()));
-            ss.str(string()); // clear the content
-        }
+	for (int j =0 ; j< y_split ; j++)
+	{
+	    // construct a WKT polygon 
+	    ss << shapebegin ;
+	    ss << min_x + i * width ;     ss << SPACE ; ss << min_y + j * height;     ss << COMMA;
+	    ss << min_x + i * width ;     ss << SPACE ; ss << min_y + (j+1) * height; ss << COMMA;
+	    ss << min_x + (i+1) * width ; ss << SPACE ; ss << min_y + (j+1) * height; ss << COMMA;
+	    ss << min_x + (i+1) * width ; ss << SPACE ; ss << min_y + j * height;     ss << COMMA;
+	    ss << min_x + i * width ;     ss << SPACE ; ss << min_y + j * height;
+	    ss << shapeend ;
+	    //cerr << ss.str() << endl;
+	    tiles.push_back(wkt_reader->read(ss.str()));
+	    ss.str(string()); // clear the content
+	}
     }
 
     return tiles;
@@ -227,7 +227,7 @@ void emitHits(Geometry* poly) {
 
     for (int i = 0 ; i < hits.size(); i++ ) 
     {
-        cout << ss.str() << BAR << hits[i]  << BAR << id_polygon[hits[i]] << endl ;
+	cout << ss.str() << BAR << hits[i]  << BAR << id_polygon[hits[i]] << endl ;
     }
 }
 
@@ -238,11 +238,11 @@ bool buildIndex(map<int,Geometry*> & geom_polygons) {
     GEOSDataStream stream(&geom_polygons);
     storage = StorageManager::createNewMemoryStorageManager();
     spidx   = RTree::createAndBulkLoadNewRTree(RTree::BLM_STR, stream, *storage, 
-            FillFactor,
-            IndexCapacity,
-            LeafCapacity,
-            2, 
-            RTree::RV_RSTAR, indexIdentifier);
+	    FillFactor,
+	    IndexCapacity,
+	    LeafCapacity,
+	    2, 
+	    RTree::RV_RSTAR, indexIdentifier);
 
     // Error checking 
     return spidx->isIndexValid();
@@ -251,7 +251,7 @@ bool buildIndex(map<int,Geometry*> & geom_polygons) {
 int main(int argc, char **argv) {
     gengetopt_args_info args_info;
     if (cmdline_parser (argc, argv, &args_info) != 0)
-        exit(1) ;
+	exit(1) ;
 
     double min_x = args_info.min_x_arg;
     double max_x = args_info.max_x_arg;
@@ -262,17 +262,17 @@ int main(int argc, char **argv) {
     // if the dataset is not PAIS or OSM, then exit.
     if (!assignIndex(args_info.dataset_arg)) 
     {
-        cerr << "Unknown dataset: " << args_info.dataset_arg << endl;
+	cerr << "Unknown dataset: " << args_info.dataset_arg << endl;
 	exit(1); 
     }
 
     if ( args_info.prefix_given )
     {
-        prefix = args_info.prefix_arg;
-        //cerr << "Prefix:" << prefix << endl;
+	prefix = args_info.prefix_arg;
+	//cerr << "Prefix:" << prefix << endl;
     }
     else 
-        prefix = NULL;
+	prefix = NULL;
 
     /* 
        cerr << "min_x "<< min_x << endl; 
@@ -296,18 +296,18 @@ int main(int argc, char **argv) {
     int i = -1; 
 
     while(cin && getline(cin, input_line) && !cin.eof()){
-        fields = parse(input_line);
-        i = boost::lexical_cast< int >( fields[ID_IDX] ); 
-        geom_polygons[i]= wkt_reader->read(fields[GEOM_IDX]);
-        id_polygon[i] = fields[GEOM_IDX]; 
+	fields = parse(input_line);
+	i = boost::lexical_cast< int >( fields[ID_IDX] ); 
+	geom_polygons[i]= wkt_reader->read(fields[GEOM_IDX]);
+	id_polygon[i] = fields[GEOM_IDX]; 
     }
 
     // build spatial index for input polygons 
     bool ret = buildIndex(geom_polygons);
     if (ret == false) 
-        cerr << "ERROR: Structure is invalid!" << std::endl;
+	cerr << "ERROR: Structure is invalid!" << std::endl;
     else 
-        cerr << "GRIDIndex Generated successfully." << endl;
+	cerr << "GRIDIndex Generated successfully." << endl;
 
 
     // genrate tile boundaries 
@@ -317,8 +317,8 @@ int main(int argc, char **argv) {
 
 
     for(std::vector<Geometry*>::iterator it = geom_tiles.begin(); it != geom_tiles.end(); ++it) {
-        doQuery(*it);
-        emitHits(*it);
+	doQuery(*it);
+	emitHits(*it);
     }
 
     cout.flush();

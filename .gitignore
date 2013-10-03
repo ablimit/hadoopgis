@@ -1,4 +1,5 @@
 benchmark/mapreduce/osm/containment/testdir/
+benchmark/mapreduce/pais/containment/testdir/
 benchmark/mapreduce/osm/join/mapper
 benchmark/mapreduce/osm/join/testdir/spatialindex.tar.bz2
 benchmark/mapreduce/osm/join/testdir/spatialindex/
@@ -68,6 +69,7 @@ partition/rtree/pais/partition.mbb.txt
 partition/rtree/stderr.txt
 partition/rtree/stdout.txt
 partition/rtree/temp.txt
+partition/data/partres/
 xxl/.project
 xxl/.settings/
 xxl/data/
@@ -87,11 +89,10 @@ xxl/xxlcore/testVLBTree_dupl_false_metadata.dat
 *.jar
 utility/dostuff.sh*
 *.log
-*.csv
-*.txt
 *.mr
 *.err
 *.out
+*.csv
 *.dat
 *.bz2
 *.gz

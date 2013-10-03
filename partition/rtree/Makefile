@@ -32,8 +32,9 @@ process: pais/GeneratePAISMBB.cc osm/GenerateOSMMBB.cc
 	$(CC) pais/GeneratePAISMBB.cc $(CFLAGS) $(LDFLAGS) -o pais/genpaismbb
 	$(CC) osm/GenerateOSMMBB.cc $(CFLAGS) $(LDFLAGS) -o osm/genosmmbb
 
-loader: RTreeBulkLoad.cc
+loader: RTreeBulkLoad.cc RTreeBulkLoadPAIS.cc
 	$(CC) RTreeBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndex
+	$(CC) RTreeBulkLoadPAIS.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndexPais
 	
 plot: genPlotFromIndex.cc
 	$(CC) genPlotFromIndex.cc $(CFLAGS) $(LDFLAGS) -o genPlotFromIndex
@@ -54,7 +55,7 @@ genpid: oidmatchpid.cc
 	$(CC) oidmatchpid.cc $(CFLAGS) $(LDFLAGS) -o genpid
 
 clean:
-	@rm -f genRtreeIndex genPlotFromIndex genPartitionFromIndex genPartitionRegionFromIndex viewRTree
+	@rm -f genRtreeIndex genPlotFromIndex genPartitionFromIndex genPartitionRegionFromIndex viewRTree rquery
 	@rm -f pais/genpaismbb osm/genosmmbb
 	@rm -f genpid
 

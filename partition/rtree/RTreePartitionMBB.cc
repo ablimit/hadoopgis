@@ -20,14 +20,14 @@ class MyQueryStrategy : public SpatialIndex::IQueryStrategy
 
             // traverse only index nodes at levels 0 and higher.
             if (n != NULL) {
-                if (n->getLevel() > 0)
+                if (n->getLevel() > 1)
                 {
                     for (uint32_t cChild = 0; cChild < n->getChildrenCount(); cChild++)
                     {
                         ids.push(n->getChildIdentifier(cChild));
                     }
                 }
-                else if (n->getLevel() ==0)
+                else if (n->getLevel() ==1)
                 {
                     IShape* ps;
                     entry.getShape(&ps);
@@ -42,9 +42,10 @@ class MyQueryStrategy : public SpatialIndex::IQueryStrategy
 
                     delete ps;
                 }
+		/*
                 else {
                     cerr <<"What the hell is this ? " <<endl;
-                }
+                }*/
             }
 
             if (! ids.empty())

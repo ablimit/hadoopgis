@@ -3,7 +3,7 @@ boost=/home/aaji/softs/boost
 spatial=/home/aaji/softs
 
 UNAME		= $(shell uname)
-OPTFLAGS	= -O3
+OPTFLAGS	= -O2
 INCBASE		= -I.
 LIBBASE		= -lspatialindex -lgeos
 
@@ -26,7 +26,7 @@ else
     CC = g++
 endif
 
-all: map reduce
+all: part
 
 cmdline_mapper.o: options_mapper.ggo
 	gengetopt -i options_mapper.ggo -F cmdline_mapper
@@ -38,6 +38,9 @@ cmdline_reducer.o: options_reducer.ggo
 
 map: cmdline_mapper.o mapper.cpp hadoopgis.h
 	$(CC) mapper.cpp cmdline_mapper.o $(CFLAGS) $(LDFLAGS) -o mapper
+
+part: cmdline_mapper.o partitionmbb.cpp hadoopgis.h
+	$(CC) partitionmbb.cpp cmdline_mapper.o $(CFLAGS) $(LDFLAGS) -o partmbb
 
 reduce: cmdline_reducer.o reducer.cpp hadoopgis.h
 	$(CC) reducer.cpp cmdline_reducer.o $(CFLAGS) $(LDFLAGS) -o reducer
