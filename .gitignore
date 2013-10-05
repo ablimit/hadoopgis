@@ -3,6 +3,8 @@ benchmark/mapreduce/pais/containment/testdir/
 benchmark/mapreduce/osm/join/mapper
 benchmark/mapreduce/osm/join/testdir/spatialindex.tar.bz2
 benchmark/mapreduce/osm/join/testdir/spatialindex/
+benchmark/mapreduce/osm/repartition/testdir
+benchmark/libs/*
 boundary/dedup.res
 boundary/example.cpp
 boundary/fusheng.in.txt
@@ -31,9 +33,8 @@ osm/partition/TreePartition/Makefile
 osm/partition/TreePartition/genPartitionRegionFromIndex
 osm/partition/TreePartition/partitioner
 osm/partition/preprocess
-osm/partition/rebucketeurope/osm_polygon_europe.snapshot.txt
-osm/partition/rebucketeurope/rebucketmyeurope
 osm/partition/rquery
+osm/partition/test
 osm/partition/rtreeloader
 osm/partition/stderr.txt
 osm/partition/stdout.txt
@@ -70,6 +71,7 @@ partition/rtree/stderr.txt
 partition/rtree/stdout.txt
 partition/rtree/temp.txt
 partition/data/partres/
+partition/data/pais
 xxl/.project
 xxl/.settings/
 xxl/data/
@@ -93,8 +95,9 @@ partition/data/algo1/
 partition/data/algo2/
 partition/data/images.txt
 partition/data/partres_local/
-*.jar
+partition/rtree/testdata/
 utility/dostuff.sh*
+*.jar
 *.log
 *.mr
 *.err
@@ -104,7 +107,8 @@ utility/dostuff.sh*
 *.bz2
 *.gz
 *.png
+*.gnu
 *.eps
 *.gpl
-.DS_Store
-.pyc
+*.DS_Store
+*.pyc
