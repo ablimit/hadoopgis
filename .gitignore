@@ -96,6 +96,7 @@ partition/data/algo2/
 partition/data/images.txt
 partition/data/partres_local/
 partition/rtree/testdata/
+partition/data/vispart/rtree/meta
 utility/dostuff.sh*
 *.jar
 *.log

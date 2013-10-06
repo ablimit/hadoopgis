@@ -1,0 +1,8 @@
+Edit Makefile (set appropriate LDFLAGS) to choose cpu or gpu kernel. Meanwhile, edit refine_and_do_spatial_op in
+justdoit.c accordingly. By default, the Makefile uses cpu kernel.
+
+Then, go to cpu or gpu directory and read Makefile to choose algorithm to use and do whatever needed before making.
+
+Make in cpu or gpu directory first, then make under just_do_it.
+
+Use `make test' or `make run' to test programs.
