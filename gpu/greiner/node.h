@@ -12,12 +12,6 @@
 #define X 400 
 #define Y 400
 
-#define BG BLACK 
-#define WORK WHITE 
-#define S CYAN 
-#define C GREEN 
-#define POLY RED
-
 typedef struct _node 
 { 
   int x, y; 
