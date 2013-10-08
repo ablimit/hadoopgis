@@ -1,7 +1,7 @@
 UNAME		= $(shell uname)
 OPTFLAGS	= -O2
 INCBASE		= -I.
-LIBBASE		= 
+LIBBASE		= -lm
 
 ifneq (,$(findstring emory,$(shell uname -a)))
     # INCFLAGS = -I$(boost)/include -I$(spatial)/include

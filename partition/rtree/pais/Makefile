@@ -28,13 +28,11 @@ endif
 # all: process loader plot part mbb view
 all: loader mbb query
 
-process: pais/GeneratePAISMBB.cc osm/GenerateOSMMBB.cc
-	#$(CC) pais/GeneratePAISMBB.cc $(CFLAGS) $(LDFLAGS) -o pais/genpaismbb
-	$(CC) osm/GenerateOSMMBB.cc $(CFLAGS) $(LDFLAGS) -o osm/genosmmbb
+process: GeneratePAISMBB.cc
+	$(CC) GeneratePAISMBB.cc $(CFLAGS) $(LDFLAGS) -o genmbb
 
-loader: RTreeBulkLoadOSM.cc RTreeBulkLoadPAIS.cc
-	$(CC) RTreeBulkLoadOSM.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndexOsm
-	$(CC) RTreeBulkLoadPAIS.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndexPais
+loader: RTreeBulkLoadPAIS.cc
+	$(CC) RTreeBulkLoadPAIS.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndex
 	
 plot: genPlotFromIndex.cc
 	$(CC) genPlotFromIndex.cc $(CFLAGS) $(LDFLAGS) -o genPlotFromIndex

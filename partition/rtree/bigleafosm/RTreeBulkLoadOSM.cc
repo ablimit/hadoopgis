@@ -66,7 +66,6 @@ class MyDataStream : public IDataStream
             {
                 Region r(low, high, 2);
                 m_pNext = new RTree::Data(0, 0 , r, m_id);// store a zero size null poiter.
-                m_id++;
             }
         }
 
