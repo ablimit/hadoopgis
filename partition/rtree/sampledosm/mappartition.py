@@ -3,9 +3,6 @@
 import sys
 import math
 
-# from collections import defaultdict
-# dic = defaultdict(set)
-
 dic = {}
 
 def main():

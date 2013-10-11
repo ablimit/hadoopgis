@@ -1,44 +1,44 @@
 #! /bin/bash
 
-leafCapacity=1000
 fillFactor=0.99
 
 
 ipath=/data2/ablimit/Data/spatialdata/osmout/osm.mbb.norm.filter.dat
-# ipath=temp.txt
-opath=/mnt/scratch1/aaji/partition/osm/rtree
-# tempPath=/dev/shm
-tempPath=/tmp
+opath=/mnt/scratch1/aaji/partition/osm/rtree/bigleaf
 
-# echo "generating approxmiation...."
-# pais/genmbb < ${dir}/${inFile} > ${tempPath}/${inFile}.mbb
+make
 
-for ic in 10 20 50 100 200 500
+# TEMPPATH=/dev/shm
+TEMPPATH=`mktemp -d -p /dev/shm`
+
+ic=4
+
+for lf in 10000 20000 50000 100000 200000 500000
 do
-    if [ ! -e ${opath}/ic${ic} ] ;
+    if [ ! -d ${opath}/lf${lf} ] ;
     then 
-	mkdir -p ${opath}/ic${ic}
+	mkdir -p ${opath}/lf${lf}
     fi
 
-    echo "Index capacity: ${ic}"
+    echo "Leaf capacity: ${lf}"
 
     echo -e "\n####################################"
     echo "building index on data ...."
-    ./genRtreeIndex ${ipath} ${tempPath}/spatial $ic $leafCapacity $fillFactor
+    echo "genRtreeIndex ${ipath} ${TEMPPATH}/spatial $ic $lf $fillFactor"
+    ./loader ${ipath} ${TEMPPATH}/spatial $ic $lf $fillFactor
     
     echo -e "\n####################################"
     echo "generating partition region..."
-    ./genPartitionRegionFromIndex  ${tempPath}/spatial > ${opath}/ic${ic}/regionmbb.txt 2> ${opath}/ic${ic}/idxmbb.gnu
+    ./parmbb ${TEMPPATH}/spatial > ${opath}/lf${lf}/regionmbb.txt 2> ${opath}/lf${lf}/idxmbb.gnu
 
     echo -e "\n####################################"
     echo "generate pid oid mapping ...."
-    ./rquery ${opath}/ic${ic}/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
+    ./pquery ${opath}/lf${lf}/regionmbb.txt ${TEMPPATH}/spatial  > ${TEMPPATH}/pidoid.txt
 
     echo -e "\n####################################"
     echo "remapping objects"
-    python osm/mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/ic${ic}/osm.part
+    python ./mappartition.py ${TEMPPATH}/pidoid.txt < ${ipath} > ${opath}/lf${lf}/osm.part
     
-    rm /tmp/spatial*
-    rm /tmp/pidoid.txt 
+    rm ${TEMPPATH}/* 
 done
 

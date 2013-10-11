@@ -7,6 +7,16 @@ opath=meta
 # tempPath=/dev/shm
 tempPath=meta
 
+if [ ! -e ./geRtreeIndex ] || [ ! -e genPartitionRegionFromIndex ] || [ ! -e rquery ] ;
+then
+    make
+fi
+
+if [ ! -d ${tempPath} ];
+then 
+    mkdir -p ${tempPath}
+fi
+
 
 for tid in 2 3 4 5
 do
@@ -30,3 +40,4 @@ do
     rm ${tempPath}/spatial.idx
     rm ${tempPath}/spatial.dat
 done
+

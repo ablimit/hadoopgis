@@ -25,21 +25,19 @@ else
     CC = g++
 endif
 
-# all: process loader plot part mbb view
-all: loader mbb query
+objects = loader parmbb pquery
+
+all: $(objects)
 
 loader: RTreeBulkLoadOSM.cc
-	$(CC) RTreeBulkLoadOSM.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndex
+	$(CC) $^ $(CFLAGS) $(LDFLAGS) -o $@
 	
-mbb: RTreePartitionMBB.cc
-	$(CC) RTreePartitionMBB.cc $(CFLAGS) $(LDFLAGS) -o genPartitionRegionFromIndex
+parmbb: RTreePartitionMBB.cc
+	$(CC) $^ $(CFLAGS) $(LDFLAGS) -o $@
 
-query: RTreeQuery.cc
-	$(CC) RTreeQuery.cc $(CFLAGS) $(LDFLAGS) -o rquery
+pquery: RTreeQuery.cc
+	$(CC) $^  $(CFLAGS) $(LDFLAGS) -o $@
 
 clean:
-	@rm -f genRtreeIndex genPlotFromIndex genPartitionFromIndex genPartitionRegionFromIndex viewRTree rquery
-	@rm -f pais/genpaismbb osm/genosmmbb
-	@rm -f genpid
-
+	rm $(objects)
 
