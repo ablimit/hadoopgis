@@ -2,7 +2,8 @@
 #include <stdlib.h> 
 #include <ctype.h> 
 #include <math.h> 
-#include <string.h> 
+#include <string.h>
+#include <float.h>
 #include "node.h"
 
 node *s=0, *c=0, *root=0; 
@@ -112,40 +113,40 @@ float dist(float x1, float y1, float x2, float y2)
 
 int I(node *p1, node *p2, node *q1, node *q2, float *alpha_p, float *alpha_q, int *xint, int *yint) 
 { 
-  float x, y, tp, tq, t, par;
+    float x, y, tp, tq, t, par ;
 
-  par = (float) ((p2->x - p1->x)*(q2->y - q1->y) - (p2->y - p1->y)*(q2->x - q1->x));
+    par = (float)((p2->x - p1->x)*(q2->y - q1->y) - (p2->y - p1->y)*(q2->x - q1->x));
+    if (! par ) return 0;                               /* parallel lines */
+    // if (par < FLT_EPSILON ) return 0;                               /* parallel lines */
 
-  if (!par) return 0;                               /* parallel lines */
+    tp = ((q1->x - p1->x)*(q2->y - q1->y) - (q1->y - p1->y)*(q2->x - q1->x))/par; 
+    tq = ((p2->y - p1->y)*(q1->x - p1->x) - (p2->x - p1->x)*(q1->y - p1->y))/par;
 
-  tp = ((q1->x - p1->x)*(q2->y - q1->y) - (q1->y - p1->y)*(q2->x - q1->x))/par; 
-  tq = ((p2->y - p1->y)*(q1->x - p1->x) - (p2->x - p1->x)*(q1->y - p1->y))/par;
+    if(tp<0 || tp>1 || tq<0 || tq>1) return 0;
 
-  if(tp<0 || tp>1 || tq<0 || tq>1) return 0;
+    x = p1->x + tp*(p2->x - p1->x); 
+    y = p1->y + tp*(p2->y - p1->y);
 
-  x = p1->x + tp*(p2->x - p1->x); 
-  y = p1->y + tp*(p2->y - p1->y);
+    *alpha_p = dist(p1->x, p1->y, x, y) / dist(p1->x, p1->y, p2->x, p2->y); 
+    *alpha_q = dist(q1->x, q1->y, x, y) / dist(q1->x, q1->y, q2->x, q2->y); 
+    *xint = (int) x; 
+    *yint = (int) y;
 
-  *alpha_p = dist(p1->x, p1->y, x, y) / dist(p1->x, p1->y, p2->x, p2->y); 
-  *alpha_q = dist(q1->x, q1->y, x, y) / dist(q1->x, q1->y, q2->x, q2->y); 
-  *xint = (int) x; 
-  *yint = (int) y;
-
-  return 1; 
+    return 1; 
 }
 
 int test(node *point, node *p) 
 { 
-  node *aux, *left, i; 
-  int type=0;
+    node *aux, *left, i; 
+    int type=0;
 
-  left = create(0, point->y, 0, 0, 0, 0, 0, 0, 0, 0.); 
-  for(aux=p; aux->next; aux=aux->next) 
-  {
-      if(I(left, point, aux, aux->next, &i.alpha, &i.alpha, &i.x, &i.y)) 
-	  type++; 
-  }
-  return type%2; 
+    left = create(0, point->y, 0, 0, 0, 0, 0, 0, 0, 0.); 
+    for(aux=p; aux->next; aux=aux->next) 
+    {
+	if(I(left, point, aux, aux->next, &i.alpha, &i.alpha, &i.x, &i.y)) 
+	    type++; 
+    }
+    return type%2; 
 }
 
 void quit() 
@@ -282,9 +283,13 @@ void add(int which_poly, int x, int y)
     }
 }
 
-
-main(int argc, char **argv) 
+void createPolygon()
 {
 
+}
+int main(int argc, char **argv) 
+{
+
+    clip();
 } 
 
