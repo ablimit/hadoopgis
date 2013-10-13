@@ -111,6 +111,8 @@ float dist(float x1, float y1, float x2, float y2)
   return sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)); 
 }
 
+/* test if the lines segments p1--p2 and q1--q2 intersects. */ 
+
 int I(node *p1, node *p2, node *q1, node *q2, float *alpha_p, float *alpha_q, int *xint, int *yint) 
 { 
     float x, y, tp, tq, t, par ;
@@ -172,6 +174,7 @@ void clip()
     auxc = last_node(c); 
     create(c->x, c->y, 0, auxc, 0, 0, 0, 0, 0, 0.);
 
+    /* phase one of the algorithm */
     for(auxs = s; auxs->next; auxs = auxs->next) 
     {
 	if(!auxs->intersect) 
