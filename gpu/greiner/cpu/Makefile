@@ -22,10 +22,10 @@ else
     CC = gcc
 endif
 
-all: compile
+all: clip
 
-compile: polyclip.c node.h
-	$(CC) polyclip.c $(CFLAGS) $(LDFLAGS) -o clip
+clip: polyclip.c node.h Makefile
+	$(CC) polyclip.c $(CFLAGS) $(LDFLAGS) -o $@
 
 clean:
 	@rm -f clip
