@@ -7,7 +7,7 @@
 #include "node.h"
 
 node *s=0, *c=0, *root=0; 
-int pS=1, pC=1; 
+// int pS=0, pC=1; 
 
 void view_node(node *p) 
 { 
@@ -56,6 +56,9 @@ void insert(node *ins, node *first, node *last)
   ins->next->prev = ins; 
 }
 
+/* creates  a node with x y coordinates, and inserts it into the space between prev and next. 
+ * prev ----> newNode ---> next 
+ * */
 node *create(int x, int y, node *next, node *prev, node *nextPoly, node *neighbor, int intersect, int entry, int visited, float alpha)
 { 
   node *newNode = (node*) malloc(sizeof(node)); 
@@ -88,6 +91,7 @@ node *last_node(node *p)
   return aux; 
 }
 
+// this function finds first unprocessed and intersecting node 
 node *first(node *p) 
 { 
   node *aux=p;
@@ -137,6 +141,7 @@ int I(node *p1, node *p2, node *q1, node *q2, float *alpha_p, float *alpha_q, in
     return 1; 
 }
 
+/* test if the point is inside the polygon pointed by p */
 int test(node *point, node *p) 
 { 
     node *aux, *left, i; 
@@ -169,12 +174,13 @@ void clip()
 
     if(!s || !c) return; /*if one of the polygon is empty*/
 
+    // close the polygon by providing the first point as the last point
     auxs = last_node(s); 
     create(s->x, s->y, 0, auxs, 0, 0, 0, 0, 0, 0.); 
     auxc = last_node(c); 
     create(c->x, c->y, 0, auxc, 0, 0, 0, 0, 0, 0.);
 
-    /* phase one of the algorithm */
+    // phase 1
     for(auxs = s; auxs->next; auxs = auxs->next) 
     {
 	if(!auxs->intersect) 
@@ -197,11 +203,10 @@ void clip()
 	}
     }
 
+    // phase 2
+    /*determine the exit point of the polygon using odd-even rule*/
     e = test(s, c); 
-    if(pS) 
-    {
-	e = 1-e; 
-    }
+    e = 1-e; 
 
     for(auxs = s; auxs->next; auxs = auxs->next)
     {
@@ -211,11 +216,9 @@ void clip()
 	    e = 1-e; 
 	}
     }
+
     e=test(c, s); 
-    if(pC) 
-    {
-	e = 1-e;
-    }
+    e = 1-e;
 
     for(auxc = c; auxc->next; auxc = auxc->next) 
     {
@@ -225,14 +228,20 @@ void clip()
 	    e = 1-e; 
 	}
     }
+    /* delete last node and make the polygon list circular */
     circle(s); 
-    circle(c); 
+    circle(c);
+
+    view(s); 
+    view(c);
+    // phase 3 
     while ((crt = first(s)) != s) 
     { 
 	old = 0; 
 	for(; !crt->visited; crt = crt->neighbor) 
 	    for(forward = crt->entry ;; ) 
 	    { 
+		printf("(%d,%d)\t",crt->x,crt->y);
 		newNode = create(crt->x, crt->y, old, 0, 0, 0, 0, 0, 0, 0.); 
 		old = newNode; 
 		crt->visited = 1; 
@@ -246,6 +255,7 @@ void clip()
 
 	old->nextPoly = root; 
 	root = old; 
+	printf("\n");
     }
 
     view(s); 
@@ -286,13 +296,81 @@ void add(int which_poly, int x, int y)
     }
 }
 
-void createPolygon()
-{
-
+void result(){
+    node *aux=root; 
+    while (root){
+	while (aux){
+	    printf("(%d,%d)\t",aux->x,aux->y);
+	    aux = aux->next;
+	}
+	printf("\n");
+	root = root->nextPoly; 
+    }
 }
+
+void test1();
+void test2();
+void test3();
+
 int main(int argc, char **argv) 
 {
-
+    if (argc>1 )
+	switch (argv[1][0]){
+	    case '1':
+		test1();
+		break;
+	    case '2':
+		test2();
+		break;
+	    case '3':
+		test3();
+		break;
+	    case '4':
+		break;
+	    default:
+		;
+	}
     clip();
+    //result();
 } 
+
+void test1()
+{
+    add(1,3,2);
+    add(1,1,2);
+    add(1,1,4);
+    add(1,3,4);
+
+    add(2,4,1);
+    add(2,2,1);
+    add(2,2,3);
+    add(2,4,3);
+}
+
+void test2()
+{
+    add(2,7,3);
+    add(2,1,3);
+    add(2,1,6);
+    add(2,7,6);
+
+    add(1,6,1);
+    add(1,2,1);
+    add(1,2,4);
+    add(1,4,2);
+    add(1,6,4);
+}
+
+void test3()
+{
+    add(2,4,4);
+    add(2,1,4);
+    add(2,1,1);
+    add(2,4,1);
+
+    add(1,3,3);
+    add(1,2,3);
+    add(1,2,2);
+    add(1,3,2);
+}
 

@@ -11,9 +11,4 @@ typedef struct vertex {
 }VERTEX;
 
 
-
-char *gi_device_info(void);
-
-
-
 #endif
