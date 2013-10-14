@@ -576,18 +576,30 @@ int gpuIntersect(VERTEX *subj, int subjSize, VERTEX *clip, int clipSize,
 	cudaError_t	devResult;
 
 		
+	printf("AllocateDevMem-----");
 	result = AllocateDevMem(devSize, devClip, devSubj, devIntClip, devIntSubj, clipSize, subjSize);
-
+	
+	result ? printf("success.\n"): printf("fail\n");
+	printf("AllocateIntBuffers-----");
+	
 	if( result )
 		result = AllocateIntBuffers(&intClip, &intSubj, clipSize, subjSize);
 		
+	result ? printf("success.\n"): printf("fail\n");
+	printf("CopyData subj-----");
+	
 	if( result ) 
 		result = CopyData(devSubj, subj, subjSize * sizeof(vertex), cudaMemcpyHostToDevice);
+	
+	result ? printf("success.\n"): printf("fail\n");
+	printf("CopyData clip-----");
 	
 	if( result )
 		result = CopyData(devClip, clip, clipSize * sizeof(vertex), cudaMemcpyHostToDevice);
 
-
+	result ? printf("success.\n"): printf("fail\n");
+	printf("CalcIntersection-----");
+	
 	// Calulate the intersection points.
 	if( result ) {
 	
@@ -598,6 +610,8 @@ int gpuIntersect(VERTEX *subj, int subjSize, VERTEX *clip, int clipSize,
 		if( devResult != cudaSuccess ) {
 			result = 0;
 		}
+	result ? printf("success.\n"): printf("fail\n");
+	
 	} else
 
 	if( result ) 
@@ -606,12 +620,20 @@ int gpuIntersect(VERTEX *subj, int subjSize, VERTEX *clip, int clipSize,
 	if( result ) 
 		result = CopyData(intClip, devIntClip, clipSize * subjSize * sizeof(vertex), cudaMemcpyDeviceToHost);
 	
+	printf("BuildIntPoly-----");
+
 	if( result ) {
 
 		result = BuildIntPoly(*intPoly, *intPolySize, intSubj, size[SUBJ], intClip, size[CLIP]);
 	}
+
+	result ? printf("success.\n"): printf("fail\n");
+	printf("FreeDevMem-----");
+	
 	result = FreeDevMem(&devClip, &devSubj, &devIntClip, &devIntSubj);
 		
+	result ? printf("success.\n"): printf("fail\n");
+
 	return result;
 }
 
@@ -684,6 +706,7 @@ int gpuUnion(VERTEX *subj, int subjSize, VERTEX *clip, int clipSize,
 //	 C wrappers for the Postgres plugin
 //
 //
+/*
 extern "C" {
 
 
@@ -703,6 +726,5 @@ int gi_Union(VERTEX *poly1, int poly1Size, VERTEX *poly2, int poly2Size,
 				 		intPoly, intPolySize);
 }
 
-
-
 }
+*/

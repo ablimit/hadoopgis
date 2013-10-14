@@ -1,24 +1,25 @@
 #include  <stdio.h> 
-#include  <spatial.cuh> 
+#include  <stdlib.h> 
+#include  "spatial.cuh"
 
-int gi_Intersect(VERTEX *poly1, int poly1Size, VERTEX *poly2, int poly2Size, VERTEX **intPoly, int *intPolySize);
+int gpuIntersect(VERTEX *poly1, int poly1Size, VERTEX *poly2, int poly2Size, VERTEX **intPoly, int *intPolySize);
 bool AddVertex(vertex *&poly, int& size, vertex *vert);
 
+void add(int which_poly, int x, int y);
 void test1();
 void test2();
 void test3();
-void add(int which_poly, int x, int y);
 
-VERTEX * s;
-VERTEX * c;
-VERTEX * r;
+VERTEX *s;
+VERTEX *c;
+VERTEX *r;
 int s_size =0;
 int c_size =0;
 int r_size =0;
 
 int main(int argc, char **argv) 
 {
-    vertex * aux ; 
+    vertex aux ; 
     if (argc>1 )
 	switch (argv[1][0]){
 	    case '1':
@@ -33,17 +34,19 @@ int main(int argc, char **argv)
 	    default:
 		;
 	}
-    gi_Intersect(s,s_size,c,c_size,r,&r_size);
-    aux = r;
+    printf("start..\n");
+    gpuIntersect(s,s_size,c,c_size,&r,&r_size);
+    printf("end..\n");
+    aux = *r;
     for (int i=0; i< r_size; i++ ){
-	    printf("(%f,%f)\t",aux->x,aux->y);
-	    aux = aux[aux->next];
+	    printf("(%f,%f)\t",aux.x,aux.y);
+	    aux = r[aux.next];
     }
 }
 
 void add(int which_poly, int x, int y) 
 { 
-    node *v; 
+    vertex *v; 
 
     v = (vertex*)malloc(sizeof(vertex)); 
     v->x = x; 
