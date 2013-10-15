@@ -170,6 +170,7 @@ int test(node *point, node *p)
 	    type++; 
 	}
     }
+    deleteNode(left);
     //printf("type = %d\n",type);
     return type%2; 
 }
