@@ -265,7 +265,7 @@ void clip()
 	for(; !crt->visited; crt = crt->neighbor) 
 	    for(forward = crt->entry ;; ) 
 	    { 
-		printf("(%d,%d)\t",crt->x,crt->y);
+		//printf("(%d,%d)\t",crt->x,crt->y);
 		newNode = create(crt->x, crt->y, old, 0, 0, 0, 0, 0, 0, 0.); 
 		old = newNode; 
 		crt->visited = 1; 
@@ -279,11 +279,13 @@ void clip()
 
 	old->nextPoly = root; 
 	root = old; 
-	printf("\n");
+	//printf("\n");
     }
 
-    view(s); 
-    view(c);
+    /*
+     * view(s);
+     * view(c);
+     */
 
 }
 
@@ -328,7 +330,9 @@ void result(){
 	    aux = aux->next;
 	}
 	printf("\n");
-	root = root->nextPoly; 
+	aux = root->nextPoly; 
+	deleteNode(root);
+	root =aux;
     }
 }
 
@@ -355,7 +359,8 @@ int main(int argc, char **argv)
 		;
 	}
     clip();
-    //result();
+    result();
+    quit();
 } 
 
 void test1()
