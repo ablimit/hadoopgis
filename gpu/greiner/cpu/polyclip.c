@@ -147,12 +147,30 @@ int test(node *point, node *p)
     node *aux, *left, i; 
     int type=0;
 
-    left = create(0, point->y, 0, 0, 0, 0, 0, 0, 0, 0.); 
-    for(aux=p; aux->next; aux=aux->next) 
+    left = create(0, point->y, 0, 0, 0, 0, 0, 0, 0, 0.);
+    /*
+     * printf("ray\n");
+     * view_node(left);
+     * view_node(point);
+     * printf("###########################\n");
+     */
+
+    // there is a bug in this loop that it consideres 
+    // for(aux=p; aux->next; aux=aux->next)
+    // the newly generated intersecting node as polygon vertex.
+    for(aux=next_node(p); aux->next; aux=next_node(aux->next))
     {
 	if(I(left, point, aux, aux->next, &i.alpha, &i.alpha, &i.x, &i.y)) 
+	{
+	    /* debugging helpers
+	     * printf("segment %d\n",type+1);
+	     * view_node(aux);
+	     * view_node(aux->next);
+	     */
 	    type++; 
+	}
     }
+    //printf("type = %d\n",type);
     return type%2; 
 }
 
@@ -180,6 +198,11 @@ void clip()
     auxc = last_node(c); 
     create(c->x, c->y, 0, auxc, 0, 0, 0, 0, 0, 0.);
 
+    /* 
+     * view(s); 
+     * view(c); 
+     */
+    
     // phase 1
     for(auxs = s; auxs->next; auxs = auxs->next) 
     {
@@ -205,9 +228,9 @@ void clip()
 
     // phase 2
     /*determine the exit point of the polygon using odd-even rule*/
-    e = test(s, c); 
-    e = 1-e; 
-
+    e = 1 - test(s, c); 
+    // printf("status = %d\n",e);
+    
     for(auxs = s; auxs->next; auxs = auxs->next)
     {
 	if(auxs->intersect) 
@@ -217,8 +240,8 @@ void clip()
 	}
     }
 
-    e=test(c, s); 
-    e = 1-e;
+    e= 1 - test(c, s); 
+    // printf("status = %d\n",e);
 
     for(auxc = c; auxc->next; auxc = auxc->next) 
     {
@@ -228,12 +251,12 @@ void clip()
 	    e = 1-e; 
 	}
     }
+    
     /* delete last node and make the polygon list circular */
     circle(s); 
     circle(c);
 
-    view(s); 
-    view(c);
+    
     // phase 3 
     while ((crt = first(s)) != s) 
     { 
