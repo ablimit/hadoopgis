@@ -1,6 +1,6 @@
 all: polytest deviceQuery
 
-NVCC 		= nvcc -m64
+NVCC 		= /opt/local/cuda/bin/nvcc -m64
 CC			= g++
 
 
@@ -11,7 +11,7 @@ CFLAGS      = $(OPTFLAGS) $(INCFLAGS)
 LIBS        = -L/usr/local/lib -L.
 
 ifeq ($(UNAME), Darwin)
-CUDALIBS    = -L/usr/local/cuda/lib -lcudart
+CUDALIBS    = -lcudart
 LDFLAGS		= -shared -flat_namespace -undefined suppress
 else 
 CUDALIBS    = -L/opt/local/cuda/lib64 -lcudart
@@ -33,5 +33,5 @@ spatial.o: spatial.cu $(HFILES)
 polytest: test.c spatial.o $(HFILES)
 	$(CC) $< -o $@ $(CFLAGS) spatial.o $(CUDALIBS) $(LIBS)
 clean:
-	rm -f *.o deviceQuery *.so
+	rm -f *.o deviceQuery polytest
 	
