@@ -10,12 +10,12 @@ void test1();
 void test2();
 void test3();
 
-VERTEX *s;
-VERTEX *c;
-VERTEX *r;
-int s_size =0;
-int c_size =0;
-int r_size =0;
+VERTEX *s = NULL;
+VERTEX *c = NULL;
+VERTEX *r = NULL;
+int s_size =-1;
+int c_size =-1;
+int r_size = 0;
 
 int main(int argc, char **argv) 
 {
@@ -59,10 +59,12 @@ void add(int which_poly, int x, int y)
     if (which_poly == 1) 
     { 
 	AddVertex(s,s_size,v);
+	s_size++;
     } 
     else if (which_poly == 2) 
     { 
 	AddVertex(c,c_size,v);
+	c_size++; 
     } 
     else {
 	printf("%d is not a valid polygon index.\n",which_poly);
