@@ -56,9 +56,14 @@ int main(int argc, char **argv)
 }
 
 void vis(VERTEX * p) {
-    while (NULL != p){
-	printf("(%f,%f)\n",p->x,p->y);
-	p = &p[p->next];
+    vertex * aux = p;
+    int i =0 ;
+    while (NULL != aux){
+	printf("(%f,%f)\n",aux->x,aux->y);
+	aux = &(aux[aux->next]);
+	i++;
+	if (i == 4 )
+	    break;
     }
 } 
 bool add(int which_poly, int x, int y) 

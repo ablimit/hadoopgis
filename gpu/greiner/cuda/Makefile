@@ -30,7 +30,7 @@ spatial.o: spatial.cu $(HFILES)
 # libspatial.so : spatial.o
 #	$(NVCC) $(LDFLAGS) --ptxas-options=-v --compiler-options '-fPIC -Wall' --shared -o $@ $< $(CUDALIBS) $(LIBS)
 
-polytest: test.c spatial.o $(HFILES)
+polytest: driver.c spatial.o $(HFILES)
 	$(CC) $< -o $@ $(CFLAGS) spatial.o $(CUDALIBS) $(LIBS)
 clean:
 	rm -f *.o deviceQuery polytest
