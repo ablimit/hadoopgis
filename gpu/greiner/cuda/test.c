@@ -5,7 +5,8 @@
 int gpuIntersect(VERTEX *poly1, int poly1Size, VERTEX *poly2, int poly2Size, VERTEX **intPoly, int *intPolySize);
 bool AddVertex(vertex *&poly, int& size, vertex *vert);
 
-void add(int which_poly, int x, int y);
+bool add(int which_poly, int x, int y);
+void vis(VERTEX * p);
 void test1();
 void test2();
 void test3();
@@ -13,13 +14,13 @@ void test3();
 VERTEX *s = NULL;
 VERTEX *c = NULL;
 VERTEX *r = NULL;
-int s_size =-1;
-int c_size =-1;
+int s_size = 0;
+int c_size = 0;
 int r_size = 0;
 
 int main(int argc, char **argv) 
 {
-    vertex aux ; 
+    vertex *aux ; 
     if (argc>1 )
 	switch (argv[1][0]){
 	    case '1':
@@ -32,58 +33,84 @@ int main(int argc, char **argv)
 		test3();
 		break;
 	    default:
-		;
+		exit(1);
 	}
-    printf("start..\n");
+    else {
+	printf("please provide an test arugument: [1,2,3] \n");
+	exit(1);
+    }
+
+    fprintf(stderr,"s_size: %d\n",s_size);
+    fprintf(stderr,"c_size: %d\n",c_size);
+    //fprintf(stderr,"start..\n");
+    vis(s);
+    vis(c);
+
     gpuIntersect(s,s_size,c,c_size,&r,&r_size);
-    printf("end..\n");
-    aux = *r;
-    for (int i=0; i< r_size; i++ ){
-	    printf("(%f,%f)\t",aux.x,aux.y);
-	    aux = r[aux.next];
+    fprintf(stderr,"\n\n");
+
+    fprintf(stderr,"result size: %d\n",r_size);
+    for (int i = 0 ;i < r_size; i++){
+	printf("(%f,%f)\n",(r[i].x),(r[i].y));
     }
 }
 
-void add(int which_poly, int x, int y) 
+void vis(VERTEX * p) {
+    while (NULL != p){
+	printf("(%f,%f)\n",p->x,p->y);
+	p = &p[p->next];
+    }
+} 
+bool add(int which_poly, int x, int y) 
 { 
+    bool res = false;
     vertex *v; 
 
     v = (vertex*)malloc(sizeof(vertex)); 
     v->x = x; 
     v->y = y;
     v->alpha = 0.;
-    v->next =0;
     v->internal =false;
     v->linkTag=0;
 
     if (which_poly == 1) 
     { 
-	AddVertex(s,s_size,v);
-	s_size++;
+	v->next = s_size+1 ;
+	res = AddVertex(s,s_size,v);
     } 
     else if (which_poly == 2) 
     { 
-	AddVertex(c,c_size,v);
-	c_size++; 
+	v->next = c_size+1 ;
+	res = AddVertex(c,c_size,v);
     } 
     else {
 	printf("%d is not a valid polygon index.\n",which_poly);
 	exit(1);
     }
     free(v);
+
+    return res;
 }
 
 void test1()
 {
-    add(1,3,2);
-    add(1,1,2);
-    add(1,1,4);
-    add(1,3,4);
+    if (!add(1,3,2))
+	fprintf(stderr,"failed.\n");
+    if (!add(1,1,2))
+	fprintf(stderr,"failed.\n");
+    if (!add(1,1,4))
+	fprintf(stderr,"failed.\n");
+    if (!add(1,3,4))
+	fprintf(stderr,"failed.\n");
 
-    add(2,4,1);
-    add(2,2,1);
-    add(2,2,3);
-    add(2,4,3);
+    if (!add(2,4,1))
+	fprintf(stderr,"failed.\n");
+    if (!add(2,2,1))
+	fprintf(stderr,"failed.\n");
+    if (!add(2,2,3))
+	fprintf(stderr,"failed.\n");
+    if (!add(2,4,3))
+	fprintf(stderr,"failed.\n");
 }
 
 void test2()

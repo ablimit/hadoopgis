@@ -317,7 +317,8 @@ __global__ void CalcIntersections(vertex *clip, int clipSize, vertex *subj, int 
 //
 // 	Allocates device memory for the 4 polygons. Clip, Subj
 // 	clip w/ intersections, subj w/ intersections.
-//
+//	e.g. |clip| = m , |subj|= n , |intClip| = n*m , |intSubj| = n*m 
+
 bool AllocateDevMem(int *&size, vertex *&clip, vertex *&subj, vertex *&intClip, vertex *&intSubj,
 					int clipSize, int subjSize)
 {
@@ -381,7 +382,8 @@ bool FreeDevMem(vertex **clip, vertex **subj, vertex **intClip, vertex **intSubj
 
 
 
-
+// Allocate host memory for the two polygon 
+// |clip| = n*m  |subj| = n*m 
 
 bool AllocateIntBuffers(vertex **clip, vertex **subj, int clipSize, int subjSize)
 {
@@ -459,12 +461,14 @@ bool BuildIntPoly(vertex *&intPoly, int& intPolySize,
 {
 	bool	result = true, inSubj = true;
 	vertex	*curVert = subj, *firstVert;
-	
+	int i = 0 ;
 	// Find first intersection point in the subj poly
 	while( curVert->internal == false ) {
 		curVert = &subj[curVert->next];
+		printf("idx = %d\n",i++);
 	}
 	firstVert = curVert;
+	printf("(%f,%f)\n", curVert->x, curVert->y);
 	if( AddVertex(intPoly, intPolySize, curVert) ) {
 	
 		do {
@@ -491,6 +495,7 @@ bool BuildIntPoly(vertex *&intPoly, int& intPolySize,
 				result = false;
 				break;
 			}
+		printf("(%f,%f)\n", curVert->x, curVert->y);
 		} while( !(curVert->x == firstVert->x &&
 				   curVert->y == firstVert->y) );
 		
@@ -576,29 +581,29 @@ int gpuIntersect(VERTEX *subj, int subjSize, VERTEX *clip, int clipSize,
 	cudaError_t	devResult;
 
 		
-	printf("AllocateDevMem-----");
+	fprintf(stderr,"AllocateDevMem-----");
 	result = AllocateDevMem(devSize, devClip, devSubj, devIntClip, devIntSubj, clipSize, subjSize);
 	
-	result ? printf("success.\n"): printf("fail\n");
-	printf("AllocateIntBuffers-----");
+	result ? fprintf(stderr,"success.\n"): fprintf(stderr,"fail\n");
+	fprintf(stderr,"AllocateIntBuffers-----");
 	
 	if( result )
 		result = AllocateIntBuffers(&intClip, &intSubj, clipSize, subjSize);
 		
-	result ? printf("success.\n"): printf("fail\n");
-	printf("CopyData subj-----");
+	result ? fprintf(stderr,"success.\n"): fprintf(stderr,"fail\n");
+	fprintf(stderr,"CopyData subj-----");
 	
 	if( result ) 
 		result = CopyData(devSubj, subj, subjSize * sizeof(vertex), cudaMemcpyHostToDevice);
 	
-	result ? printf("success.\n"): printf("fail\n");
-	printf("CopyData clip-----");
+	result ? fprintf(stderr,"success.\n"): fprintf(stderr,"fail\n");
+	fprintf(stderr,"CopyData clip-----");
 	
 	if( result )
 		result = CopyData(devClip, clip, clipSize * sizeof(vertex), cudaMemcpyHostToDevice);
 
-	result ? printf("success.\n"): printf("fail\n");
-	printf("CalcIntersection-----");
+	result ? fprintf(stderr,"success.\n"): fprintf(stderr,"fail\n");
+	fprintf(stderr,"CalcIntersection-----");
 	
 	// Calulate the intersection points.
 	if( result ) {
@@ -610,7 +615,7 @@ int gpuIntersect(VERTEX *subj, int subjSize, VERTEX *clip, int clipSize,
 		if( devResult != cudaSuccess ) {
 			result = 0;
 		}
-	result ? printf("success.\n"): printf("fail\n");
+	result ? fprintf(stderr,"success.\n"): fprintf(stderr,"fail\n");
 	
 	} else
 
@@ -620,19 +625,19 @@ int gpuIntersect(VERTEX *subj, int subjSize, VERTEX *clip, int clipSize,
 	if( result ) 
 		result = CopyData(intClip, devIntClip, clipSize * subjSize * sizeof(vertex), cudaMemcpyDeviceToHost);
 	
-	printf("BuildIntPoly-----");
+	fprintf(stderr,"BuildIntPoly-----");
 
 	if( result ) {
 
 		result = BuildIntPoly(*intPoly, *intPolySize, intSubj, size[SUBJ], intClip, size[CLIP]);
 	}
 
-	result ? printf("success.\n"): printf("fail\n");
-	printf("FreeDevMem-----");
+	result ? fprintf(stderr,"success.\n"): fprintf(stderr,"fail\n");
+	fprintf(stderr,"FreeDevMem-----");
 	
 	result = FreeDevMem(&devClip, &devSubj, &devIntClip, &devIntSubj);
 		
-	result ? printf("success.\n"): printf("fail\n");
+	result ? fprintf(stderr,"success.\n"): fprintf(stderr,"fail\n");
 
 	return result;
 }
@@ -694,37 +699,3 @@ int gpuUnion(VERTEX *subj, int subjSize, VERTEX *clip, int clipSize,
 	return result;
 }
 
-
-
-
-
-
-
-
-//
-//
-//	 C wrappers for the Postgres plugin
-//
-//
-/*
-extern "C" {
-
-
-int gi_Intersect(VERTEX *poly1, int poly1Size, VERTEX *poly2, int poly2Size,
-				   VERTEX **intPoly, int *intPolySize) 
-{
-	return gpuIntersect(poly1, poly1Size, poly2, poly2Size,
-				 		intPoly, intPolySize);
-}
-
-
-
-int gi_Union(VERTEX *poly1, int poly1Size, VERTEX *poly2, int poly2Size,
-				   VERTEX **intPoly, int *intPolySize) 
-{
-	return gpuIntersect(poly1, poly1Size, poly2, poly2Size,
-				 		intPoly, intPolySize);
-}
-
-}
-*/
