@@ -461,11 +461,11 @@ bool BuildIntPoly(vertex *&intPoly, int& intPolySize,
 {
 	bool	result = true, inSubj = true;
 	vertex	*curVert = subj, *firstVert;
-	int i = 0 ;
+	// int i = 0 ;
 	// Find first intersection point in the subj poly
 	while( curVert->internal == false ) {
 		curVert = &subj[curVert->next];
-		printf("idx = %d\n",i++);
+		printf("idx = %d\n",curVert->next);
 	}
 	firstVert = curVert;
 	printf("(%f,%f)\n", curVert->x, curVert->y);
@@ -603,40 +603,50 @@ int gpuIntersect(VERTEX *subj, int subjSize, VERTEX *clip, int clipSize,
 		result = CopyData(devClip, clip, clipSize * sizeof(vertex), cudaMemcpyHostToDevice);
 
 	result ? fprintf(stderr,"success.\n"): fprintf(stderr,"fail\n");
+
 	fprintf(stderr,"CalcIntersection-----");
-	
+
 	// Calulate the intersection points.
 	if( result ) {
-	
-		CalcIntersections<<<1, 128>>>(devClip, clipSize, devSubj, subjSize,
-								  devIntClip, devIntSubj, devSize);
-		
-		devResult = cudaMemcpy(size, devSize, 2 * sizeof(int), cudaMemcpyDeviceToHost);
-		if( devResult != cudaSuccess ) {
-			result = 0;
-		}
-	result ? fprintf(stderr,"success.\n"): fprintf(stderr,"fail\n");
-	
+
+	    CalcIntersections<<<1, 128>>>(devClip, clipSize, devSubj, subjSize,
+		    devIntClip, devIntSubj, devSize);
+
+	    devResult = cudaMemcpy(size, devSize, 2 * sizeof(int), cudaMemcpyDeviceToHost);
+	    if( devResult != cudaSuccess ) {
+		result = 0;
+	    }
+	    result ? fprintf(stderr,"success.\n"): fprintf(stderr,"fail\n");
+
 	} else
 
-	if( result ) 
+	    if( result ) 
 		result = CopyData(intSubj, devIntSubj, clipSize * subjSize * sizeof(vertex), cudaMemcpyDeviceToHost);
-	
+
 	if( result ) 
-		result = CopyData(intClip, devIntClip, clipSize * subjSize * sizeof(vertex), cudaMemcpyDeviceToHost);
+	    result = CopyData(intClip, devIntClip, clipSize * subjSize * sizeof(vertex), cudaMemcpyDeviceToHost);
+
+	for (int i =0 ; i< clipSize * subjSize; i++)
+	    fprintf(stderr,"(%d,%d)\n",(int)intSubj[i].x,(int)intSubj[i].y);
+
+	fprintf(stderr,"\n");
 	
+	for (int i =0 ; i< clipSize * subjSize; i++)
+	    fprintf(stderr,"(%d,%d)\n",(int)intClip[i].x,(int)intClip[i].y);
+	
+	exit(1);
 	fprintf(stderr,"BuildIntPoly-----");
 
 	if( result ) {
 
-		result = BuildIntPoly(*intPoly, *intPolySize, intSubj, size[SUBJ], intClip, size[CLIP]);
+	    result = BuildIntPoly(*intPoly, *intPolySize, intSubj, size[SUBJ], intClip, size[CLIP]);
 	}
 
 	result ? fprintf(stderr,"success.\n"): fprintf(stderr,"fail\n");
 	fprintf(stderr,"FreeDevMem-----");
-	
+
 	result = FreeDevMem(&devClip, &devSubj, &devIntClip, &devIntSubj);
-		
+
 	result ? fprintf(stderr,"success.\n"): fprintf(stderr,"fail\n");
 
 	return result;
@@ -651,51 +661,51 @@ int gpuIntersect(VERTEX *subj, int subjSize, VERTEX *clip, int clipSize,
 //
 //
 int gpuUnion(VERTEX *subj, int subjSize, VERTEX *clip, int clipSize,
-				 VERTEX **intPoly, int *intPolySize)
+	VERTEX **intPoly, int *intPolySize)
 {
-	int		result = 1;
-	vertex	*devSubj, *devClip, *devIntSubj, *devIntClip,
-			*intClip, *intSubj;
-	int		*devSize, size[2];
-	cudaError_t	devResult;
-
-		
-	result = AllocateDevMem(devSize, devClip, devSubj, devIntClip, devIntSubj, clipSize, subjSize);
-
-	if( result )
-		result = AllocateIntBuffers(&intClip, &intSubj, clipSize, subjSize);
-		
-	if( result ) 
-		result = CopyData(devSubj, subj, subjSize * sizeof(vertex), cudaMemcpyHostToDevice);
-	
-	if( result )
-		result = CopyData(devClip, clip, clipSize * sizeof(vertex), cudaMemcpyHostToDevice);
+    int		result = 1;
+    vertex	*devSubj, *devClip, *devIntSubj, *devIntClip,
+		*intClip, *intSubj;
+    int		*devSize, size[2];
+    cudaError_t	devResult;
 
 
-	// Calulate the intersection points.
-	if( result ) {
-	
-		CalcIntersections<<<1, 128>>>(devClip, clipSize, devSubj, subjSize,
-								  devIntClip, devIntSubj, devSize);
-		
-		devResult = cudaMemcpy(size, devSize, 2 * sizeof(int), cudaMemcpyDeviceToHost);
-		if( devResult != cudaSuccess ) {
-			result = 0;
-		}
-	} else
+    result = AllocateDevMem(devSize, devClip, devSubj, devIntClip, devIntSubj, clipSize, subjSize);
 
-	if( result ) 
-		result = CopyData(intSubj, devIntSubj, clipSize * subjSize * sizeof(vertex), cudaMemcpyDeviceToHost);
-	
-	if( result ) 
-		result = CopyData(intClip, devIntClip, clipSize * subjSize * sizeof(vertex), cudaMemcpyDeviceToHost);
-	
-	if( result ) {
+    if( result )
+	result = AllocateIntBuffers(&intClip, &intSubj, clipSize, subjSize);
 
-		result = BuildUnionPoly(*intPoly, *intPolySize, intSubj, size[SUBJ], intClip, size[CLIP]);
+    if( result ) 
+	result = CopyData(devSubj, subj, subjSize * sizeof(vertex), cudaMemcpyHostToDevice);
+
+    if( result )
+	result = CopyData(devClip, clip, clipSize * sizeof(vertex), cudaMemcpyHostToDevice);
+
+
+    // Calulate the intersection points.
+    if( result ) {
+
+	CalcIntersections<<<1, 128>>>(devClip, clipSize, devSubj, subjSize,
+		devIntClip, devIntSubj, devSize);
+
+	devResult = cudaMemcpy(size, devSize, 2 * sizeof(int), cudaMemcpyDeviceToHost);
+	if( devResult != cudaSuccess ) {
+	    result = 0;
 	}
-	result = FreeDevMem(&devClip, &devSubj, &devIntClip, &devIntSubj);
-		
-	return result;
+    } else
+
+	if( result ) 
+	    result = CopyData(intSubj, devIntSubj, clipSize * subjSize * sizeof(vertex), cudaMemcpyDeviceToHost);
+
+    if( result ) 
+	result = CopyData(intClip, devIntClip, clipSize * subjSize * sizeof(vertex), cudaMemcpyDeviceToHost);
+
+    if( result ) {
+
+	result = BuildUnionPoly(*intPoly, *intPolySize, intSubj, size[SUBJ], intClip, size[CLIP]);
+    }
+    result = FreeDevMem(&devClip, &devSubj, &devIntClip, &devIntSubj);
+
+    return result;
 }
 

@@ -6,7 +6,7 @@ int gpuIntersect(VERTEX *poly1, int poly1Size, VERTEX *poly2, int poly2Size, VER
 bool AddVertex(vertex *&poly, int& size, vertex *vert);
 
 bool add(int which_poly, int x, int y);
-void vis(VERTEX * p);
+void vis(vertex* p, int size);
 void test1();
 void test2();
 void test3();
@@ -41,31 +41,29 @@ int main(int argc, char **argv)
     }
 
     fprintf(stderr,"s_size: %d\n",s_size);
-    fprintf(stderr,"c_size: %d\n",c_size);
-    //fprintf(stderr,"start..\n");
-    vis(s);
-    vis(c);
+    vis(s, s_size);
 
+    printf("\n");
+    
+    fprintf(stderr,"c_size: %d\n",c_size);
+    vis(c, c_size);
+    
+    
     gpuIntersect(s,s_size,c,c_size,&r,&r_size);
     fprintf(stderr,"\n\n");
 
-    fprintf(stderr,"result size: %d\n",r_size);
-    for (int i = 0 ;i < r_size; i++){
-	printf("(%f,%f)\n",(r[i].x),(r[i].y));
+    fprintf(stderr,"r_size: %d\n",r_size);
+    vis(r,r_size);
+}
+
+void vis(vertex * p, int size ) {
+    vertex * aux = p;
+    while (aux->next <= size && aux->next > 0) {
+	fprintf(stderr,"(%d,%d)\n",(int)aux->x,(int)aux->y);
+	aux = &(p[aux->next]); 
     }
 }
 
-void vis(VERTEX * p) {
-    vertex * aux = p;
-    int i =0 ;
-    while (NULL != aux){
-	printf("(%f,%f)\n",aux->x,aux->y);
-	aux = &(aux[aux->next]);
-	i++;
-	if (i == 4 )
-	    break;
-    }
-} 
 bool add(int which_poly, int x, int y) 
 { 
     bool res = false;
@@ -75,8 +73,8 @@ bool add(int which_poly, int x, int y)
     v->x = x; 
     v->y = y;
     v->alpha = 0.;
-    v->internal =false;
-    v->linkTag=0;
+    v->internal = false;
+    v->linkTag = 0;
 
     if (which_poly == 1) 
     { 
