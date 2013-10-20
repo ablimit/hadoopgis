@@ -1,11 +1,11 @@
 #if !defined(_SPATIAL_)
 #define _SPATIAL_
 
-#define COOR float
+#define point_type float
 
 typedef struct vertex {
-	COOR	x;
-	COOR	y;
+	point_type	x;
+	point_type	y;
 	float	alpha;
 	int		next;
 	bool	internal;
