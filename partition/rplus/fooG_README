@@ -1,0 +1,30 @@
+Syntax:		fooG.all <file> 
+Action:		insert data from <file>, search TOP, search DIR
+
+Syntax:		fooG.allD <file> <type>
+Action:		search DIR, <type> = MBR
+
+Syntax:		fooG.allT <file> <type>
+Action:		search TOP, <type> = OBJ | MBR
+
+Syntax:		fooG_D <file> <rel> <type>
+Action:		search direction relation <rel>, <type> = OBJ | MBR
+
+Syntax:		fooG_T <file> <rel> <type>
+Action:		search topological relation <rel>, <type> = OBJ | MBR
+
+Syntax:		fooG <file> <rel> <type> <group>
+Action:		compile, insert data from <file>, search relation <rel>, 
+		<type> = OBJ | MBR, <group> = TOP | DIR
+
+
+Destination of results:
+
+RESULTS/INSERT		: insert statistics
+RESULTS/SEARCH_DIR	: search statistics for direction relations
+RESULTS/SEARCH_TOP	: search statistics for topological relations
+
+
+------------------
+
+Yannis, 27.10.94

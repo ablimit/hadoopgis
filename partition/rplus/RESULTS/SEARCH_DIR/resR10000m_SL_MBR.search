@@ -1,0 +1,10 @@
+
+searches:				100
+qualifying rects:			13269
+qualifying rects (no refinement):	0
+avg hits per search:			132.69
+pages touched per search:		64.73
+pages touched per hit:			0.49
+cpu time:				12.833333
+cpu time per search:			0.128333
+cpu time per hit:			0.000967

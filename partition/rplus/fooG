@@ -1,0 +1,9 @@
+make rpt
+/bin/rm -f yannis$1.idx
+/bin/rm -f yannis$1.sll
+echo "Start insert..."
+rpt ../db/data.$1 yannis$1 1 X X > RESULTS/INSERT/res$1.ins
+echo "End insert"
+echo "Start search..."
+rpt ../db/q.$1 yannis$1 2 $2 $3 > RESULTS/SEARCH_$4/res$1_$2_$3.search
+echo "End search"
