@@ -4,9 +4,9 @@
 || the r-tree library.
 */
 
-#ifndef	NULL
-#define NULL 0
-#endif
+//#ifndef	NULL
+//#define NULL 0
+//#endif
 
 #define EOS '\0'
 

@@ -12,15 +12,16 @@
 ||	5 - mode of search (OBJ or MBR)
 */
 
-#include	<stdio.h>
-#include	<ctype.h>
-#include	<sys/file.h>
-
-#include	"macros.h"
-#include	"options.h"
-#include	"assert.h"
-#include	"index.h"
-#include	"global.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <sys/file.h>
+#include "macros.h"
+#include "options.h"
+#include "assert.h"
+#include "index.h"
+#include "global.h"
 
 int     NO_REFIN;
 
@@ -31,9 +32,7 @@ struct	Node	*SearchBuf[MAXLEVELS];
 	int magicNum;
 
 
-main(argc, argv)
-int argc;
-char *argv[];
+int main(int argc, char **argv)
 {
 	int idxp;
 	char	ixfnam[MAXNAMLEN];
