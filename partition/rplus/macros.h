@@ -7,7 +7,7 @@
 //#ifndef	NULL
 //#define NULL 0
 //#endif
-
+#include <stdlib.h>
 #define EOS '\0'
 
 #define True 1

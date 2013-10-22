@@ -201,19 +201,13 @@ off_t		offset;
     return ;
 }
 
-PutOnePage( idxp, offset, node )
-int idxp;
-off_t offset;
-struct Node *node;
+void PutOnePage ( int idxp, off_t offset,struct Node *node)
 {
     if (node->level == 0) RPutOneLPage(idxp,offset,node);
     else RPutOnePage(idxp,offset,node);
 }
 
-RPutOnePage( idxp, offset, node )
-int idxp;
-off_t offset;
-struct Node *node;
+void RPutOnePage (int idxp, off_t offset, struct Node *node)
 {
     char ws[PAGESIZE];
     register int i, j;
@@ -277,13 +271,10 @@ struct Node *node;
 #endif
 }
        
-RPutOneLPage( idxp, offset, node )
-int idxp;
-off_t offset;
-struct Node *node;
+void RPutOneLPage (int idxp, off_t offset, struct Node *node)
 {
     char ws[LPAGESIZE];
-    register int i, j;
+    int i, j;
     int d1, d2;
 
 #ifdef DEBUG
@@ -338,10 +329,7 @@ struct Node *node;
 #endif
 }
        
-struct OverFlowNode *
-GetOverFlowPage( idxp, offset )
-int idxp;
-off_t offset;
+struct OverFlowNode * GetOverFlowPage (int idxp, off_t offset)
 {
     int n;
     char ws[LPAGESIZE];
@@ -390,17 +378,14 @@ off_t offset;
 }
 
 
-void
-PutOverFlowPage( idxp, overFlowNode )
-int idxp;
-struct OverFlowNode *overFlowNode;
+void PutOverFlowPage (int idxp, struct OverFlowNode *overFlowNode)
 {
-    register off_t offset;
+    off_t offset;
     char ws[LPAGESIZE];
     register int i, j;
     int tempNo, d1, d2;
     int OFFsize;
-    register struct OverFlowNode * rp;
+    struct OverFlowNode * rp;
 
 #ifdef DEBUG
 	printf("I TRY TO WRITE A OVERF PAGE AT OFFSET %d\n",offset);
@@ -452,9 +437,7 @@ struct OverFlowNode *overFlowNode;
     }
 }
 
-double
-AArea(rect)
-struct Rect *rect;
+double AArea(struct Rect *rect)
 {
 
         register int i;
@@ -467,9 +450,7 @@ struct Rect *rect;
 }
 
  /* Rectangle r1 is inside rectangle r2 */
-int
-Within(r1,r2)
-struct Rect r1, r2;
+int Within(struct Rect r1, struct Rect r2)
 {
     int tmp;
 
@@ -485,9 +466,7 @@ struct Rect r1, r2;
 }
 
 
-int
-OverLaps(r1,r2)
-struct Rect r1, r2;
+int OverLaps(struct Rect r1, struct Rect r2)
 {
     int tmp;
 
@@ -505,11 +484,9 @@ struct Rect r1, r2;
 }
 
 
-int
-CheckFullCover(node)
-struct Node *node;
+int CheckFullCover(struct Node *node)
 {
-    register int i, j, k;
+    int i, j, k;
     double area, AArea();
     int X1[NODECARD];
     int X2[NODECARD];

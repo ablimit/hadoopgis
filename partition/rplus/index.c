@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "macros.h"
 #include "options.h"
 #include "index.h"
@@ -285,12 +286,8 @@ register struct Node *n;
 ** NODECARD, the overflow page will be changed to normal page.
 **
 */
-int
-DeleteOFRect( r, over, node, rect )
-register struct Rect *r;
-register struct OverFlowNode *over;
-register struct Node **node;
-register struct Rect rect;
+//( r, over, node, rect )
+int DeleteOFRect( struct Rect *r, struct OverFlowNode *over, struct Node **node, struct Rect rect)
 {
     register struct OverFlowNode *rp, *rq;
     struct Rect IntersectRect();

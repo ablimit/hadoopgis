@@ -13,7 +13,7 @@ struct Rect	CoverAll;
 /* int MinFill; */
 
 /* the whole permited area */
-struct Rect MaxArea;
+// extern struct Rect MaxArea;
 
 /* rp: Head of list of rectangles when packing the tree */
 struct ListRect *ListRectHead;

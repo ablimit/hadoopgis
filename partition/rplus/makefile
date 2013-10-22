@@ -1,4 +1,3 @@
-# @(#)Makefile	1.13 3/13/84
 
 FLAGS= -O2
 
@@ -11,28 +10,15 @@ ALL= $(SRC) $(HEADERS)
 
 OBJ= main.o index.o rectangl.o printsta.o clock.o allocate.o error.o\
         pack.o insert.o splitnod.o partitio.o node.o page.o func.o
-CC= gcc 
 
-$(OBJ): $(HEADERS)
+all: rpt
 
-.c.o: $(HEADERS)
-	$(CC) -c $(FLAGS) $*.c
+#.c.o: $(HEADERS)
+$(OBJ): $(HEADERS) $(SRC)
+	gcc -m64 -c $(FLAGS) $*.c
 
-rpt: $(OBJ) 
-	$(CC) $(FLAGS) $(OBJ) $(OBJLIN) -lm -o rpt
+rpt: $(OBJ)
+	gcc -m64 $(FLAGS) $(OBJ) -lm -o $@
 
-
-edit:
-	vi $(SRC)
 clean:
-	rm -f *.o core tags rpt
-
-tags: $(SRC)
-	ctags *.c
-
-lint:
-	rm -f lint.out
-	lint *.c > lint.out
-
-c:
-	/bin/rm -f core
+	rm -f *.o rpt

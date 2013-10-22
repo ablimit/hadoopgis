@@ -6,49 +6,44 @@
 #include "assert.h"
 
 /*-----------------------------------------------------------------------------
-| Space allocation routines. - just keep track of No. of allocations
-|
-| Call myalloc() like malloc().
-| Call myfree() like free().
------------------------------------------------------------------------------*/
+  | Space allocation routines. - just keep track of No. of allocations
+  |
+  | Call myalloc() like malloc().
+  | Call myfree() like free().
+  -----------------------------------------------------------------------------*/
 
-static	int	puse=0; vuse=0;
+static	int	puse=0, vuse=0;
 static	int	all = 0;
 static	int	maxuse=0;
 
-char *
-myalloc(n)
-register int	 n;
+void * myalloc(int n)
 {
-	char	*malloc();
+    all++;
+    puse++;
 
-	all++;
-	puse++;
+    if ((puse-vuse) > maxuse)
+	maxuse++;
 
-	if ((puse-vuse) > maxuse)
-		maxuse++;
-
-	return malloc(n);
+    return malloc(n);
 }
 
-myfree(p)
-char	*p;
+void myfree(void *p)
 {
-	all--;
+    all--;
+    vuse++;
+
+    free(p);
+}
+
+void myfreeOFN( struct OverFlowNode *p)
+{
+    struct OverFlowNode 	*q;
+    while ( p != NULL ) {
+	all --;
 	vuse++;
-
+	q = p->next2;
 	free(p);
+	p = q;
+    }
 }
 
-myfreeOFN( p )
-register struct OverFlowNode 	*p;
-{
-    	register struct OverFlowNode 	*q;
-    	while ( p != NULL ) {
-		all --;
-		vuse++;
-		q = p->next2;
-		free(p);
-		p = q;
-    	}
-}

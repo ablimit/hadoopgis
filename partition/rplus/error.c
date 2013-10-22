@@ -3,12 +3,12 @@
 */
 
 #include	<stdio.h>
+#include	<stdlib.h>
 
 /* General purpose error routine.
 ** Prints a string and exits.
 */
-error(s)
-char *s;
+void error(char *s)
 {
 	printf("*** %s\n", s);
 	exit(1);
