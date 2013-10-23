@@ -16,7 +16,7 @@ struct Rect CombineRect(struct Rect *r, struct Rect *rr);
 struct Rect IntersectRect(struct Rect *r, struct Rect *rr);
 struct OverFlowNode * GetOverFlowPage (int idxp, off_t offset);
 
-int SplitNode (int idxp,
+void SplitNode (int idxp,
 	struct Node *n,     /* node to be split */
 	struct Branch *b,
 	struct Node **nn,   /* new node */
