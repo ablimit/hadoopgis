@@ -11,8 +11,8 @@ ifneq (,$(findstring emory,$(shell uname -a)))
     LIBS = -L$(boost)/lib -L$(spatial)/lib
 else 
     ifeq ($(UNAME), Darwin)
-    INCFLAGS = -I /Library/Frameworks/GEOS.framework/Headers
-    LIBS = -L /Library/Frameworks/GEOS.framework/unix/lib
+    INCFLAGS = -I /Library/Frameworks/GEOS.framework/Headers -I /usr/local/include
+    LIBS = -L /Library/Frameworks/GEOS.framework/unix/lib -L /usr/local/lib
 endif
 endif
 

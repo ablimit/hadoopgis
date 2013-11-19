@@ -3,22 +3,25 @@
 using namespace std;
 using namespace SpatialIndex;
 
+
+
+
 class MyDataStream : public IDataStream
 {
     public:
-        MyDataStream(std::string inputFile) : m_pNext(0), m_id(0)
+        MyDataStream(std::string inputFile) : m_pNext(0)
     {
         m_fin.open(inputFile.c_str());
 
         if (! m_fin)
             throw Tools::IllegalArgumentException("Input file not found.");
-        readNextEntry();
+        
+	readNextEntry();
     }
 
         virtual ~MyDataStream()
         {
             if (m_pNext != 0) delete m_pNext;
-            //m_fin.close();
         }
 
         virtual IData* getNext()
@@ -50,7 +53,6 @@ class MyDataStream : public IDataStream
             }
 
             m_fin.seekg(0, std::ios::beg);
-            //m_id = 0 ;
             readNextEntry();
         }
 
@@ -61,19 +63,17 @@ class MyDataStream : public IDataStream
 	    id_type id;
 
 
-            m_fin >> m_id >> low[0] >> low[1] >> high[0] >> high[1] >> area;
+            m_fin >> id >> low[0] >> low[1] >> high[0] >> high[1] >> area;
 
             if (m_fin.good())
             {
                 Region r(low, high, 2);
                 m_pNext = new RTree::Data(0, 0 , r, id);// store a zero size null poiter.
-		std::cerr << "Item ID: " << m_id << endl; 
             }
         }
 
         std::ifstream m_fin;
         RTree::Data* m_pNext;
-        id_type m_id;
 };
 
 int main(int argc, char** argv)
@@ -104,7 +104,7 @@ int main(int argc, char** argv)
         // the StorageManager and the RSTAR splitting policy.
         id_type indexIdentifier;
         ISpatialIndex* tree = RTree::createAndBulkLoadNewRTree(
-                RTree::BLM_STR, stream, *file, fillFactor, indexCapacity, leafCapacity, 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
+                RTree::BLM_RP, stream, *file, fillFactor, indexCapacity, leafCapacity, 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
 
         std::cerr << *tree;
         //std::cerr << "Buffer hits: " << file->getHits() << std::endl;
