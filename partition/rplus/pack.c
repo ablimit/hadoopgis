@@ -5,10 +5,6 @@
 #include "global.h"
 #include "assert.h"
 
-int
-Pack (rects, n, fillfact)
-register struct ListRect *rects;
-register struct Node *n;
-register int fillfact;
+int Pack (struct ListRect *rects, struct Node *n, int fillfact)
 {
 }

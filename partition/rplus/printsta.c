@@ -63,7 +63,7 @@ InsertStats()
                         (UserTime+SystemTime) / InSplitCount);
         TreeStats();
 }
-
+
 SearchStats()
 {
         float fraction;
@@ -95,8 +95,8 @@ SearchStats()
         if (HitCount > 0)
                 printf("cpu time per hit:\t\t\t%f\n", (UserTime+SystemTime) / HitCount);
 }
-
-DeleteStats()
+
+void DeleteStats()
 {
         printf("\n");
         printf("rectangles deleted:\t\t%d\n", DeleteCount);
@@ -125,8 +125,8 @@ DeleteStats()
                 printf("cpu time per delete:\t\t%f\n",
                         (UserTime+SystemTime) / DeleteCount);
 }
-
-GeneralStats()
+
+void GeneralStats()
 {
 
         printf("\n");
@@ -134,8 +134,8 @@ GeneralStats()
         printf("dimensions:\t\t\t%d\n", NUMDIMS);
         printf("entries per node:\t\t%d\n", NODECARD);
 }
-
-TreeStats()
+
+void TreeStats()
 {
         assert(RectCount >= 0);
 
@@ -158,3 +158,4 @@ TreeStats()
                 printf("space utilization:\t\t%d%%\n",
                         (int)(100*(float)EntryCount/(NodeCount*NODECARD)));
 }
+

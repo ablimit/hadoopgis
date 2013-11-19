@@ -18,7 +18,7 @@ then
 fi
 
 
-for tid in 2 3 4 5
+for tid in 2 3 4 5 6 7
 do
     ifile="${idir}/test${tid}.obj.txt"
 

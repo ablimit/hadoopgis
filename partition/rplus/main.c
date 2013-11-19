@@ -61,6 +61,7 @@ int main(int argc, char **argv)
 	ResetClock();
 	StartClock();
 	NoPackInput( idxp, &Root, argv[1] );
+	// PackInput( idxp, &Root, argv[1] );
 	StopClock();
 	InsertStats();
 	fflush(stdout);

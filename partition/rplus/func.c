@@ -17,9 +17,7 @@ extern	struct Node	*SearchBuf[MAXLEVELS];
  */
 int CreateIndex (char *indexName, struct Node *root)
 {
-
     int		i, idxp;
-
 
     if (( idxp = open( indexName, O_RDWR )) > 0 )
     {
@@ -46,9 +44,7 @@ int CreateIndex (char *indexName, struct Node *root)
     return idxp;
 }
 
-    int
-DropIndex( indexName )
-    char	*indexName;
+int DropIndex(char* indexName)
 {
     char s[100];
 
@@ -85,14 +81,11 @@ CloseIndex( idxp, root )
     close( idxp );
 }
 
-    int
-GetOneRect( fp, rect )
-    FILE		*fp;
-    struct Rect	*rect;
+int GetOneRect(FILE* fp, struct Rect* rect)
 {
     int	in;
-    float	x1, y1, x2, y2;
-    int 	j;
+    float x1, y1, x2, y2;
+    int j;
 
     j = fscanf( fp, "%d %e %e %e %e", &in, &x1, &y1, &x2, &y2 );
     if (j == EOF)
@@ -102,16 +95,11 @@ GetOneRect( fp, rect )
     rect->boundary[2] = (int) x2;
     rect->boundary[3] = (int) y2;
     return ( 0 - in );
-
 }
 
-    int
-GetManyRect( fp, rect, id )
-    FILE		*fp;
-    struct Rect	**rect;
-    int		*id;
+int GetManyRect(FILE* fp, struct Rect** rect, int* id)
 {
-    register int i=0;
+    int i=0;
 
     while ( (id[i] = GetOneRect(fp,rect[i])) != 0)
     {
@@ -136,12 +124,12 @@ InsertOneRect( idxp, root, rect, id )
     return( InsertRect( idxp, rect, id, root, 0 ));
 }
 
-    int
-InsertManyRect( idxp, root, rect, id,num )
-    int		idxp;
-    struct Node	**root;
-    struct Rect	**rect;
-    int		*id, num;
+int InsertManyRect(
+	int		idxp,
+	struct Node	**root,
+	struct Rect	**rect,
+	int		*id, 
+	int num)
 {
     int	j;
 
@@ -153,16 +141,12 @@ InsertManyRect( idxp, root, rect, id,num )
     /*	return( Pa_InsertRect( idxp, rect, root, 0, num )); */
 }
 
-    int
-PackInput( idxp, root, fileName )
-    int		idxp;
-    struct Node	**root;
-    char		*fileName;
+int PackInput(int idxp, struct Node** root,char* fileName)
 {
     FILE		*fp;
     struct Rect	*rect[NODECARD];
     int		num, id[NODECARD];
-    register	int i,j;
+    int i,j;
 
     if ((fp = fopen( fileName, "r" )) == NULL )
     {
@@ -192,11 +176,7 @@ PackInput( idxp, root, fileName )
     return TRUE;
 }
 
-    int
-NoPackInput( idxp, root, fileName )
-    int		idxp;
-    struct Node	**root;
-    char		*fileName;
+int NoPackInput(int idxp, struct Node	**root, char* fileName)
 {
     FILE		*fp;
     struct Rect	*rect;
