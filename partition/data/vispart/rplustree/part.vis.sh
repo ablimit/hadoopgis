@@ -18,7 +18,7 @@ then
 fi
 
 
-for tid in 5 6 7
+for tid in 2 3 4 5 6 7
 do
     ifile="${idir}/test${tid}.obj.txt"
 
@@ -29,14 +29,15 @@ do
     echo -e "\n------------------------------------"
     echo -e "\ngenerating partition region..."
     ./genPartitionRegionFromIndex  ${tempPath}/spatial > ${opath}/regionmbb.${tid}.txt 2> ${opath}/idxmbb.${tid}.gnu
-
-    #echo -e "\n remove R+ index data."
-    #rm ${tempPath}/spatial.idx
-    #rm ${tempPath}/spatial.dat
     
-    #echo -e "\n------------------------------------"
-    #echo "building index on test ${tid}  ...."
-    #./genRtreeIndex ${ifile} ${tempPath}/spatial 4 4 $fillFactor
+    echo -e "\n------------------------------------"
+    echo -e "\nremove R+ index data."
+    rm ${tempPath}/spatial.idx
+    rm ${tempPath}/spatial.dat
+    
+    echo -e "\n------------------------------------"
+    echo "building index on test ${tid}  ...."
+    ./genRtreeIndex ${ifile} ${tempPath}/spatial 4 4 $fillFactor
     
     echo -e "\n------------------------------------"
     echo "generate pid oid mapping ...."

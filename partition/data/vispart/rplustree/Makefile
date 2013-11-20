@@ -25,17 +25,21 @@ else
     CC = g++
 endif
 
-# all: process loader plot part mbb view
-all: genRplusIndex genRtreeIndex genPartitionRegionFromIndex rquery
+all: genRplusIndex genRtreeIndex genPartitionRegionFromIndex rquery Makefile
 
-genRplusIndex: RplusBulkLoad.cc
+debug: CXX += -DDEBUG -g
+debug: CC += -DDEBUG -g
+debug: all 
+
+
+genRplusIndex: RplusBulkLoad.cc 
 	$(CC) RplusBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o genRplusIndex
 	
 genRtreeIndex: RTreeBulkLoad.cc
 	$(CC) RTreeBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndex
 
-genPartitionRegionFromIndex: RTreePartitionMBB.cc
-	$(CC) RTreePartitionMBB.cc $(CFLAGS) $(LDFLAGS) -o genPartitionRegionFromIndex
+genPartitionRegionFromIndex: RplusPartitionMBB.cc dbg.h
+	$(CC) RplusPartitionMBB.cc $(CFLAGS) $(LDFLAGS) -o genPartitionRegionFromIndex
 
 rquery: RTreeQuery.cc
 	$(CC) RTreeQuery.cc $(CFLAGS) $(LDFLAGS) -o rquery

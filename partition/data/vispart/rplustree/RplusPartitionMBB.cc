@@ -1,7 +1,9 @@
+#include <spatialindex/SpatialIndex.h>
 #include <cstring>
 
+#include"dbg.h"
+
 // include library header file.
-#include <spatialindex/SpatialIndex.h>
 
 using namespace SpatialIndex;
 using namespace std;
@@ -31,9 +33,12 @@ class MyQueryStrategy : public SpatialIndex::IQueryStrategy
 		{
 		    for (uint32_t cChild = 0; cChild < n->getChildrenCount(); cChild++)
 		    {
-			IShape** ps;
-			n->getChildShape(cChild,ps) ;
-			Region* pr = dynamic_cast<Region*>(*ps);
+			debug("number of children: %d.", n->getChildrenCount());
+
+			IShape *ps;
+
+			n->getChildShape(cChild,&ps) ;
+			Region* pr = dynamic_cast<Region*>(ps);
 			cout << n->getChildIdentifier(cChild)<< " " 
 			    << pr->m_pLow[0] << " " << pr->m_pLow[1] << " "
 			    << pr->m_pHigh[0] << " " << pr->m_pHigh[1] 
@@ -41,7 +46,7 @@ class MyQueryStrategy : public SpatialIndex::IQueryStrategy
 			// print node MBRs gnuplot style!
 			cerr<< "set object rect from " 
 			    << pr->m_pLow[0] << "," << pr->m_pLow[1] << " to "<< pr->m_pHigh[0] << "," << pr->m_pHigh[1] << endl;
-			delete *ps;
+			delete ps;
 		    }
 		    /*
 		       IShape* ps;

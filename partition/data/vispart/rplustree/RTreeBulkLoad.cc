@@ -84,14 +84,16 @@ int main(int argc, char** argv)
 {
     try
     {
-	if (argc != 5)
+	if (argc != 6)
 	{
-	    std::cerr << "Usage: " << argv[0] << " input_file tree_file capacity utilization." << std::endl;
+	    std::cerr << "Usage: " << argv[0] << " input_file tree_file indexCapacity leafCapacity fillFactor." << std::endl;
 	    return -1;
 	}
 
 	std::string baseName = argv[2];
-	double utilization = atof(argv[4]);
+	int indexCapacity = atoi(argv[3]);
+	int leafCapacity = atoi(argv[4]);
+	double fillFactor = atof(argv[5]);
 	
 	// IStorageManager* memoryFile = StorageManager::createNewMemoryStorageManager();
 	IStorageManager* diskfile = StorageManager::createNewDiskStorageManager(baseName, 4096);
@@ -107,7 +109,7 @@ int main(int argc, char** argv)
 	// the StorageManager and the RSTAR splitting policy.
 	id_type indexIdentifier;
 	ISpatialIndex* tree = RTree::createAndBulkLoadNewRTree(
-		RTree::BLM_STR, stream, *file, utilization, atoi(argv[3]), atoi(argv[3]), 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
+		RTree::BLM_STR, stream, *file, fillFactor, indexCapacity, leafCapacity, 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
 
 	std::cerr << *tree;
 	//std::cerr << "Buffer hits: " << file->getHits() << std::endl;
