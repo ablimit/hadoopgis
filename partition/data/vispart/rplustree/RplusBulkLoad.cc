@@ -1,10 +1,7 @@
 #include <spatialindex/SpatialIndex.h>
 
+using namespace std;
 using namespace SpatialIndex;
-
-#define INSERT 1
-#define DELETE 0
-#define QUERY 2
 
 class MyDataStream : public IDataStream
 {
@@ -58,21 +55,17 @@ class MyDataStream : public IDataStream
 
 	void readNextEntry()
 	{
-	    id_type id;
-	    double area;
 	    double low[2], high[2];
+	    double area;
+	    id_type id;
+
 
 	    m_fin >> id >> low[0] >> low[1] >> high[0] >> high[1] >> area;
 
 	    if (m_fin.good())
 	    {
-
 		Region r(low, high, 2);
-		m_pNext = new RTree::Data(sizeof(double), reinterpret_cast<byte*>(low), r, id);
-		// Associate a bogus data array with every entry for testing purposes.
-		// Once the data array is given to RTRee:Data a local copy will be created.
-		// Hence, the input data array can be deleted after this operation if not
-		// needed anymore.
+		m_pNext = new RTree::Data(0, 0 , r, id);// store a zero size null poiter.
 	    }
 	}
 
@@ -84,15 +77,17 @@ int main(int argc, char** argv)
 {
     try
     {
-	if (argc != 5)
+	if (argc != 6)
 	{
-	    std::cerr << "Usage: " << argv[0] << " input_file tree_file capacity utilization." << std::endl;
+	    std::cerr << "Usage: " << argv[0] << " input_file tree_file indexCapacity leafCapacity fillFactor." << std::endl;
 	    return -1;
 	}
 
 	std::string baseName = argv[2];
-	double utilization = atof(argv[4]);
-	
+	int indexCapacity = atoi(argv[3]);
+	int leafCapacity = atoi(argv[4]);
+	double fillFactor = atof(argv[5]);
+
 	// IStorageManager* memoryFile = StorageManager::createNewMemoryStorageManager();
 	IStorageManager* diskfile = StorageManager::createNewDiskStorageManager(baseName, 4096);
 	// Create a new storage manager with the provided base name and a 4K page size.
@@ -102,12 +97,12 @@ int main(int argc, char** argv)
 	// (LRU buffer, etc can be created the same way).
 
 	MyDataStream stream(argv[1]);
-
+	//cerr << "okay" << endl; 
 	// Create and bulk load a new RTree with dimensionality 2, using "file" as
 	// the StorageManager and the RSTAR splitting policy.
 	id_type indexIdentifier;
 	ISpatialIndex* tree = RTree::createAndBulkLoadNewRTree(
-		RTree::BLM_STR, stream, *file, utilization, atoi(argv[3]), atoi(argv[3]), 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
+		RTree::BLM_RP, stream, *file, fillFactor, indexCapacity, leafCapacity, 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
 
 	std::cerr << *tree;
 	//std::cerr << "Buffer hits: " << file->getHits() << std::endl;
@@ -115,12 +110,13 @@ int main(int argc, char** argv)
 
 	bool ret = tree->isIndexValid();
 	if (ret == false) std::cerr << "ERROR: Structure is invalid!" << std::endl;
-	else std::cerr << "The stucture seems O.K." << std::endl;
+	else std::cerr << "RTree build successfully." << std::endl;
+
+	cerr.flush();
 
 	delete tree;
 	delete file;
 	delete diskfile;
-
 	// delete the buffer first, then the storage manager
 	// (otherwise the the buffer will fail trying to write the dirty entries).
     }
@@ -134,3 +130,4 @@ int main(int argc, char** argv)
 
     return 0;
 }
+

@@ -26,11 +26,14 @@ else
 endif
 
 # all: process loader plot part mbb view
-all: genRtreeIndex genPartitionRegionFromIndex rquery
+all: genRplusIndex genRtreeIndex genPartitionRegionFromIndex rquery
 
-genRtreeIndex: RTreeBulkLoadOSM.cc
-	$(CC) RTreeBulkLoadOSM.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndex
+genRplusIndex: RplusBulkLoad.cc
+	$(CC) RplusBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o genRplusIndex
 	
+genRtreeIndex: RTreeBulkLoad.cc
+	$(CC) RTreeBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndex
+
 genPartitionRegionFromIndex: RTreePartitionMBB.cc
 	$(CC) RTreePartitionMBB.cc $(CFLAGS) $(LDFLAGS) -o genPartitionRegionFromIndex
 
@@ -39,6 +42,6 @@ rquery: RTreeQuery.cc
 
 
 clean:
-	@rm -f genRtreeIndex genPartitionRegionFromIndex rquery
+	@rm -f genRtreeIndex genPartitionRegionFromIndex rquery genRplusIndex
 
 
