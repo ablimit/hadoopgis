@@ -69,6 +69,9 @@ int main(int argc, char** argv)
 		while (fin)
 		{
 		    fin >> id >> x1 >> y1 >> x2 >> y2;
+		    
+		    cerr << "Query Region: (" << x1 << "," << y1 << ") (" << x2 << "," << y2 << ") --- " << id << endl; 
+		    
 		    if (! fin.good()) continue; // skip newlines, etc.
 
 		    plow[0] = x1; plow[1] = y1;

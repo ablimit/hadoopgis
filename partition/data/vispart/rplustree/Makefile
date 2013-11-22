@@ -7,8 +7,8 @@ INCBASE		= -I.
 LIBBASE		= -lspatialindex -lgeos
 
 ifneq (,$(findstring emory,$(shell uname -a)))
-    INCFLAGS = -I$(boost)/include -I$(spatial)/include
-    LIBS = -L$(boost)/lib -L$(spatial)/lib
+    INCFLAGS = -I$(spatial)/include
+    LIBS = -L$(spatial)/lib
 else 
     ifeq ($(UNAME), Darwin)
     INCFLAGS = -I /Library/Frameworks/GEOS.framework/Headers -I /usr/local/include
