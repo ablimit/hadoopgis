@@ -25,27 +25,30 @@ else
     CC = g++
 endif
 
-all: genRplusIndex genRtreeIndex genPartitionRegionFromIndex rquery Makefile
+all: genRplusPartition genRtreeIndex rquery Makefile
 
 debug: CXX += -DDEBUG -g
 debug: CC += -DDEBUG -g
 debug: all 
 
 
-genRplusIndex: RplusBulkLoad.cc 
-	$(CC) RplusBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o genRplusIndex
+genRplusPartition: RplusPartitioner.cc SpaceStreamReader.h
+	$(CC) RplusPartitioner.cc -std=c++0x $(CFLAGS) $(LDFLAGS) -o genRplusPartition
+
+#genRplusIndex: RplusBulkLoad.cc 
+#	$(CC) RplusBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o genRplusIndex
 	
 genRtreeIndex: RTreeBulkLoad.cc
 	$(CC) RTreeBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndex
 
-genPartitionRegionFromIndex: RplusPartitionMBB.cc dbg.h
-	$(CC) RplusPartitionMBB.cc $(CFLAGS) $(LDFLAGS) -o genPartitionRegionFromIndex
+#genPartitionRegionFromIndex: RplusPartitionMBB.cc dbg.h
+#	$(CC) RplusPartitionMBB.cc $(CFLAGS) $(LDFLAGS) -o genPartitionRegionFromIndex
 
 rquery: RTreeQuery.cc
 	$(CC) RTreeQuery.cc $(CFLAGS) $(LDFLAGS) -o rquery
 
 
 clean:
-	@rm -f genRtreeIndex genPartitionRegionFromIndex rquery genRplusIndex
+	@rm -f genRtreeIndex genPartitionRegionFromIndex rquery genRplusIndex genRplusPartition
 
 
