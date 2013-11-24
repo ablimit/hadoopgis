@@ -21,21 +21,9 @@ do
 
     echo "partition size ${k} K"
 
-    echo -e "\n---------------------------------------------"
-    echo "building rplus index on data ...."
-    echo "genRplusIndex ${ipath} ${tempPath}/spatial 20 ${k}000 $fillFactor"
-    ./genRplusIndex ${ipath} ${tempPath}/spatial 20 ${k}000 $fillFactor
-    rc=$?
-    if [ $rc -eq 0 ];then
-	echo ""
-    else
-	echo -e "\nERROR: genRplusIndex failed."
-	exit $rc ;
-    fi
-
     echo -e "---------------------------------------------"
     echo "generating partition region..."
-    ./genPartitionRegionFromIndex  ${tempPath}/spatial > ${opath}/c${k}k/regionmbb.txt 2> ${opath}/c${k}k/idxmbb.gnu
+    ./genRplusPartition ${ipath} ${k}000 > ${opath}/c${k}k/regionmbb.txt 
     rc=$?
     if [ $rc -eq 0 ];then
 	echo ""
@@ -43,11 +31,15 @@ do
 	echo -e "\nERROR: genPartitionRegionFromIndex failed."
 	exit $rc ;
     fi
-
-    echo -e "------------------------------------"
-    echo -e "\nremove R+ index data."
-    rm ${tempPath}/spatial.idx
-    rm ${tempPath}/spatial.dat
+    
+    python simulatecerr.py < ${opath}/c${k}k/regionmbb.txt > ${opath}/c${k}k/idxmbb.gnu
+    rc=$?
+    if [ $rc -eq 0 ];then
+	echo ""
+    else
+	echo -e "\nERROR: gnuplot generation failed "
+	exit $rc ;
+    fi
 
     echo -e "\n------------------------------------"
     echo "building rtree index on test ...."
