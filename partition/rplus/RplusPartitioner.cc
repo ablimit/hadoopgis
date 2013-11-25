@@ -74,8 +74,8 @@ int main(int argc, char** argv)
     insert((uint64_t)d->m_id,obj);
     delete d;
     cc++; 
-    if (cc % 1000 == 0)
-	std::cerr << "Records sorted: " << cc << std::endl;
+    if (cc % 100000 == 0)
+	std::cerr << "number of records sorted: " << cc << std::endl;
   }
 
   // initilization 
