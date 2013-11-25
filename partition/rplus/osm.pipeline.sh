@@ -12,7 +12,7 @@ tempPath=/dev/shm
 # tempPath=/tmp
 
 
-for k in 50 100
+for k in 50 100 200
 do
     if [ ! -e ${opath}/c${k}k ] ;
     then 
