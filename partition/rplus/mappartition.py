@@ -1,40 +1,31 @@
-#! /home/aaji/softs/bin/python
-
+#! /usr/bin/python
 import sys
-import math
-
-# from collections import defaultdict
-# dic = defaultdict(set)
 
 dic = {}
 
+def readstdin():
+  global dic
+  for line in sys.stdin:
+    line = line.strip()
+    sp =line.split()
+    if len(sp)>1:
+      dic[int(sp[0])] = line
+
 def main():
-
-    if len(sys.argv) < 2:
-        sys.stderr.write("Usage: "+ sys.argv[0] + "\n")
-
-    for line in open(sys.argv[1],'r'):
-        sp =line.strip().split()
-	pid = int(sp[0])
-	dic [pid] = set([int(item) for item in sp[1:]])
-
-    for line in sys.stdin:
-        sp =line.strip().split()
-        if len(sp)>1:
-            oid = int(sp[0])
-	    # pid | oid | shape 
-	    pids = []
-	    
-	    for pid in dic:
-		if oid in dic[pid]:
-		    pids.append(pid)
-	    
-	    for pid in pids:
-		print '|'.join((str(pid),sp[0],' '.join(sp[1:-1])))
-
-    sys.stdout.flush()
-
+  global dic
+  if len(sys.argv) < 2:
+    sys.stderr.write("Usage: "+ sys.argv[0] + "\n")
+  
+  readstdin()
+  
+  for line in open(sys.argv[1],'r'):
+    sp =line.strip().split()
+    pid = sp[0]
+    for oid in set([int(item) for item in sp[1:]]):
+      print " ".join((pid,dic[oid]))
+  
+  sys.stdout.flush()
 
 if __name__ == '__main__':
-    main()
+  main()
 

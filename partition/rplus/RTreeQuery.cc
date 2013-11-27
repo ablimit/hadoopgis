@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 		IStorageManager* diskfile = StorageManager::loadDiskStorageManager(baseName);
 			// this will try to locate and open an already existing storage manager.
 
-		StorageManager::IBuffer* file = StorageManager::createNewRandomEvictionsBuffer(*diskfile, 10, false);
+		StorageManager::IBuffer* file = StorageManager::createNewRandomEvictionsBuffer(*diskfile, 50000, false);
 			// applies a main memory random buffer on top of the persistent storage manager
 			// (LRU buffer, etc can be created the same way).
 
