@@ -62,7 +62,7 @@ int main(int argc, char** argv)
 
   SpaceStreamReader stream(argv[1]);
   const int partition_size = atoi(argv[2]);
-
+  uint64_t cc = 0; 
   while (stream.hasNext())
   {
     Data* d = reinterpret_cast<Data*>(stream.getNext());
@@ -73,6 +73,9 @@ int main(int argc, char** argv)
     Region *obj = d->m_region.clone();
     insert((uint64_t)d->m_id,obj);
     delete d;
+    cc++; 
+    if (cc % 100000 == 0)
+	std::cerr << "number of records sorted: " << cc << std::endl;
   }
 
   // initilization 
