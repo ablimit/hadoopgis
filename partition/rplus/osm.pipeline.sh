@@ -16,7 +16,8 @@ tempPath=/dev/shm
 echo -e "---------------------------------------------"
 echo "group generating partition region..."
 
-./rplusGroupPartition ${ipath} 10 20 50 100 200 500
+# done 
+# ./rplusGroupPartition ${ipath} 10 20 50 100 200 500
 
 rc=$?
 if [ $rc -eq 0 ];then

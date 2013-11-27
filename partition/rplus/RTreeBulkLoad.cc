@@ -1,84 +1,7 @@
+#include "./SpaceStreamReader.h"
 #include <spatialindex/SpatialIndex.h>
 
 using namespace SpatialIndex;
-
-#define INSERT 1
-#define DELETE 0
-#define QUERY 2
-
-class MyDataStream : public IDataStream
-{
-    public:
-	MyDataStream(std::string inputFile) : m_pNext(0)
-    {
-	m_fin.open(inputFile.c_str());
-
-	if (! m_fin)
-	    throw Tools::IllegalArgumentException("Input file not found.");
-
-	readNextEntry();
-    }
-
-	virtual ~MyDataStream()
-	{
-	    if (m_pNext != 0) delete m_pNext;
-	}
-
-	virtual IData* getNext()
-	{
-	    if (m_pNext == 0) return 0;
-
-	    RTree::Data* ret = m_pNext;
-	    m_pNext = 0;
-	    readNextEntry();
-	    return ret;
-	}
-
-	virtual bool hasNext()
-	{
-	    return (m_pNext != 0);
-	}
-
-	virtual uint32_t size()
-	{
-	    throw Tools::NotSupportedException("Operation not supported.");
-	}
-
-	virtual void rewind()
-	{
-	    if (m_pNext != 0)
-	    {
-		delete m_pNext;
-		m_pNext = 0;
-	    }
-
-	    m_fin.seekg(0, std::ios::beg);
-	    readNextEntry();
-	}
-
-	void readNextEntry()
-	{
-	    id_type id;
-	    double area;
-	    double low[2], high[2];
-
-	    m_fin >> id >> low[0] >> low[1] >> high[0] >> high[1] >> area;
-
-	    if (m_fin.good())
-	    {
-
-		Region r(low, high, 2);
-		m_pNext = new RTree::Data(sizeof(double), reinterpret_cast<byte*>(low), r, id);
-		// Associate a bogus data array with every entry for testing purposes.
-		// Once the data array is given to RTRee:Data a local copy will be created.
-		// Hence, the input data array can be deleted after this operation if not
-		// needed anymore.
-	    }
-	}
-
-	std::ifstream m_fin;
-	RTree::Data* m_pNext;
-};
 
 int main(int argc, char** argv)
 {
@@ -94,7 +17,7 @@ int main(int argc, char** argv)
 	int indexCapacity = atoi(argv[3]);
 	int leafCapacity = atoi(argv[4]);
 	double fillFactor = atof(argv[5]);
-	
+
 	// IStorageManager* memoryFile = StorageManager::createNewMemoryStorageManager();
 	IStorageManager* diskfile = StorageManager::createNewDiskStorageManager(baseName, 4096);
 	// Create a new storage manager with the provided base name and a 4K page size.
@@ -103,7 +26,7 @@ int main(int argc, char** argv)
 	// applies a main memory random buffer on top of the persistent storage manager
 	// (LRU buffer, etc can be created the same way).
 
-	MyDataStream stream(argv[1]);
+	SpaceStreamReader stream(argv[1]);
 
 	// Create and bulk load a new RTree with dimensionality 2, using "file" as
 	// the StorageManager and the RSTAR splitting policy.
@@ -136,3 +59,4 @@ int main(int argc, char** argv)
 
     return 0;
 }
+

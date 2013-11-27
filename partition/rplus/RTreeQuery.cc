@@ -1,5 +1,3 @@
-#include <cstring>
-
 #include <spatialindex/SpatialIndex.h>
 
 using namespace SpatialIndex;

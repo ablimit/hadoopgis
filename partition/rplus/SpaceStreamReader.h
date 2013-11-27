@@ -56,11 +56,10 @@ class SpaceStreamReader : public IDataStream
     void readNextEntry()
     {
       double low[2], high[2];
-      double area;
       id_type id;
 
 
-      m_fin >> id >> low[0] >> low[1] >> high[0] >> high[1] >> area;
+      m_fin >> id >> low[0] >> low[1] >> high[0] >> high[1] ;
 
       if (m_fin.good())
       {
