@@ -110,11 +110,11 @@ int main(int argc, char** argv)
 	std::cerr << "Partition param = " << argv[i]; 
 
 	stringstream outname;
-	outname << "c" << argv[i] << "k.txt"; 
+	outname << "c" << argv[i] << ".txt"; 
 	ofstream pfile(outname.str().c_str());
 	std::cerr << ", output file: " << outname.str() << std::endl;
 
-	const uint32_t partition_size = strtoul (argv[i], NULL, 0) * 1000;
+	const uint32_t partition_size = strtoul (argv[i], NULL, 0);
 
 	// loop vars 
 	double cost [] = {0.0, 0.0};
