@@ -28,7 +28,7 @@ else
     CXX = g++
 endif
 
-all: genRplusPartition genRtreeIndex rquery Makefile
+all: genRplusPartition rplusGroupPartition genRtreeIndex rquery Makefile
 
 debug: CXX += -DDEBUG -g
 debug: CC += -DDEBUG -g
@@ -37,6 +37,9 @@ debug: all
 
 genRplusPartition: RplusPartitioner.cc SpaceStreamReader.h
 	$(CXX) RplusPartitioner.cc -std=c++0x $(CFLAGS) $(LDFLAGS) -o genRplusPartition
+
+rplusGroupPartition: RplusGroupPartitioner.cc SpaceStreamReader.h
+	$(CXX) RplusGroupPartitioner.cc -std=c++0x $(CFLAGS) $(LDFLAGS) -o rplusGroupPartition
 
 #genRplusIndex: RplusBulkLoad.cc 
 #	$(CC) RplusBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o genRplusIndex
@@ -52,6 +55,6 @@ rquery: RTreeQuery.cc
 
 
 clean:
-	@rm -f genRtreeIndex genPartitionRegionFromIndex rquery genRplusIndex genRplusPartition
+	@rm -f genRtreeIndex genPartitionRegionFromIndex rquery genRplusIndex genRplusPartition rplusGroupPartition
 
 
