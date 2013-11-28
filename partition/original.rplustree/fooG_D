@@ -1,3 +1,0 @@
-echo "Start search..."
-rpt ../db/q.$1 yannis$1 2 $2 $3 > RESULTS/SEARCH_DIR/res$1_$2_$3.search
-echo "End search"

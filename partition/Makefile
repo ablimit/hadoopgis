@@ -28,21 +28,33 @@ else
     CXX = g++
 endif
 
-all: stripGroupPartition genRtreeIndex rquery Makefile
+TARGET = stripGroupPartition rplusGroupPartition genRtreeIndex genPartitionFromIndex rquery
+
+all: $(TARGET)
 
 debug: CXX += -DDEBUG -g
 debug: CC += -DDEBUG -g
 debug: all 
 
+
+genRplusPartition: RplusPartitioner.cc SpaceStreamReader.h
+	$(CXX) $< -std=c++0x $(CFLAGS) $(LDFLAGS) -o $@
+
+rplusGroupPartition: RplusGroupPartitioner.cc SpaceStreamReader.h
+	$(CXX) $< -std=c++0x $(CFLAGS) $(LDFLAGS) -o $@
+
 stripGroupPartition: StripGroupPartitioner.cc SpaceStreamReader.h
-	$(CXX) StripGroupPartitioner.cc -std=c++0x $(CFLAGS) $(LDFLAGS) -o stripGroupPartition
-	
+	$(CXX) $< -std=c++0x $(CFLAGS) $(LDFLAGS) -o $@
+
 genRtreeIndex: RTreeBulkLoad.cc
-	$(CXX) RTreeBulkLoad.cc $(CFLAGS) $(LDFLAGS) -o genRtreeIndex
+	$(CXX) $< $(CFLAGS) $(LDFLAGS) -o $@
+
+genPartitionFromIndex: RTreePartitionMBB.cc
+	$(CXX) $< $(CFLAGS) $(LDFLAGS) -o $@
 
 rquery: RTreeQuery.cc
-	$(CXX) RTreeQuery.cc $(CFLAGS) $(LDFLAGS) -o rquery
+	$(CXX) $< $(CFLAGS) $(LDFLAGS) -o $@
 
 clean:
-	@rm -f genRtreeIndex rquery stripGroupPartition
+	@rm -f $(TARGET)
 

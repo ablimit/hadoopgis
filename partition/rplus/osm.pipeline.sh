@@ -14,7 +14,7 @@ mkdir -p ${tempPath}
 echo -e "---------------------------------------------"
 echo "group generating partition region..."
 
-./rplusGroupPartition ${ipath} 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
+../rplusGroupPartition ${ipath} 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
 
 rc=$?
 if [ $rc -eq 0 ];then
@@ -36,7 +36,7 @@ do
   
   cp c${k}.txt ${opath}/c${k}/regionmbb.txt
   
-  python simulatecerr.py < ${opath}/c${k}/regionmbb.txt > ${opath}/c${k}/idxmbb.gnu
+  python ../simulatecerr.py < ${opath}/c${k}/regionmbb.txt > ${opath}/c${k}/idxmbb.gnu
   
   rc=$?
   
@@ -49,7 +49,7 @@ do
 
   echo -e "\n------------------------------------"
   echo "building rtree index on test ...."
-  ./genRtreeIndex ${ipath} ${tempPath}/spatial 20 1000 $fillFactor
+  ../genRtreeIndex ${ipath} ${tempPath}/spatial 20 1000 $fillFactor
   rc=$?
   if [ $rc -eq 0 ];then
     echo ""
@@ -60,7 +60,7 @@ do
 
   echo -e "---------------------------------------------"
   echo "generate pid oid mapping ...."
-  ./rquery ${opath}/c${k}/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
+  ../rquery ${opath}/c${k}/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
   rc=$?
   if [ $rc -eq 0 ];then
     echo ""
@@ -71,10 +71,11 @@ do
 
   echo -e "\n---------------------------------------------"
   echo "remapping objects"
-  python mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/c${k}/osm.part
+  python ../mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/c${k}/osm.part
 
   rm ${tempPath}/spatial*
   rm ${tempPath}/pidoid.txt 
 done
 
-echo "" > done.osm.txt
+touch okay.osm.txt
+

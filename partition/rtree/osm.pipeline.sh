@@ -1,44 +1,62 @@
 #! /bin/bash
 
-leafCapacity=1000
 fillFactor=0.99
 
-
 ipath=/data2/ablimit/Data/spatialdata/osmout/osm.mbb.norm.filter.dat
-# ipath=temp.txt
-opath=/mnt/scratch1/aaji/partition/osm/rtree
-# tempPath=/dev/shm
-tempPath=/tmp
+opath=/scratch/data/partition/osm/rt
+tempPath=/dev/shm/osm/rt
 
-# echo "generating approxmiation...."
-# pais/genmbb < ${dir}/${inFile} > ${tempPath}/${inFile}.mbb
+mkdir -p ${tempPath}
 
-for ic in 10 20 50 100 200 500
+for k in 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
 do
-    if [ ! -e ${opath}/ic${ic} ] ;
-    then 
-	mkdir -p ${opath}/ic${ic}
+    if [ ! -e ${opath}/c${k} ] ;
+    then
+        mkdir -p ${opath}/c${k}
     fi
 
-    echo "Index capacity: ${ic}"
-
-    echo -e "\n####################################"
+    echo "partition size ${k}"
+    echo -e "\n------------------------------------"
     echo "building index on data ...."
-    ./genRtreeIndex ${ipath} ${tempPath}/spatial $ic $leafCapacity $fillFactor
-    
-    echo -e "\n####################################"
+    ../genRtreeIndex ${ipath} ${tempPath}/spatial 20 $k $fillFactor
+
+    rc=$?
+    if [ $rc -eq 0 ];then
+        echo ""
+    else
+        echo -e "\nERROR: RTree index generation failed "
+        exit $rc ;
+    fi
+
+    echo -e "\n------------------------------------"
     echo "generating partition region..."
-    ./genPartitionRegionFromIndex  ${tempPath}/spatial > ${opath}/ic${ic}/regionmbb.txt 2> ${opath}/ic${ic}/idxmbb.gnu
+    ../genPartitionRegionFromIndex  ${tempPath}/spatial > ${opath}/c${k}/regionmbb.txt 2> ${opath}/c${k}/idxmbb.gnu
+    rc=$?
+    if [ $rc -eq 0 ];then
+        echo ""
+    else
+        echo -e "\nERROR: partition generation failed."
+        exit $rc ;
+    fi
 
-    echo -e "\n####################################"
+    echo -e "---------------------------------------------"
     echo "generate pid oid mapping ...."
-    ./rquery ${opath}/ic${ic}/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
+    ../rquery ${opath}/c${k}/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
+    rc=$?
+    if [ $rc -eq 0 ];then
+        echo ""
+    else
+        echo -e "\nERROR: rqueryfailed."
+        exit $rc ;
+    fi
 
-    echo -e "\n####################################"
+    echo -e "\n---------------------------------------------"
     echo "remapping objects"
-    python osm/mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/ic${ic}/osm.part
-    
-    rm /tmp/spatial*
-    rm /tmp/pidoid.txt 
+    python ../mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/c${k}/osm.part
+
+    rm ${tempPath}/spatial*
+    rm ${tempPath}/pidoid.txt 
 done
+
+touch okay.osm.txt
 

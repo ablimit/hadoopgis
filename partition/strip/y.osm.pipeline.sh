@@ -3,7 +3,6 @@
 indexCapacity=1000
 fillFactor=0.99
 
-
 ipath=/scratch/data/osm.mbb.norm.filter.dat
 opath=/scratch/data/partition/osm/st/y
 tempPath=/dev/shm/osm/st/y
@@ -13,7 +12,7 @@ mkdir -p ${tempPath}
 echo -e "---------------------------------------------"
 echo "group generating partition region..."
 
-./stripGroupPartition ${ipath} 1 10 20 50 100 200 500
+../stripGroupPartition ${ipath} 1 10 20 50 100 200 500
 
 rc=$?
 if [ $rc -eq 0 ];then
@@ -35,7 +34,7 @@ do
   
   cp c${k}.txt ${opath}/c${k}/regionmbb.txt
   
-  python simulatecerr.py < ${opath}/c${k}/regionmbb.txt > ${opath}/c${k}/idxmbb.gnu
+  python ../simulatecerr.py < ${opath}/c${k}/regionmbb.txt > ${opath}/c${k}/idxmbb.gnu
   
   rc=$?
   
@@ -48,7 +47,7 @@ do
 
   echo -e "\n------------------------------------"
   echo "building rtree index on test ...."
-  ./genRtreeIndex ${ipath} ${tempPath}/spatial 20 1000 $fillFactor
+  ../genRtreeIndex ${ipath} ${tempPath}/spatial 20 1000 $fillFactor
   rc=$?
   if [ $rc -eq 0 ];then
     echo ""
@@ -59,7 +58,7 @@ do
 
   echo -e "---------------------------------------------"
   echo "generate pid oid mapping ...."
-  ./rquery ${opath}/c${k}/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
+  ../rquery ${opath}/c${k}/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
   rc=$?
   if [ $rc -eq 0 ];then
     echo ""
@@ -70,9 +69,11 @@ do
 
   echo -e "\n---------------------------------------------"
   echo "remapping objects"
-  python mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/c${k}/osm.part
+  python ../mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/c${k}/osm.part
 
   rm ${tempPath}/spatial*
   rm ${tempPath}/pidoid.txt 
 done
+
+touch okay.y.osm.txt
 

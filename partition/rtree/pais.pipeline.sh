@@ -1,48 +1,59 @@
 #! /bin/bash
 
-leafCapacity=1000
 fillFactor=0.99
+ipath=/data2/ablimit/Data/spatialdata/pais/mbb/oligoIII.2.norm.1.dat
+opath=/scratch/data/partition/pais/rt # group partition results  
+tempPath=/dev/shm/pais/rt
 
-
-ipath=/data2/ablimit/Data/spatialdata/pais/pais.mbb.dat
-# ipath=temp.txt
-
-opath=/mnt/scratch1/aaji/partition/pais/rtree
-
-tempPath=/tmp
-# tempPath=/dev/shm
-
-# echo "generating approxmiation...."
-# pais/genmbb < ${dir}/${inFile} > ${tempPath}/${inFile}.mbb
-
-# for ic in 10 20 50 100 200 500
-for ic in 10000 20000 50000 100000 200000 500000
+for k in 20 100 200 400 1000 2000 4000 10000 20000 10000
 do
-    if [ ! -e ${opath}/ic${ic}leaf ] ;
-    then 
-	mkdir -p ${opath}/ic${ic}leaf
+    if [ ! -e ${opath}/c${k} ] ;
+    then
+        mkdir -p ${opath}/c${k}
     fi
 
-    echo "Leaf capacity: ${ic}"
-
-    echo -e "\n####################################"
+    echo "partition size ${k}"
+    echo -e "\n------------------------------------"
     echo "building index on data ...."
-    ./genRtreeIndexPais ${ipath} ${tempPath}/paisspatial $ic $leafCapacity $fillFactor
-    # ./genRtreeIndexPais ${ipath} ${tempPath}/paisspatial 4 $ic $fillFactor
-    
-    echo -e "\n####################################"
+    ../genRtreeIndex ${ipath} ${tempPath}/spatial 20 $k $fillFactor
+
+    rc=$?
+    if [ $rc -eq 0 ];then
+        echo ""
+    else
+        echo -e "\nERROR: RTree index generation failed "
+        exit $rc ;
+    fi
+
+    echo -e "\n------------------------------------"
     echo "generating partition region..."
-    ./genPartitionRegionFromIndex  ${tempPath}/paisspatial > ${opath}/ic${ic}leaf/regionmbb.txt 2> ${opath}/ic${ic}leaf/idxmbb.gnu
+    ../genPartitionRegionFromIndex  ${tempPath}/spatial > ${opath}/c${k}/regionmbb.txt 2> ${opath}/c${k}/idxmbb.gnu
+    rc=$?
+    if [ $rc -eq 0 ];then
+        echo ""
+    else
+        echo -e "\nERROR: partition generation failed."
+        exit $rc ;
+    fi
 
-    echo -e "\n####################################"
-    echo "generate pid oid mapping ...."
-    ./rquery ${opath}/ic${ic}leaf/regionmbb.txt ${tempPath}/paisspatial  > ${tempPath}/paispidoid.txt
+  echo -e "---------------------------------------------"
+  echo "generate pid oid mapping ...."
+  ../rquery ${opath}/c${k}/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
+  rc=$?
+  if [ $rc -eq 0 ];then
+    echo ""
+  else
+    echo -e "\nERROR: rqueryfailed."
+    exit $rc ;
+  fi
 
-    echo -e "\n####################################"
-    echo "remapping objects"
-    python pais/mappartition.py ${tempPath}/paispidoid.txt < ${ipath} > ${opath}/ic${ic}leaf/pais.part
-    
-    rm /tmp/paisspatial*
-    rm /tmp/paispidoid.txt 
+  echo -e "\n---------------------------------------------"
+  echo "remapping objects"
+  python ../mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/c${k}/osm.part
+
+  rm ${tempPath}/spatial*
+  rm ${tempPath}/pidoid.txt 
 done
+
+touch okay.pais.txt
 
