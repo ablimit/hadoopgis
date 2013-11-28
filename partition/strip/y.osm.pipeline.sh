@@ -12,18 +12,17 @@ mkdir -p ${tempPath}
 echo -e "---------------------------------------------"
 echo "group generating partition region..."
 
-../stripGroupPartition ${ipath} 1 10 20 50 100 200 500
+../stripGroupPartition ${ipath} 0 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
 
 rc=$?
 if [ $rc -eq 0 ];then
   echo "group partition finished."
 else
-  echo -e "\nERROR: genPartitionRegionFromIndex failed."
+  echo -e "\nERROR: strip group partition failed."
   exit $rc ;
 fi
 
-
-for k in 10 20 50 100 200 500
+for k in 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
 do
   if [ ! -e ${opath}/c${k} ] ;
   then
@@ -75,5 +74,5 @@ do
   rm ${tempPath}/pidoid.txt 
 done
 
-touch okay.y.osm.txt
+touch "done.y.osm.log"
 

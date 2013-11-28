@@ -20,7 +20,7 @@ rc=$?
 if [ $rc -eq 0 ];then
   echo "group partition finished."
 else
-  echo -e "\nERROR: genPartitionRegionFromIndex failed."
+  echo -e "\nERROR: strip group partition failed."
   exit $rc ;
 fi
 
@@ -65,7 +65,7 @@ do
   if [ $rc -eq 0 ];then
     echo ""
   else
-    echo -e "\nERROR: rqueryfailed."
+    echo -e "\nERROR: rquery failed."
     exit $rc ;
   fi
 
@@ -77,4 +77,4 @@ do
   rm ${tempPath}/pidoid.txt 
 done
 
-touch okay.y.pais.log
+touch "done.y.pais.log"

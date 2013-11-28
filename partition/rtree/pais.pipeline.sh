@@ -27,7 +27,7 @@ do
 
     echo -e "\n------------------------------------"
     echo "generating partition region..."
-    ../genPartitionRegionFromIndex  ${tempPath}/spatial > ${opath}/c${k}/regionmbb.txt 2> ${opath}/c${k}/idxmbb.gnu
+    ../genPartitionFromIndex  ${tempPath}/spatial > ${opath}/c${k}/regionmbb.txt 2> ${opath}/c${k}/idxmbb.gnu
     rc=$?
     if [ $rc -eq 0 ];then
         echo ""
@@ -43,7 +43,7 @@ do
   if [ $rc -eq 0 ];then
     echo ""
   else
-    echo -e "\nERROR: rqueryfailed."
+    echo -e "\nERROR: rquery failed."
     exit $rc ;
   fi
 
@@ -55,5 +55,5 @@ do
   rm ${tempPath}/pidoid.txt 
 done
 
-touch okay.pais.txt
+touch "done.pais.log"
 

@@ -78,4 +78,4 @@ do
   rm ${tempPath}/pidoid.txt 
 done
 
-touch okay.pais.txt
+touch "done.pais.log"

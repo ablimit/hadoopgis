@@ -77,5 +77,5 @@ do
   rm ${tempPath}/pidoid.txt 
 done
 
-touch okay.osm.txt
+touch done.osm.log
 
