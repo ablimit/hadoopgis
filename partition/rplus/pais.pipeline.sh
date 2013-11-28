@@ -7,9 +7,10 @@ fillFactor=0.99
 # pais 20 100 200 400 1000 2000 4000 10000 20000 10000
 
 ipath=/data2/ablimit/Data/spatialdata/pais/mbb/oligoIII.2.norm.1.dat
-opath=/scratch/data/partition/pais # group partition results  
-tempPath=/dev/shm
-# tempPath=/tmp
+opath=/scratch/data/partition/pais/rp # group partition results  
+tempPath=/dev/shm/pais/rp
+
+mkdir -p ${tempPath}
 
 echo -e "---------------------------------------------"
 echo "group generating partition region..."
@@ -77,3 +78,4 @@ do
   rm ${tempPath}/pidoid.txt 
 done
 
+echo "" > done.pais.txt

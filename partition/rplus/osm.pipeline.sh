@@ -3,21 +3,18 @@
 indexCapacity=1000
 fillFactor=0.99
 
+# 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
 
 ipath=/scratch/data/osm.mbb.norm.filter.dat
-# ipath=data.snapshot.txt
-# ipath=temp.txt
-# opath=/scratch/data/partition/osm/rplus
-opath=/scratch/data/partition/osm/rplus/gp # group partition results  
-tempPath=/dev/shm
-# tempPath=/tmp
+opath=/scratch/data/partition/osm/rp
+tempPath=/dev/shm/osm/rp
 
+mkdir -p ${tempPath}
 
 echo -e "---------------------------------------------"
 echo "group generating partition region..."
 
-# done 
-# ./rplusGroupPartition ${ipath} 10 20 50 100 200 500
+./rplusGroupPartition ${ipath} 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
 
 rc=$?
 if [ $rc -eq 0 ];then
@@ -28,18 +25,18 @@ else
 fi
 
 
-for k in 10 20 50 100 200 500
+for k in 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
 do
-  if [ ! -e ${opath}/c${k}k ] ;
+  if [ ! -e ${opath}/c${k} ] ;
   then
-    mkdir -p ${opath}/c${k}k
+    mkdir -p ${opath}/c${k}
   fi
   
   echo "partition size ${k} K"
   
-  cp c${k}k.txt ${opath}/c${k}k/regionmbb.txt
+  cp c${k}.txt ${opath}/c${k}/regionmbb.txt
   
-  python simulatecerr.py < ${opath}/c${k}k/regionmbb.txt > ${opath}/c${k}k/idxmbb.gnu
+  python simulatecerr.py < ${opath}/c${k}/regionmbb.txt > ${opath}/c${k}/idxmbb.gnu
   
   rc=$?
   
@@ -63,7 +60,7 @@ do
 
   echo -e "---------------------------------------------"
   echo "generate pid oid mapping ...."
-  ./rquery ${opath}/c${k}k/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
+  ./rquery ${opath}/c${k}/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
   rc=$?
   if [ $rc -eq 0 ];then
     echo ""
@@ -74,9 +71,10 @@ do
 
   echo -e "\n---------------------------------------------"
   echo "remapping objects"
-  python mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/c${k}k/osm.part
+  python mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/c${k}/osm.part
 
   rm ${tempPath}/spatial*
   rm ${tempPath}/pidoid.txt 
 done
 
+echo "" > done.osm.txt
