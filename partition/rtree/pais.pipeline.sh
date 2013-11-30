@@ -5,6 +5,8 @@ ipath=/data2/ablimit/Data/spatialdata/pais/mbb/oligoIII.2.norm.1.dat
 opath=/scratch/data/partition/pais/rt # group partition results  
 tempPath=/dev/shm/pais/rt
 
+mkdir -p ${tempPath}
+
 for k in 20 100 200 400 1000 2000 4000 10000 20000 10000
 do
     if [ ! -e ${opath}/c${k} ] ;
@@ -49,7 +51,7 @@ do
 
   echo -e "\n---------------------------------------------"
   echo "remapping objects"
-  python ../mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/c${k}/osm.part
+  python ../mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/c${k}/pais.part
 
   rm ${tempPath}/spatial*
   rm ${tempPath}/pidoid.txt 

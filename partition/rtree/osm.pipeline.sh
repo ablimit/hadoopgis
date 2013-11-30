@@ -46,7 +46,7 @@ do
     if [ $rc -eq 0 ];then
         echo ""
     else
-        echo -e "\nERROR: rqueryfailed."
+        echo -e "\nERROR: rquery failed."
         exit $rc ;
     fi
 
