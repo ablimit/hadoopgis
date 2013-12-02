@@ -28,7 +28,7 @@ else
     CXX = g++
 endif
 
-TARGET = stripGroupPartition rplusGroupPartition genRtreeIndex genPartitionFromIndex rquery
+TARGET = fixedgridPartition stripGroupPartition rplusGroupPartition genRtreeIndex genPartitionFromIndex rquery
 
 all: $(TARGET)
 
@@ -36,6 +36,8 @@ debug: CXX += -DDEBUG -g
 debug: CC += -DDEBUG -g
 debug: all 
 
+fixedgridPartition: FixedGridPartitioner.cc SpaceStreamReader.h
+	$(CXX) $< $(CFLAGS) $(LDFLAGS) -o $@
 
 genRplusPartition: RplusPartitioner.cc SpaceStreamReader.h
 	$(CXX) $< -std=c++0x $(CFLAGS) $(LDFLAGS) -o $@
