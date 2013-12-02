@@ -5,7 +5,7 @@ import math
 from collections import Counter
 import numpy as np
 
-def datset_size(filename):
+def dataset_size(filename):
     i = 0
     with open(filename,'r') as f:
         for i in f:
@@ -19,7 +19,7 @@ def main():
         sys.exit(1)
 
     dicc = Counter()
-    raw_ds_size = dataset_size(sys.argv[1])
+    raw_ds_size = sys.argv[1].strip()
     
     for line in sys.stdin:
         sp = line.strip().split()
