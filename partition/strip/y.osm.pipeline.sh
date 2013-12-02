@@ -12,7 +12,7 @@ mkdir -p ${tempPath}
 echo -e "---------------------------------------------"
 echo "group generating partition region..."
 
-../stripGroupPartition ${ipath} 0 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
+../stripGroupPartition ${ipath} 1 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
 
 rc=$?
 if [ $rc -eq 0 ];then

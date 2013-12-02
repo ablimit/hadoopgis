@@ -1,27 +1,57 @@
 #! /bin/bash
 
-# osm
-data=/scratch/data/osm.mbb.norm.filter.dat
+usage(){
+    echo -e "plotall.sh  [ pais | osm ]\n \
+    --name \t dataset name to process \n \
+    --help \t show this information.
+    "
+    exit 1
+}
 
-opath=/scratch/data/partition/osm
-for k in 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
+name=""
+
+while :
 do
-    for algo in rp st rt
-    do
-        echo -n "${algo},${k}," >> osm.eval.csv
-        python evalpartition.sh ${data} < ${opath}/${algo}/c${k}/osm.part >>osm.eval.csv
-    done
+    case $1 in
+	-h | --help | -\?)
+	    usage;
+	    #  Call your Help() or usage() function here.
+	    exit 0      # This is not an error, User asked help. Don't do "exit 1"
+	    ;;
+	-n | --name)
+	    name=$2     # You might want to check if you really got FILE
+	    shift 2
+	    ;;
+	--name=*)
+	    name=${1#*=}        # Delete everything up till "="
+	    shift
+	    ;;
+	--) # End of all options
+	    shift
+	    break
+	    ;;
+	-*)
+	    echo "WARN: Unknown option (ignored): $1" >&2
+	    shift
+	    ;;
+	*)  # no more options. Stop while loop
+	    break
+	    ;;
+    esac
 done
 
-# pais
-data=/data2/ablimit/Data/spatialdata/pais/mbb/oligoIII.2.norm.1.dat
-opath=/scratch/data/partition/pais
 
-for k in 20 100 200 400 1000 2000 4000 10000 20000 10000
+if [ ! "$name" ] ; then
+    echo "ERROR: missing option. See --help" >&2
+    exit 1
+fi
+
+for metric in min max avg median count stddev ratio
 do
-    for algo in rp st rt
-    do
-        echo -n "${algo},${k}," >> pais.eval.csv
-        python evalpartition.sh ${data} < ${path}/${algo}/c${k}/pais.part >>pais.eval.csv
-    done
+	python genPlotData.py "${metric}" < ../${name}.eval.csv > pltdata.dat
+	cp template.plt draw.plt
+	perl -p -i -e "s/_chartname_/${metric}.${name}.eps/g" draw.plt
+	perl -p -i -e "s/_dataset_/pltdata.dat/g" draw.plt
+	gnuplot draw.plt
 done
+

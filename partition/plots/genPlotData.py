@@ -42,7 +42,7 @@ def main():
     for x in sorted(datalog.iterkeys()):
         header = sorted(datalog[x].iterkeys())
         if printheader:
-            print "# x " +" ".join([str(head) for head in header])
+            print "x " +" ".join([str(head) for head in header])
             printheader = False
         vals = [datalog[x][name] for name in header]
         vals.insert(0,str(x))
