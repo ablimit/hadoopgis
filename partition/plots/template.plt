@@ -26,22 +26,30 @@ set style line 6 lc rgb '#00b300' pt 15 ps 1.5 # green
 
 # Legend
 # set key at 6.1,1.3
+
 # Axes label 
 set xlabel 'bucket size'
 # set ylabel ''
+
+# Axes scale 
 set logscale x 10
 set logscale y 10
-# Axis ranges
+set format x "10^{%L}"
+set format y "10^{%L}"
+
+# Axes ranges
 # set xrange[10:210]
 # set yrange[0:2000]
 
-# Axis labels
+# Axis tics 
 # set xtics (20, 50, 80, 120, 160, 200)
 # set xtics ('-2{/Symbol p}' -2*pi, '-{/Symbol p}' -pi, 0, '{/Symbol p}' pi, '2{/Symbol p}' 2*pi)
 # set ytics 1
 # set tics scale 0.75
 
 set key autotitle columnheader
+set key _keyposition_
+set key box
 
 # Plot
 

@@ -46,12 +46,23 @@ if [ ! "$name" ] ; then
     exit 1
 fi
 
-for metric in min max avg median count stddev ratio
+for metric in min max avg median count stddev
 do
 	python genPlotData.py "${metric}" < ../${name}.eval.csv > pltdata.dat
 	cp template.plt draw.plt
-	perl -p -i -e "s/_chartname_/${metric}.${name}.eps/g" draw.plt
+	perl -p -i -e "s/_chartname_/${metric}${name}.eps/g" draw.plt
 	perl -p -i -e "s/_dataset_/pltdata.dat/g" draw.plt
+	perl -p -i -e "s/_keyposition_/left top/g" draw.plt
+	gnuplot draw.plt
+done
+
+for metric in ratio
+do
+	python genPlotData.py "${metric}" < ../${name}.eval.csv > pltdata.dat
+	cp template.plt draw.plt
+	perl -p -i -e "s/_chartname_/${metric}${name}.eps/g" draw.plt
+	perl -p -i -e "s/_dataset_/pltdata.dat/g" draw.plt
+	perl -p -i -e "s/_keyposition_/right top/g" draw.plt
 	gnuplot draw.plt
 done
 
