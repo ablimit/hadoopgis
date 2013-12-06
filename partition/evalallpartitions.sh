@@ -26,7 +26,7 @@ done
 data=/data2/ablimit/Data/spatialdata/pais/mbb/oligoIII.2.norm.1.dat
 opath=/scratch/data/partition/pais
 
-for k in 20 100 200 400 1000 2000 4000 10000 20000 10000
+for k in 20 100 200 400 1000 2000 4000 10000 20000 100000
 do
   for algo in rp rt fg
   do
