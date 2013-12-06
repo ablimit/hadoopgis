@@ -48,7 +48,7 @@ fi
 
 for metric in min max avg median count stddev
 do
-	python genPlotData.py "${metric}" < ../${name}.eval.csv > pltdata.dat
+	python genPlotData.py "${metric}" < ${name}.eval.csv > pltdata.dat
 	cp template.plt draw.plt
 	perl -p -i -e "s/_chartname_/${metric}${name}.eps/g" draw.plt
 	perl -p -i -e "s/_dataset_/pltdata.dat/g" draw.plt
@@ -58,7 +58,7 @@ done
 
 for metric in ratio
 do
-	python genPlotData.py "${metric}" < ../${name}.eval.csv > pltdata.dat
+	python genPlotData.py "${metric}" < ${name}.eval.csv > pltdata.dat
 	cp template.plt draw.plt
 	perl -p -i -e "s/_chartname_/${metric}${name}.eps/g" draw.plt
 	perl -p -i -e "s/_dataset_/pltdata.dat/g" draw.plt
