@@ -14,7 +14,7 @@ CXX = g++
 
 all: resque
 
-resque: resque.cpp
+resque: effresque.cpp
 	$(CXX) $< $(INCFLAGS) $(LIBS) $(OPTFLAGS) -o $@
 
 install:
