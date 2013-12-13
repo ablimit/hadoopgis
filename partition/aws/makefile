@@ -20,8 +20,8 @@ resque: resque.cpp
 install:
 	mkdir -p $(prefix)/bin
 	cp resque $(prefix)/bin
-	cp skewresque $(prefix)/bin
 
 clean:
-	@rm -f resque skewresque
+	@rm -f resque
+
 

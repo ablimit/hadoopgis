@@ -224,6 +224,7 @@ bool readSpatialInputGEOS()
         return false;
     }
 
+    /*
     std::stringstream ss;
     for (size_t i =3 ; i < fields.size(); ++i) {
       if (i > 3 ) {
@@ -231,9 +232,9 @@ bool readSpatialInputGEOS()
       }
       ss << fields[i];
     }
-
+*/
     polydata[tile_id][database_id].push_back(poly);
-    data[tile_id][database_id].push_back(ss.str());
+    data[tile_id][database_id].push_back(fields[2]);
 
     fields.clear();
   }
@@ -336,7 +337,7 @@ int join()
 
           // data[key][object_id] = input_line;
           if (join_with_predicate(geom1, geom2, JOIN_PREDICATE))  {
-            cout << data[key][DATABASE_ID_ONE][i] << sep << data[key][DATABASE_ID_TWO][j] << endl; 
+            cout << data[key][DATABASE_ID_ONE][i] << tab << data[key][DATABASE_ID_TWO][j] << endl; 
             pairs++;
           }
 
