@@ -14,7 +14,7 @@ sudo cp /tmp/lib/* /usr/lib/
 sudo cp -r /tmp/include/* /usr/include/
 
 
-s3cmd get s3://aaji/scratch/awsjoin/resque.cpp ./
+s3cmd get s3://aaji/scratch/awsjoin/effresque.cpp ./
 s3cmd get s3://aaji/scratch/awsjoin/makefile ./
 
 make
