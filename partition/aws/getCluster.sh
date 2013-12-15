@@ -8,3 +8,8 @@ algo=rp
 
 # Wait for previous step to complete
 # elastic-mapreduce -j ${jobid} --wait-for-steps
+
+# --instance-group master --instance-type m1.medium --instance-count 1 \
+# --instance-group core   --instance-type m1.medium --instance-count 5  --bid-price 0.028
+# --instance-group task   --instance-type c1.xlarge --instance-count 14 --bid-price 0.028
+
