@@ -6,37 +6,41 @@ fillFactor=0.99
 
 # pais 20 100 200 400 1000 2000 4000 10000 20000 10000
 
-ipath=/data2/ablimit/Data/spatialdata/pais/mbb/oligoIII.2.norm.1.dat
+ipath=/data2/ablimit/Data/spatialdata/pais/mbb
 opath=/scratch/data/partition/pais/rp # group partition results  
 tempPath=/dev/shm/pais/rp
 
 mkdir -p ${tempPath}
 
-echo -e "---------------------------------------------"
-echo "group generating partition region..."
-
-../rplusGroupPartition ${ipath} 20 100 200 400 1000 2000 4000 10000 20000 100000
-
-rc=$?
-if [ $rc -eq 0 ];then
-  echo "group partition finished."
-else
-  echo -e "\nERROR: genPartitionRegionFromIndex failed."
-  exit $rc ;
-fi
-
-
-for k in 20 100 200 400 1000 2000 4000 10000 20000 100000
+for image in astroII.1 astroII.2 gbm0.1 gbm0.2 gbm1.1 gbm1.2 gbm2.1 gbm2.2 normal.2 normal.3 oligoastroII.1 oligoastroII.2 oligoastroIII.1 oligoastroIII.2 oligoII.1 oligoII.2 oligoIII.1 oligoIII.2
 do
-  if [ ! -e ${opath}/c${k} ] ;
-  then
-    mkdir -p ${opath}/c${k}
+
+  echo -e "---------------------------------------------"
+  echo "group generating partition region for ${image} ..."
+
+  ../rplusGroupPartition ${ipath}/${image}.norm.1.dat 20 100 200 400 1000 2000 4000 10000 20000 100000
+
+  rc=$?
+  if [ $rc -eq 0 ];then
+    echo "group partition finished."
+  else
+    echo -e "\nERROR: genPartitionRegionFromIndex failed."
+    exit $rc ;
+  fi
+
+
+  for k in 20 100 200 400 1000 2000 4000 10000 20000 100000
+  do
+    if [ ! -e ${opath}/c${k} ] ;
+    then
+      mkdir -p ${opath}/c${k}
+    fi
 
     echo "partition size ${k} K"
 
-    cp c${k}.txt ${opath}/c${k}/regionmbb.txt
+    mv c${k}.txt ${opath}/c${k}/${image}.regionmbb.txt
 
-    python ../simulatecerr.py < ${opath}/c${k}/regionmbb.txt > ${opath}/c${k}/idxmbb.gnu
+    python ../simulatecerr.py < ${opath}/c${k}/${image}.regionmbb.txt > ${opath}/c${k}/${image}.idxmbb.gnu
 
     rc=$?
 
@@ -49,7 +53,7 @@ do
 
     echo -e "\n------------------------------------"
     echo "building rtree index on test ...."
-    ../genRtreeIndex ${ipath} ${tempPath}/spatial 20 1000 $fillFactor
+    ../genRtreeIndex ${ipath}/${image}.norm.1.dat ${tempPath}/spatial 20 1000 $fillFactor
     rc=$?
     if [ $rc -eq 0 ];then
       echo ""
@@ -60,7 +64,7 @@ do
 
     echo -e "---------------------------------------------"
     echo "generate pid oid mapping ...."
-    ../rquery ${opath}/c${k}/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
+    ../rquery ${opath}/c${k}/${image}.regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
     rc=$?
     if [ $rc -eq 0 ];then
       echo ""
@@ -71,11 +75,11 @@ do
 
     echo -e "\n---------------------------------------------"
     echo "remapping objects"
-    python ../mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/c${k}/pais.part
+    python ../mappartition.py ${tempPath}/pidoid.txt < ${ipath}/${image}.norm.1.dat > ${opath}/c${k}/${image}.part
 
     rm ${tempPath}/spatial*
     rm ${tempPath}/pidoid.txt 
-  fi
+  done
 done
 
 touch "done.pais.log"

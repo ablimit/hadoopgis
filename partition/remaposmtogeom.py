@@ -21,6 +21,7 @@ def main():
         sp =line.strip().split()
         pid = sp[0]
         uid = sp[1]
+        sys.stderr.write("uid: "+ uid+ "\n")
         print "\t".join((pid,uid,dic[uid]))
     sys.stdout.flush()
 

@@ -8,7 +8,7 @@ do
   for i in 1 2
   do
     echo "[${image}] [${i}]" 
-    fgrep "|${image}|${i}|" /dev/shm/pais.geom.dat  > ${geompath}/${image}.${i}.dat
+    fgrep "|${image}|${i}|" /dev/shm/pais.geom.dat  | cut -d"|" -f1,4,5 > ${geompath}/${image}.${i}.dat
   done
 
 done
