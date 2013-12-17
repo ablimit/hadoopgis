@@ -1,10 +1,11 @@
 #! /bin/bash
 
 # osm
-geomdata=/dev/shm/osm.planet.dat
+geompath=/data2/ablimit/Data/spatialdata/pais/algo1
 
 opath=/scratch/data/partition/pais
 
+logg=pais.remap.log
 # > remap.log
 for image in astroII.1 astroII.2 gbm0.1 gbm0.2 gbm1.1 gbm1.2 gbm2.1 gbm2.2 normal.2 normal.3 oligoastroII.1 oligoastroII.2 oligoastroIII.1 oligoastroIII.2 oligoII.1 oligoII.2 oligoIII.1 oligoIII.2
 do
@@ -16,8 +17,8 @@ do
     echo "[${k}] [${algo}]"
     if [ ! -e ${opath}/${algo}/c${k}/osm.geom.dat.gz ] ;
     then 
-      echo "[${k}] [${algo}]" >> remap.log
-      python remaptogeom.py ${opath}/${algo}/c${k}/osm.part < ${geomdata} | gzip > ${opath}/${algo}/c${k}/osm.geom.dat.gz
+      echo "[${k}] [${algo}]" >> ${logg}
+      python remaptogeom.py ${opath}/${algo}/c${k}/${image}.part < ${geompath}/${image}.markup.ablet.1 > ${opath}/${algo}/c${k}/${image}.geom.1.dat
     fi
   done
 
@@ -25,8 +26,8 @@ do
   echo "[${k}] [${algo}]"
   if [ ! -e ${opath}/${algo}/x/c${k}/osm.geom.dat.gz ] ;
   then
-    echo "[${k}] [${algo}]"   >> remap.log
-    python remaptogeom.py ${opath}/${algo}/x/c${k}/osm.part < ${geomdata} | gzip > ${opath}/${algo}/x/c${k}/osm.geom.dat.gz
+    echo "[${k}] [${algo}]"   >> ${logg}
+    python remaptogeom.py ${opath}/${algo}/x/c${k}/${image}.part < ${geompath}/${image}.markup.ablet.1 > ${opath}/${algo}/x/c${k}/${image}.geom.1.dat
   fi
 done
 
