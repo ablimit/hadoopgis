@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # osm
-geompath=/data2/ablimit/Data/spatialdata/pais/algo1
+geompath=/data2/ablimit/Data/spatialdata/pais/geom
 
 opath=/scratch/data/partition/pais
 
@@ -15,19 +15,19 @@ do
   for algo in rp rt fg
   do
     echo "[${k}] [${algo}]"
-    if [ ! -e ${opath}/${algo}/c${k}/osm.geom.dat.gz ] ;
+    if [ ! -e ${opath}/${algo}/c${k}/${image}.geom.1.dat ] ;
     then 
       echo "[${k}] [${algo}]" >> ${logg}
-      python remaptogeom.py ${opath}/${algo}/c${k}/${image}.part < ${geompath}/${image}.markup.ablet.1 > ${opath}/${algo}/c${k}/${image}.geom.1.dat
+      python remaptogeom.py ${opath}/${algo}/c${k}/${image}.part < ${geompath}/${image}.1.dat > ${opath}/${algo}/c${k}/${image}.geom.1.dat
     fi
   done
 
   algo=st
   echo "[${k}] [${algo}]"
-  if [ ! -e ${opath}/${algo}/x/c${k}/osm.geom.dat.gz ] ;
+  if [ ! -e ${opath}/${algo}/x/c${k}/${image}.geom.1.dat ] ;
   then
     echo "[${k}] [${algo}]"   >> ${logg}
-    python remaptogeom.py ${opath}/${algo}/x/c${k}/${image}.part < ${geompath}/${image}.markup.ablet.1 > ${opath}/${algo}/x/c${k}/${image}.geom.1.dat
+    python remaptogeom.py ${opath}/${algo}/x/c${k}/${image}.part < ${geompath}/${image}.1.dat > ${opath}/${algo}/x/c${k}/${image}.geom.1.dat
   fi
 done
 
