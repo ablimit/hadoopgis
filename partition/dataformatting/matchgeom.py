@@ -25,7 +25,7 @@ def main():
     
     for (i, line) in enumerate(mbbfile):
         sp = line.split('|')
-        sp[-1] = geomfile[index]
+        sp[-1] = geomfile[i]
         print "|".join(sp)
 
     sys.stdout.flush()
