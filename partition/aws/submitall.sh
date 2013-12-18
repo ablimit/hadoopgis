@@ -54,30 +54,30 @@ echo "Job ID [${jobid}]"
 
 # R+ Tree 
 algo=rp
-for c in 4322 8644 17288 43220 86441 172882 432206 864412 4322062
+for c in 864 #4322 8644 17288 43220 86441 172882 432206 864412 4322062
 do
   echo "[${c}] [${algo}]"
-  /usr/local/emrcli/elastic-mapreduce --jobflow ${jobid} --stream --step-name "${algo}.${c}" --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/c${c}" --output s3://aaji/scratch/pout/dec16/${algo}c${c} --jobconf mapred.reduce.tasks=1000
+  /usr/local/emrcli/elastic-mapreduce --jobflow ${jobid} --stream --step-name "${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/c${c}" --output s3://aaji/scratch/pout/dec17/${algo}c${c} --jobconf mapred.reduce.tasks=1000
 
   sleep 300 ;
 done
 
 # R* Tree 
 algo=rt
-for c in 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
+for c in 864 4322 8644 17288 43220 86441 # 172882 432206 864412 4322062
 do
   echo "[${c}] [${algo}]"
-  /usr/local/emrcli/elastic-mapreduce --jobflow ${jobid} --stream --step-name "${algo}.${c}" --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/c${c}" --output s3://aaji/scratch/pout/dec16/${algo}c${c} --jobconf mapred.reduce.tasks=1000
+  /usr/local/emrcli/elastic-mapreduce --jobflow ${jobid} --stream --step-name "${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/c${c}" --output s3://aaji/scratch/pout/dec17/${algo}c${c} --jobconf mapred.reduce.tasks=1000
 
   sleep 300 ;
 done
 
 # strip
 algo=st
-for c in 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
+for c in 864 4322 8644 17288 43220 86441 # 172882 432206 864412 4322062
 do
   echo "[${c}] [${algo}]"
-  /usr/local/emrcli/elastic-mapreduce --jobflow ${jobid} --stream --step-name "${algo}.${c}" --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/c${c}" --output s3://aaji/scratch/pout/dec16/${algo}c${c} --jobconf mapred.reduce.tasks=1000
+  /usr/local/emrcli/elastic-mapreduce --jobflow ${jobid} --stream --step-name "${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/c${c}" --output s3://aaji/scratch/pout/dec17/${algo}c${c} --jobconf mapred.reduce.tasks=1000
 
   sleep 300 ;
 
@@ -86,10 +86,10 @@ done
 # Fixed Grid
 algo=fg
 
-for c in 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
+for c in 864 4322 8644 17288 43220 86441 # 172882 432206 864412 4322062
 do
   echo "[${c}] [${algo}]"
-  /usr/local/emrcli/elastic-mapreduce --jobflow ${jobid} --stream --step-name "${algo}.${c}" --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/c${c}" --output s3://aaji/scratch/pout/dec16/${algo}c${c} --jobconf mapred.reduce.tasks=1000
+  /usr/local/emrcli/elastic-mapreduce --jobflow ${jobid} --stream --step-name "${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/c${c}" --output s3://aaji/scratch/pout/dec17/${algo}c${c} --jobconf mapred.reduce.tasks=1000
 
   sleep 300 ;
 done
