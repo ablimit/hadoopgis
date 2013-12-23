@@ -20,7 +20,7 @@ do
 
   algo=st
   echo "[${k}] [${algo}]"
-  if [ ! -e ${opath}/${algo}/x/c${k}/osm.geom.dat.gz ] ;
+  if [ -e ${opath}/${algo}/x/c${k}/osm.geom.dat.gz ] ;
   then
     zcat ${opath}/${algo}/x/c${k}/osm.geom.dat.gz | ./sample.py 0.5 > ${dpath}/${algo}/x/c${k}/osm.geom.2.dat
   fi
