@@ -1,8 +1,9 @@
-#! /bin/bash
+#!/usr/bin/env bash
 
 usage(){
     echo -e "submitall.sh  --job [job flow id]\n \
-    --job \t Amazon EMR Job Flow ID to submit steps \n \
+    --job \t Amazon EMR Job Flow ID to submit steps. \n \
+    --alg \t partition algorithm to test. \n \
     --help \t show this information.
     "
     exit 1
@@ -73,9 +74,9 @@ then
   for c in 864 4322 8644 17288 43220 86441 # 172882 432206 864412 4322062
   do
     # echo "[${c}] [${algo}]"
-    elastic-mapreduce --jobflow ${jobid} --stream --step-name "${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/c${c}" --output s3://aaji/scratch/pout/dec18/${algo}c${c} --jobconf mapred.reduce.tasks=1000
+    elastic-mapreduce --jobflow ${jobid} --stream --step-name "osm.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/c${c}" --output s3://aaji/scratch/pout/dec23/osm/${algo}c${c} --jobconf mapred.reduce.tasks=1000
 
-    sleep 300 ;
+    sleep 100 ;
   done
 
 else
@@ -83,9 +84,9 @@ else
   for c in 864 4322 8644 17288 43220 86441 # 172882 432206 864412 4322062
   do
     echo "[${c}] [${algo}]"
-    elastic-mapreduce --jobflow ${jobid} --stream --step-name "${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/x/c${c}" --output s3://aaji/scratch/pout/dec18/${algo}c${c} --jobconf mapred.reduce.tasks=1000
+    elastic-mapreduce --jobflow ${jobid} --stream --step-name "osm.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/x/c${c}" --output s3://aaji/scratch/pout/dec23/osm/${algo}c${c} --jobconf mapred.reduce.tasks=1000
 
-    sleep 300 ;
+    sleep 100 ;
 
   done
 fi
