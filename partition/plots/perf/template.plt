@@ -11,18 +11,18 @@ set output '_chartname_'
 # set output 'ht.tex'
 
 # color style 
-load 'gnucolor.plt'
+load '../gnucolor.plt'
 
 # Legend
 # set key at 6.1,1.3
 
 # Axes label 
-set xlabel 'bucket size'
-# set ylabel ''
+set xlabel 'Bucket size'
+set ylabel 'Time (min)'
 
 # Axes scale 
-set logscale x 10
-set logscale y 10
+set logscale x 2
+#set logscale y 10
 set format x "2^{%L}"
 #set format y "10^{%L}"
 
@@ -42,9 +42,12 @@ set key box
 
 # Plot
 
-plot '_dataset_' using 1:2  with lines ls 1,	\
-     '' using 1:3  with lines ls 2, \
-     '' using 1:4  with lines ls 3
+plot '_dataset_' using 1:2  notitle with lines ls 1,	\
+     '' using 1:2  with points ls 1, \
+     '' using 1:3  notitle with lines ls 2, \
+     '' using 1:3  with points ls 2, \
+     '' using 1:4  notitle with lines ls 3, \
+     '' using 1:4  with points ls 3
 #     '' using 1:5  with lines ls 4, \
 #     '' using 1:6  with lines ls 5, \
 #     '' using 1:7  with lines ls 6
