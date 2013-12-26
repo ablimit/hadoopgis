@@ -70,24 +70,10 @@ echo "Job ID [${jobid}]"
 
 # R+ Tree  | R* Tree  | FixedGrid
 
-if [ "${algo}" != "st" ] ;
-then
-  for c in 20 100 200 400 1000 2000 4000 10000 20000 100000
-  do
-    # echo "[${c}] [${algo}]"
-    elastic-mapreduce --jobflow ${jobid} --stream --step-name "pais.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py pais.geom.1.tsv pais.geom.2.tsv' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/pais/${algo}/c${c}" --output s3://aaji/scratch/pout/dec23/pais/${algo}c${c} --jobconf mapred.reduce.tasks=1000
+for c in 20 100 200 400 1000 2000 4000 10000 20000 100000
+do
+	# echo "[${c}] [${algo}]"
+	elastic-mapreduce --jobflow ${jobid} --stream --step-name "pais.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py pais.geom.1.tsv pais.geom.2.tsv' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/pais/${algo}/c${c}" --output s3://aaji/scratch/pout/dec26/pais/${algo}c${c} --jobconf mapred.reduce.tasks=1000
 
-    sleep 100 ;
-  done
-
-else
-  # strip
-  for c in 20 100 200 400 1000 2000 4000 10000 20000 100000
-  do
-    # echo "[${c}] [${algo}]"
-    elastic-mapreduce --jobflow ${jobid} --stream --step-name "pais.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py pais.geom.1.tsv pais.geom.2.tsv' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/pais/${algo}/x/c${c}" --output s3://aaji/scratch/pout/dec23/pais/${algo}c${c} --jobconf mapred.reduce.tasks=1000
-
-    sleep 100 ;
-  done
-fi
-
+	sleep 30 ;
+done
