@@ -4,7 +4,6 @@ usage(){
   echo -e "submitall.sh  --job [job flow id]\n \
     --job \t Amazon EMR Job Flow ID to submit steps. \n \
     --alg \t partition algorithm to test. \n \
-    --log \t output directory for the results. \n \
     --help \t show this information.
   "
   exit 1
@@ -78,17 +77,7 @@ if [ ! "$log" ] ; then
   exit 1
 fi
 
-# jobid="j-2UHSB3ZIF85YA"
 echo "Job ID [${jobid}]"
-# /usr/local/emrcli/elastic-mapreduce -j ${jobid} --wait-for-steps
 
-# R+ Tree  | R* Tree  | Fixed Grid | Strip
-s3input="s3://aaji/data/partitions/pais/${algo}/c${c}"
+elastic-mapreduce --jobflow ${jobid} --stream --step-name "tcga.st_intersect.full" --step-action TERMINATE_JOB_FLOW --mapper 's3://aaji/scratch/awsjoin/tcgamapper.py' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input s3://aaji/data/tcga --output s3://aaji/scratch/pout/${log}/tcga --jobconf mapred.reduce.tasks=2000
 
-for c in 20 100 200 400 1000 2000 4000 10000 20000 100000
-do
-  echo -n "job param: [${c}] -- "
-  elastic-mapreduce --jobflow ${jobid} --stream --step-name "pais.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py pais.geom.1.tsv pais.geom.2.tsv' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input ${s3input} --output s3://aaji/scratch/pout/${log}/pais/${algo}c${c} --jobconf mapred.reduce.tasks=1000
-
-  sleep 30 ;
-done
