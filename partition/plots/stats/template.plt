@@ -11,7 +11,7 @@ set output '_chartname_'
 # set output 'ht.tex'
 
 # color style 
-load 'gnucolor.plt'
+load '../gnucolor.plt'
 
 # Legend
 # set key at 6.1,1.3

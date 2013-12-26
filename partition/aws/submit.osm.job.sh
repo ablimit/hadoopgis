@@ -11,6 +11,7 @@ usage(){
 
 jobid=""
 algo=""
+log=""
 
 while :
 do
@@ -36,6 +37,14 @@ do
 	    algo=${1#*=}        # Delete everything up till "="
 	    shift
 	    ;;
+    -l | --log)
+      log=$2
+      shift 2
+      ;;
+    --log=*)
+      log=${1#*=}
+      shift
+      ;;
 	--) # End of all options
 	    shift
 	    break
@@ -63,31 +72,29 @@ then
   exit 1;
 fi
 
-# jobid="j-2UHSB3ZIF85YA"
-echo "Job ID [${jobid}]"
-
-# /usr/local/emrcli/elastic-mapreduce -j ${jobid} --wait-for-steps
-
-# R+ Tree  | R* Tree  | Fixed Grid
-if [ "${algo}" != "st" ] ;
-then
-  for c in 864 4322 8644 17288 43220 86441 # 172882 432206 864412 4322062
-  do
-    # echo "[${c}] [${algo}]"
-    elastic-mapreduce --jobflow ${jobid} --stream --step-name "osm.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/c${c}" --output s3://aaji/scratch/pout/dec23/osm/${algo}c${c} --jobconf mapred.reduce.tasks=1000
-
-    sleep 100 ;
-  done
-
-else
-  # strip
-  for c in 864 4322 8644 17288 43220 86441 # 172882 432206 864412 4322062
-  do
-    echo "[${c}] [${algo}]"
-    elastic-mapreduce --jobflow ${jobid} --stream --step-name "osm.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/osm/${algo}/x/c${c}" --output s3://aaji/scratch/pout/dec23/osm/${algo}c${c} --jobconf mapred.reduce.tasks=1000
-
-    sleep 100 ;
-
-  done
+if [ ! "$log" ] ; then
+  echo "ERROR: log directoray name is missing. See --help" >&2
+  exit 1
 fi
 
+# jobid="j-2UHSB3ZIF85YA"
+echo "Job ID [${jobid}]"
+# /usr/local/emrcli/elastic-mapreduce -j ${jobid} --wait-for-steps
+
+# R+ Tree  | R* Tree  | Fixed Grid | strip
+s3input=""
+
+if [ "${algo}" == "st" ] ;
+then
+  s3input="s3://aaji/data/partitions/osm/${algo}/x/c${c}"
+else
+  s3input="s3://aaji/data/partitions/osm/${algo}/c${c}"
+fi
+
+for c in 864 4322 8644 17288 43220 86441 # 172882 432206 864412 4322062
+do
+  echo -n "job param: [${c}] -- "
+  elastic-mapreduce --jobflow ${jobid} --stream --step-name "osm.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "${s3input}" --output s3://aaji/scratch/pout/${log}/osm/${algo}c${c} --jobconf mapred.reduce.tasks=1000
+
+  sleep 30 ;
+done

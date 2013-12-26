@@ -4,6 +4,7 @@ usage(){
   echo -e "submitall.sh  --job [job flow id]\n \
     --job \t Amazon EMR Job Flow ID to submit steps. \n \
     --alg \t partition algorithm to test. \n \
+    --log \t output directory for the results. \n \
     --help \t show this information.
   "
   exit 1
@@ -11,6 +12,7 @@ usage(){
 
 jobid=""
 algo=""
+log=""
 
 while :
 do
@@ -34,6 +36,14 @@ do
       ;;
     --alg=*)
       algo=${1#*=}        # Delete everything up till "="
+      shift
+      ;;
+    -l | --log)
+      log=$2
+      shift 2
+      ;;
+    --log=*)
+      log=${1#*=}
       shift
       ;;
     --) # End of all options
@@ -63,31 +73,23 @@ then
   exit 1;
 fi
 
+if [ ! "$log" ] ; then
+  echo "ERROR: log directoray name is missing. See --help" >&2
+  exit 1
+fi
+
 # jobid="j-2UHSB3ZIF85YA"
 echo "Job ID [${jobid}]"
-
 # /usr/local/emrcli/elastic-mapreduce -j ${jobid} --wait-for-steps
 
-# R+ Tree  | R* Tree  | FixedGrid
+# R+ Tree  | R* Tree  | Fixed Grid | Strip
+s3input="s3://aaji/data/partitions/pais/${algo}/c${c}"
 
-if [ "${algo}" != "st" ] ;
-then
-  for c in 20 100 200 400 1000 2000 4000 10000 20000 100000
-  do
-    # echo "[${c}] [${algo}]"
-    elastic-mapreduce --jobflow ${jobid} --stream --step-name "pais.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py pais.geom.1.tsv pais.geom.2.tsv' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/pais/${algo}/c${c}" --output s3://aaji/scratch/pout/dec23/pais/${algo}c${c} --jobconf mapred.reduce.tasks=1000
+for c in 20 100 200 400 1000 2000 4000 10000 20000 100000
+do
+  echo -n "job param: [${c}] -- "
+  elastic-mapreduce --jobflow ${jobid} --stream --step-name "pais.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py pais.geom.1.tsv pais.geom.2.tsv' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input ${s3input} --output s3://aaji/scratch/pout/${log}/pais/${algo}c${c} --jobconf mapred.reduce.tasks=1000
 
-    sleep 100 ;
-  done
-
-else
-  # strip
-  for c in 20 100 200 400 1000 2000 4000 10000 20000 100000
-  do
-    # echo "[${c}] [${algo}]"
-    elastic-mapreduce --jobflow ${jobid} --stream --step-name "pais.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py pais.geom.1.tsv pais.geom.2.tsv' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input "s3://aaji/data/partitions/pais/${algo}/x/c${c}" --output s3://aaji/scratch/pout/dec23/pais/${algo}c${c} --jobconf mapred.reduce.tasks=1000
-
-    sleep 100 ;
-  done
-fi
+  sleep 30 ;
+done
 
