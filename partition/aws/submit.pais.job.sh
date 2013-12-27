@@ -78,9 +78,8 @@ if [ ! "$log" ] ; then
   exit 1
 fi
 
-# jobid="j-2UHSB3ZIF85YA"
 echo "Job ID [${jobid}]"
-# /usr/local/emrcli/elastic-mapreduce -j ${jobid} --wait-for-steps
+# elastic-mapreduce -j ${jobid} --wait-for-steps
 
 # R+ Tree  | R* Tree  | Fixed Grid | Strip
 s3input="s3://aaji/data/partitions/pais/${algo}/c${c}"
