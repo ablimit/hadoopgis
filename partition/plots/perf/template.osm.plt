@@ -47,9 +47,7 @@ plot '_dataset_' using 1:2  notitle with lines ls 1,	\
      '' using 1:3  notitle with lines ls 2, \
      '' using 1:3  with points ls 2, \
      '' using 1:4  notitle with lines ls 3, \
-     '' using 1:4  with points ls 3, \
-     '' using 1:5  notitle with lines ls 4, \
-     '' using 1:5  with points ls 4
+     '' using 1:4  with points ls 3
 #     '' using 1:5  with lines ls 4, \
 #     '' using 1:6  with lines ls 5, \
 #     '' using 1:7  with lines ls 6

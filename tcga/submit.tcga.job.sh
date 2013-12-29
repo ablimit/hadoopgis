@@ -3,14 +3,12 @@
 usage(){
   echo -e "submitall.sh  --job [job flow id]\n \
     --job \t Amazon EMR Job Flow ID to submit steps. \n \
-    --alg \t partition algorithm to test. \n \
     --help \t show this information.
   "
   exit 1
 }
 
 jobid=""
-algo=""
 log=""
 
 while :
@@ -27,14 +25,6 @@ do
       ;;
     --job=*)
       jobid=${1#*=}
-      shift
-      ;;
-    -a | --alg)
-      algo=$2 
-      shift 2
-      ;;
-    --alg=*)
-      algo=${1#*=}        # Delete everything up till "="
       shift
       ;;
     -l | --log)
@@ -65,13 +55,6 @@ if [ ! "$jobid" ] ; then
   exit 1
 fi
 
-# argument checking 
-if [ "${algo}" != "st" ] && [ "${algo}" != "rt" ] && [ "${algo}" != "rp" ] && [ "${algo}" != "fg" ] ;
-then
-  echo "Parameter [${algo}] is NOT recognized. Alternatives are [ st | rp | rt | fg ]"
-  exit 1;
-fi
-
 if [ ! "$log" ] ; then
   echo "ERROR: log directoray name is missing. See --help" >&2
   exit 1
@@ -79,5 +62,7 @@ fi
 
 echo "Job ID [${jobid}]"
 
-elastic-mapreduce --jobflow ${jobid} --stream --step-name "tcga.st_intersect.full" --step-action TERMINATE_JOB_FLOW --mapper 's3://aaji/scratch/awsjoin/tcgamapper.py' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input s3://aaji/data/tcga --output s3://aaji/scratch/pout/${log}/tcga --jobconf mapred.reduce.tasks=2000
+action=CONTINUE  # TERMINATE_JOB_FLOW 
+
+elastic-mapreduce --jobflow ${jobid} --stream --step-name "tcga.st_intersect.full" --step-action ${action} --mapper 's3://aaji/scratch/awsjoin/tcgamapper.py' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input s3://aaji/data/tcga --output s3://aaji/scratch/pout/${log}/tcga_2 --jobconf mapred.reduce.tasks=2000
 
