@@ -9,6 +9,8 @@ uint32_t genTiles(Region &universe, const uint32_t partition_size, const uint64_
     double split  =std::ceil(std::sqrt(P));
     uint64_t LOOP =static_cast<uint64_t>(std::ceil(std::sqrt(P)));
     
+    cerr << "ds: " << ds << ", partition size:  "<< partition_size << endl;
+    cerr << "split: " << split << ", LOOP "<< LOOP <<endl;
     double width =  (universe.getHigh(0)- universe.getLow(0)) / split;
     //cerr << "Tile width" << SPACE <<width <<endl;
     double height = (universe.getHigh(1)- universe.getLow(1)) / split;
@@ -66,7 +68,7 @@ int main(int argc, char **argv) {
 	    std::cerr << "Procestd::couted records " <<  recs  << std::endl;
     }
     
-    cerr << "Number of tiles: " << endl;
+    // cerr << "Number of tiles: " << endl;
 
     uint32_t size = genTiles(universe,partition_size,recs);
     cerr << "Number of tiles: " << size << endl;
