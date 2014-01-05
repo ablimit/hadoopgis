@@ -47,10 +47,10 @@ def main():
         sp = line.strip().split()
         if (len(sp)>4):
             oid += 1
-            x1 = float(sp[1]) - 0.005
-            y1 = float(sp[2]) - 0.005
-            x2 = float(sp[3]) + 0.005
-            y2 = float(sp[4]) + 0.005
+            x1 = float(sp[1])
+            y1 = float(sp[2])
+            x2 = float(sp[3])
+            y2 = float(sp[4])
 
             # default color
             color_id = seq % 7
