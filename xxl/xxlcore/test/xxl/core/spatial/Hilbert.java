@@ -67,7 +67,7 @@ public class Hilbert{
         hilbert [0] = getHilbertValue(leftCorner[0],leftCorner[1]);
         hilbert [1] = getHilbertValue(center[0],center[1]);
         hilbert [2] = getHilbertValue(rightCorner[0],rightCorner[1]);
-        System.out.println(line + hilbert[0] + space + hilbert[1] + space + hilbert[2]);
+        System.out.println(line + space + hilbert[0] + space + hilbert[1] + space + hilbert[2]);
       }
     }
 
