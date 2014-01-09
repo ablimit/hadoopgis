@@ -62,7 +62,7 @@ do
 
     echo -e "\n---------------------------------------------"
     echo "remapping objects"
-    python ../mappartition.py ${tempPath}/pidoid.txt < /data2/ablimit/Data/spatialdata/bakup/data/osm.mbb.norm.filter.dat > ${opath}/c${k}/osm.part
+    python ../mappartition.py ${tempPath}/pidoid.txt < ${tempPath}/hilbert.dat > ${opath}/c${k}/osm.part
 
     rm -f ${tempPath}/pidoid.txt
   
