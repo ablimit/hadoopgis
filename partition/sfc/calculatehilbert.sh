@@ -10,7 +10,7 @@ prec=20
 
 cp /home/aaji/proj/hadoopgis/xxl/xxlcore/target/*.jar ./
 
-head -n 10000 ${path} > temp.dat 
+# head -n 10000 ${path} > temp.dat 
 
 java ${jvm} -cp xxlcore-2.1-SNAPSHOT.jar:xxlcore-2.1-SNAPSHOT-tests.jar:. xxl.core.spatial.Hilbert ${path} ${prec} > ${outpath} 
 
