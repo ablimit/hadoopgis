@@ -24,6 +24,7 @@ cp /home/aaji/proj/hadoopgis/xxl/xxlcore/target/*.jar ./
 
 for tid in 2 3 4 5 6 7
 do
+  echo "tid: ${tid}"
   ifile="${idir}/test${tid}.obj.txt"
   cut -f1,2,3,4,5 ${ifile} > /tmp/data.txt 
 
@@ -33,7 +34,7 @@ do
   # sort based on the value
   sort -T /dev/shm --numeric-sort --key=7 /tmp/data.hc.dat | cut -d" " -f1,2,3,4,5 > hilbert.dat
 
-
+  ./hilbertPartition hilbert.dat 4 > ${tempPath}/regionmbb.${tid}.txt 
 
 done
 
