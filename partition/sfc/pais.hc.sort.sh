@@ -1,6 +1,7 @@
 #! /bin/bash
 
-ipath=/data2/ablimit/Data/spatialdata/pais/hc
+# ipath=/data2/ablimit/Data/spatialdata/pais/hc
+ipath=/home/aaji/temp/hc
 
 for image in astroII.1 astroII.2 gbm0.1 gbm0.2 gbm1.1 gbm1.2 gbm2.1 gbm2.2 normal.2 normal.3 oligoastroII.1 oligoastroII.2 oligoastroIII.1 oligoastroIII.2 oligoII.1 oligoII.2 oligoIII.1 oligoIII.2
 do
@@ -18,17 +19,19 @@ do
       pos=8 
     else
       echo "param corner is NOT correct."
+      exit 0;
     fi
 
     echo "sorting ${image} with corner ${corner}."
 
     infile=${ipath}/${image}.1.dat
     ofile=${ipath}/${image}.1.${corner}.dat
-    sort -T /dev/shm --numeric-sort --parallel=10 --key=${pos} ${infile} -o ${ofile}
-
+    if [ -e ${infile} ]
+    then
+      sort -T /dev/shm --numeric-sort --parallel=2 --key=${pos} ${infile} -o ${ofile}
+    fi
   done
 done
-
 
 echo "done."
 
