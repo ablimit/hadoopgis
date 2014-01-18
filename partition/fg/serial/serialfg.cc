@@ -1,9 +1,12 @@
 #include "../../SpaceStreamReader.h"
 #include<cmath>
-#include <boost/timer.hpp>>
+#include <boost/timer.hpp>
+#include <boost/program_options.hpp>
 
 vector<RTree::Data*> tiles;
 
+// using namespace boost;
+namespace po = boost::program_options;
 using namespace SpatialIndex::RTree;
 
 void genTiles(Region &universe, const uint32_t partition_size, const uint64_t ds) {
@@ -34,20 +37,54 @@ void genTiles(Region &universe, const uint32_t partition_size, const uint64_t ds
       high[0] = min_x + (i+1) * width;
       high[1] = min_y + (j+1) * height;
       Region r(low, high, 2);
-      tiles.push_back(new RTree::Data(0, 0 , r, tid++);
+      tiles.push_back(new RTree::Data(0, 0 , r, tid++));
     }
   }
 }
 
-int main(int argc, char **argv) {
-  if (argc < 3)
-  {
-    std::cerr << "Usage: " << argv[0] << " [input_file] [partition_size]" << std::endl;
+int main(int ac, char* av[]){
+  uint32_t partition_size ;
+  int indexCapacity ;
+  int leafCapacity ;
+  double fillFactor ;
+  try {
+    po::options_description desc("Allowed options");
+    desc.add_options()
+        ("help", "produce help message")
+        ("index_cap", po::value<int>(&indexCapacity)->default_value(20), "RTree index page size")
+        ("leaf_cap", po::value<int>(&leafCapacity)->default_value(1000), "RTree leaf page size")
+        ("fill_cap", po::value<double>(&fillFactor)->default_value(0.99), "Page fill factor.")
+        ("bucket_size", po::value<int>(), "Expected bucket size")
+        ;
+
+    po::variables_map vm;        
+    po::store(po::parse_command_line(ac, av, desc), vm);
+    po::notify(vm);    
+
+    if (vm.count("help")) {
+      cerr << desc << endl;
+      return 0;
+    }
+
+    if (vm.count("fill_cap")) {
+      cout << "fill factor was set to " 
+          << vm["fill_cap"].as<double>() << ".\n";
+    } else {
+      cout << "fill factor was not set.\n";
+    }
+
+    return 0; 
+  }
+  catch(exception& e) {
+    cerr << "error: " << e.what() << "\n";
+    return 1;
+  }
+  catch(...) {
+    cerr << "Exception of unknown type!\n";
     return 1;
   }
 
-  SpaceStreamReader stream(argv[1]);
-  const uint32_t partition_size = strtoul (argv[2], NULL, 0);
+  SpaceStreamReader stream("");
   Region universe;
 
   uint64_t recs = 0 ;
@@ -79,7 +116,7 @@ int main(int argc, char **argv) {
   cerr << "stat:" << partition_size << "," << tiles.size() <<"," << elapsed_time << endl;
 
   // build in memory Tree 
-	t.restart();
+  t.restart();
 
 
   elapsed_time = t.elapsed();
