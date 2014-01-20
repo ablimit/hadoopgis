@@ -1,6 +1,6 @@
-#include <boost/timer.hpp>
+#include "Timer.hpp"
 #include <boost/program_options.hpp>
-#include "../../SpaceStreamReader.h"
+#include "SpaceStreamReader.h"
 #include <unordered_map>
 #include <cstring>
 
@@ -117,7 +117,7 @@ int main(int ac, char** av)
       */
   }
 
-  boost::timer t;                         
+  Timer t;                         
   for (vector<Data*>::iterator it = inMemData.begin(); it != inMemData.end(); it++)
   {
     Region *obj = (*it)->m_region.clone();

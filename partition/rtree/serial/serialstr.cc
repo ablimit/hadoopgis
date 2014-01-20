@@ -1,7 +1,7 @@
-#include "../../SpaceStreamReader.h"
+#include "SpaceStreamReader.h"
 #include "VecStreamReader.h"
+#include <Timer.hpp>
 #include<cmath>
-#include <boost/timer.hpp>
 #include <boost/program_options.hpp>
 
 
@@ -119,7 +119,7 @@ int main(int ac, char* av[]){
     vec.push_back(d);
   }
 
-  boost::timer t;                         
+  Timer t;                         
   // build in memory Tree
   VecStreamReader vecstream(&vec);
   IStorageManager* memoryFile = StorageManager::createNewMemoryStorageManager();

@@ -1,7 +1,8 @@
-#include "../../SpaceStreamReader.h"
+#include "SpaceStreamReader.h"
 #include<cmath>
-#include <boost/timer.hpp>
+//#include <boost/timer.hpp>
 #include <boost/program_options.hpp>
+#include "Timer.hpp"
 
 vector<RTree::Data*> tiles;
 id_type bid; //bucket id
@@ -139,7 +140,8 @@ int main(int ac, char* av[]){
 
   // cerr << "Number of tiles: " << endl;
 
-  boost::timer t;                         
+  // boost::timer t;     
+  Timer t;
   genTiles(universe,bucket_size,recs);
   double elapsed_time = t.elapsed();
   cerr << "stat:ptime," << bucket_size << "," << tiles.size() <<"," << elapsed_time << endl;
@@ -156,7 +158,6 @@ int main(int ac, char* av[]){
   ISpatialIndex* tree = RTree::createAndBulkLoadNewRTree(
       RTree::BLM_STR, stream2, *memoryFile, fillFactor, indexCapacity, leafCapacity, 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
 
-  cerr << "DEBUG: pass" << endl;
   
   elapsed_time = t.elapsed();
   cerr << "stat:itime," << elapsed_time << endl;

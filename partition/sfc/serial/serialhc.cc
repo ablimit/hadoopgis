@@ -1,4 +1,4 @@
-#include <boost/timer.hpp>
+#include "Timer.hpp"
 #include <boost/program_options.hpp>
 #include "../../SpaceStreamReader.h"
 
@@ -165,7 +165,7 @@ int main(int ac, char* av[]){
   m_fin.close();
 
    cerr << "About to sort. " << endl;
-  boost::timer t;                         
+  Timer t;                         
   // sort object based on Hilbert Curve value
   std::sort (socoll.begin(), socoll.end(), hcsorter); 
   cerr << "sort ------ done. " << endl;

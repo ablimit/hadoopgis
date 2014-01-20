@@ -1,63 +1,31 @@
 #! /bin/bash
 
-fillFactor=0.99
-ipath=/data2/ablimit/Data/spatialdata/pais/mbb
-opath=/scratch/data/partition/pais/fg
-tempPath=/dev/shm/pais/fg
-
-mkdir -p ${tempPath}
+ipath=/home/hpcuser/proj/data/pais
 
 for image in astroII.1 astroII.2 gbm0.1 gbm0.2 gbm1.1 gbm1.2 gbm2.1 gbm2.2 normal.2 normal.3 oligoastroII.1 oligoastroII.2 oligoastroIII.1 oligoastroIII.2 oligoII.1 oligoII.2 oligoIII.1 oligoIII.2
 do
-  for k in 20 100 200 400 1000 2000 4000 10000 20000 100000
+  echo "stat:${image}"
+  for f in 0.00001 0.00005 0.0001 0.0002 0.00049 0.00098 0.00197 0.00492 0.00984 0.04922 #20   100  200  400 1000 2000 4000 10000 20000 100000
   do
-    if [ ! -e ${opath}/c${k} ] ;
-    then
-      mkdir -p ${opath}/c${k}
-    fi
-    echo "partition size ${k}"
-    echo -e "\n------------------------------------"
-    echo "building index on data ...."
-    ../genRtreeIndex ${ipath}/${image}.norm.1.dat ${tempPath}/spatial 20 1000 $fillFactor
 
-    rc=$?
-    if [ $rc -eq 0 ];then
-      echo ""
-    else
-      echo -e "\nERROR: RTree index generation failed "
-      exit $rc ;
+    NUMOFLINES=$(wc -l < "${ipath}/${image}.norm.1.dat")
+    k=$(echo "${NUMOFLINES} * ${f}" | bc -l | cut -d"." -f1)
+    if [ ! "${k}" ] ;then
+      continue ;
     fi
 
     echo -e "\n------------------------------------"
-    echo "generating partition region..."
-    ../fixedgridPartition  ${ipath}/${image}.norm.1.dat ${k} > ${opath}/c${k}/${image}.regionmbb.txt 
+    # echo "partition size ${k}"
+
+
+    # awk '{printf("%d\n",$0+=$0<0?0:0.9)}'
+    serial/fg --bucket ${k} --input ${ipath}/${image}.norm.1.dat > /dev/null
+
     rc=$?
-    if [ $rc -eq 0 ];then
-      echo ""
-    else
+    if [ ! $rc -eq 0 ];then
       echo -e "\nERROR: partition generation failed."
       exit $rc ;
     fi
-
-    echo -e "---------------------------------------------"
-    echo "generate pid oid mapping ...."
-    ../rquery ${opath}/c${k}/${image}.regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
-    rc=$?
-    if [ $rc -eq 0 ];then
-      echo ""
-    else
-      echo -e "\nERROR: rquery failed."
-      exit $rc ;
-    fi
-
-    echo -e "\n---------------------------------------------"
-    echo "remapping objects"
-    python ../mappartition.py ${tempPath}/pidoid.txt < ${ipath}/${image}.norm.1.dat > ${opath}/c${k}/${image}.part
-
-    rm ${tempPath}/spatial*
-    rm ${tempPath}/pidoid.txt 
   done
 done
-
-touch "done.pais.log"
 
