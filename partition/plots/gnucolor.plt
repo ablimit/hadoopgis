@@ -6,14 +6,14 @@
 
 # line styles
 set style line 9 lc '#000000' lt 2 lw 1 pt 0 pi -1 ps 2 # black
-set style line 1 lc rgb '#1B9E77' pt 5 ps 1.2 # dark teal
-set style line 2 lc rgb '#D95F02' pt 7 ps 1.2 # dark orange
-set style line 3 lc rgb '#7570B3' pt 9 ps 1.2 # dark lilac
-set style line 4 lc rgb '#E7298A' pt 13 ps 1.2 # dark magenta
-set style line 5 lc rgb '#66A61E' pt 15 ps 1.2 # dark lime green
-set style line 6 lc rgb '#E6AB02' pt 6 ps 1.2 # dark banana
-set style line 7 lc rgb '#A6761D' pt 19 ps 1.2 # dark tan
-set style line 8 lc rgb '#666666' pt 21 ps 1.2# dark gray
+set style line 1 lc rgb '#1B9E77' lt 2 pt 5 ps 2 # dark teal
+set style line 2 lc rgb '#D95F02' lt 2 pt 7 ps 2 # dark orange
+set style line 3 lc rgb '#7570B3' lt 2 pt 9 ps 2 # dark lilac
+set style line 4 lc rgb '#E7298A' lt 2 pt 13 ps 2 # dark magenta
+set style line 5 lc rgb '#66A61E' lt 2 pt 15 ps 2 # dark lime green
+set style line 6 lc rgb '#E6AB02' lt 2 pt 6 ps 2 # dark banana
+set style line 7 lc rgb '#A6761D' lt 2 pt 19 ps 2 # dark tan
+set style line 8 lc rgb '#666666' lt 2 pt 21 ps 2 # dark gray
 
 
 # palette

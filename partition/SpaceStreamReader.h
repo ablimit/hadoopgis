@@ -19,6 +19,7 @@ class SpaceStreamReader : public IDataStream
     virtual ~SpaceStreamReader()
     {
       if (m_pNext != 0) delete m_pNext;
+      m_fin.close();
     }
 
     virtual IData* getNext()

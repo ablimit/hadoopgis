@@ -3,7 +3,8 @@
 reset
 
 # eps
-set terminal postscript eps size 3.5,2.62 enhanced color font 'Helvetica,20' lw 2
+# set terminal postscript eps size 3.5,2.62 enhanced color font 'Helvetica,20' lw 2
+set terminal postscript eps size 3.5,2.62 enhanced color font ',28'
 set output '_chartname_'
 
 # latex
@@ -21,9 +22,9 @@ set xlabel 'Bucket size'
 set ylabel 'Time (min)'
 
 # Axes scale 
-set logscale x 2
+set logscale x 10
 #set logscale y 10
-set format x "2^{%L}"
+set format x "10^{%L}"
 #set format y "10^{%L}"
 
 # Axes ranges
@@ -38,7 +39,7 @@ set format x "2^{%L}"
 
 set key autotitle columnheader
 set key _keyposition_
-set key box
+# set key box
 
 # Plot
 

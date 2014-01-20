@@ -178,7 +178,12 @@ int main(int ac, char* av[]){
   elapsed_time = t.elapsed();
   cerr << "stat:rtime," << elapsed_time << endl;
 
+  // cleanup allocated memory 
+  for (vector<RTree::Data*>::iterator it = tiles.begin() ; it != tiles.end(); ++it) 
+    delete *it;
+
   delete tree;
+  delete memoryFile;
 
   return 0; // success
 }

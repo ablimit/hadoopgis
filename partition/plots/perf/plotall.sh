@@ -57,11 +57,12 @@ if [ ! "$name" ] || [ ! "$size" ]; then
   exit 1
 fi
 
-  cp template.${name}.plt draw.plt
-  perl -p -i -e "s/_chartname_/${name}.medium.${size}.eps/g" draw.plt
-  perl -p -i -e "s/_dataset_/${name}.medium.${size}.dat/g" draw.plt
-  perl -p -i -e "s/_keyposition_/left top/g" draw.plt
-  gnuplot draw.plt
+cp template.${name}.plt draw.plt
+perl -p -i -e "s/_chartname_/${name}.medium.${size}.eps/g" draw.plt
+perl -p -i -e "s/_dataset_/${name}.medium.${size}.dat/g" draw.plt
+perl -p -i -e "s/_keyposition_/left top/g" draw.plt
+gnuplot draw.plt
+cp draw.plt indiv/${name}.${size}.gpl
 
 #if [ ! "$name" == "pais" ] ; then
 #  echo "Processing OpenStreetMap."
