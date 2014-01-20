@@ -160,7 +160,7 @@ int main(int ac, char* av[]){
       //printShape(id, obj);
     }
     else 
-      delete obj; 
+      delete [] obj; 
   }
   m_fin.close();
 
@@ -176,14 +176,18 @@ int main(int ac, char* av[]){
   vector<double*>::size_type len = socoll.size();
   for (vector<double*>::size_type i = 0; i < len; i+=bucket_size)
   {
+    low[0] = std::numeric_limits<double>::max();
+    low[1] = std::numeric_limits<double>::max();
+    high[0] = 0.0 ;
+    high[1] = 0.0 ;
     for (int j = 0; j < bucket_size-1 && i+j < len; j++)
     {
       //cerr << "i+j = " << i+j << endl;
       double *obj=  socoll[i+j] ;
         if (obj[0] < low[0])  low[0] = obj[0];
         if (obj[1] < low[1])  low[1] = obj[1];
-        if (obj[2] < high[0]) high[0] = obj[2];
-        if (obj[3] < high[1]) high[1] = obj[3];
+        if (obj[2] > high[0]) high[0] = obj[2];
+        if (obj[3] > high[1]) high[1] = obj[3];
     }
       Region r(low, high, 2);
       tiles.push_back(new RTree::Data(0, 0 , r, tid++));
@@ -222,11 +226,13 @@ int main(int ac, char* av[]){
   
   // cleanup allocated memory 
   for (vector<double*>::iterator it = socoll.begin() ; it != socoll.end(); ++it) 
-    delete *it;
+    delete [] *it;
   for (vector<RTree::Data*>::iterator it = tiles.begin() ; it != tiles.end(); ++it) 
     delete *it;
 
   delete tree;
   delete memoryFile;
+  return 0;
+
 }
 
