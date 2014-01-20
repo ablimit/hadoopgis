@@ -131,7 +131,7 @@ int main(int ac, char* av[]){
   MyQueryStrategy qs;
   tree->queryStrategy(qs);
   double elapsed_time = t.elapsed();
-  cerr << "stat:ptime," << bucket_size << "," << tiles.size() <<"," << elapsed_time << endl;
+  cout << "stat:ptime," << bucket_size << "," << tiles.size() <<"," << elapsed_time << endl;
 
   // cleanup allocated memory
   //for (size_type i =0 ;i < vec.size();i++)
@@ -142,6 +142,8 @@ int main(int ac, char* av[]){
 
   delete tree;
   delete memoryFile;
+
+  cout.flush();
 
   return 0; // success
 }

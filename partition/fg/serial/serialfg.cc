@@ -1,7 +1,6 @@
-#include "SpaceStreamReader.h"
 #include<cmath>
-//#include <boost/timer.hpp>
 #include <boost/program_options.hpp>
+#include "SpaceStreamReader.h"
 #include "Timer.hpp"
 
 vector<RTree::Data*> tiles;
@@ -86,7 +85,7 @@ int main(int ac, char* av[]){
         ("indexCap", po::value<int>(&indexCapacity)->default_value(20), "RTree index page size")
         ("leafCap", po::value<int>(&leafCapacity)->default_value(1000), "RTree leaf page size")
         ("fillCap", po::value<double>(&fillFactor)->default_value(0.99), "Page fill factor.")
-        ("bucket", po::value<uint32_t>(&bucket_size), "Expected bucket size")
+        ("bucket,b", po::value<uint32_t>(&bucket_size), "Expected bucket size")
         ("input,i", po::value<string>(&inputPath), "Data input file path")
         // ("index", po::value<string>(&indexPath), "index file path")
         ;
@@ -144,8 +143,8 @@ int main(int ac, char* av[]){
   Timer t;
   genTiles(universe,bucket_size,recs);
   double elapsed_time = t.elapsed();
-  cerr << "stat:ptime," << bucket_size << "," << tiles.size() <<"," << elapsed_time << endl;
-
+  cout<< "stat:ptime," << bucket_size << "," << tiles.size() <<"," << elapsed_time << endl;
+  /* 
   // build in memory Tree
   //stream.rewind();
   SpaceStreamReader stream2(inputPath);
@@ -179,12 +178,15 @@ int main(int ac, char* av[]){
   elapsed_time = t.elapsed();
   cerr << "stat:rtime," << elapsed_time << endl;
 
+  delete tree;
+  delete memoryFile;
+  */
+  
   // cleanup allocated memory 
   for (vector<RTree::Data*>::iterator it = tiles.begin() ; it != tiles.end(); ++it) 
     delete *it;
 
-  delete tree;
-  delete memoryFile;
+  cout.flush();
 
   return 0; // success
 }

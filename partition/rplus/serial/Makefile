@@ -1,5 +1,3 @@
-spatial=/home/aaji/softs
-
 UNAME		= $(shell uname)
 OPTFLAGS	= -O2
 INCBASE		= -I. -I../../
@@ -21,7 +19,7 @@ debug: CXX += -DDEBUG -g
 debug: CC += -DDEBUG -g
 debug: all 
 
-bos: RplusPartitioner.cc
+bos: serialbos.cc
 	$(CXX) $< -std=c++0x $(CFLAGS) $(LDFLAGS) -o $@
 
 clean:

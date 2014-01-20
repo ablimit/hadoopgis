@@ -74,7 +74,7 @@ int main(int ac, char** av)
     po::options_description desc("Options");
     desc.add_options()
         ("help", "this help message")
-        ("orient,o", po::value<uint32_t>(&orientation), "Expected bucket size")
+        ("orient,o", po::value<uint32_t>(&orientation), "partition orientation [0 for x axis, 1 for y axis]")
         ("bucket,b", po::value<uint32_t>(&bucket_size), "Expected bucket size")
         ("input,i", po::value<string>(&inputPath), "Data input file path");
 
@@ -167,7 +167,7 @@ int main(int ac, char** av)
     tiles.push_back(new RTree::Data(0, 0 , pr, pid++));
   } // end while
   elapsed_time += t.elapsed();
-  cerr << "stat:ptime," << bucket_size << "," << tiles.size() <<"," << elapsed_time << endl;
+  cout << "stat:ptime," << bucket_size << "," << tiles.size() <<"," << elapsed_time << endl;
 
 
   //cleanup memory 
@@ -179,6 +179,7 @@ int main(int ac, char** av)
 
   freeMemory();
 
+  cout.flush();
   return 0 ;
 }
 

@@ -194,8 +194,8 @@ int main(int ac, char* av[]){
       //cerr << "tid: " << tid << "; " << "i: " << i<< endl;
   }
   double elapsed_time = t.elapsed();
-  cerr << "stat:ptime," << bucket_size << "," << tiles.size() <<"," << elapsed_time << endl;
-
+  cout << "stat:ptime," << bucket_size << "," << tiles.size() <<"," << elapsed_time << endl;
+  /* 
   // build in memory Tree
   SpaceStreamReader stream(inputPath);
   IStorageManager* memoryFile = StorageManager::createNewMemoryStorageManager();
@@ -224,14 +224,18 @@ int main(int ac, char* av[]){
   elapsed_time = t.elapsed();
   cerr << "stat:rtime," << elapsed_time << endl;
   
+  delete tree;
+  delete memoryFile;
+
+  */
   // cleanup allocated memory 
   for (vector<double*>::iterator it = socoll.begin() ; it != socoll.end(); ++it) 
     delete [] *it;
   for (vector<RTree::Data*>::iterator it = tiles.begin() ; it != tiles.end(); ++it) 
     delete *it;
 
-  delete tree;
-  delete memoryFile;
+  cout.flush();
+  
   return 0;
 
 }

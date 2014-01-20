@@ -182,7 +182,7 @@ int main(int ac, char** av)
   } // end while
 
   elapsed_time += t.elapsed();
-  cerr << "stat:ptime," << bucket_size << "," << tiles.size() <<"," << elapsed_time << endl;
+  cout << "stat:ptime," << bucket_size << "," << tiles.size() <<"," << elapsed_time << endl;
 
   //cleanup memory 
   for (vector<RTree::Data*>::iterator it = tiles.begin() ; it != tiles.end(); ++it) 
@@ -191,6 +191,7 @@ int main(int ac, char** av)
   for (vector<Data*>::iterator it = inMemData.begin(); it != inMemData.end(); it++)
     delete *it; 
 
+  cout.flush();
 
   return 0 ;
 }
