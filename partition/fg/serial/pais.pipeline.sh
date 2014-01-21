@@ -9,13 +9,13 @@ do
   for f in 0.00001 0.00005 0.0001 0.0002 0.00049 0.00098 0.00197 0.00492 0.00984 0.04922 #20   100  200  400 1000 2000 4000 10000 20000 100000
   do
 
+
     NUMOFLINES=$(wc -l < "${ipath}/${image}.norm.1.dat")
     k=$(echo "${NUMOFLINES} * ${f}" | bc -l | cut -d"." -f1)
     if [ ! "${k}" ] ;then
       continue ;
     fi
-
-    echo -e "\n------------------------------------"
+    
     # echo "partition size ${k}"
 
 
@@ -28,5 +28,5 @@ do
       exit $rc ;
     fi
   done
+    echo "------------------------------------"
 done
-
