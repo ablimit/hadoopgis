@@ -1,7 +1,7 @@
 #! /bin/bash
 
 
-for script in pais osm
+for script in pais # osm
 do
   for loc in fg sfc strip rplus rtree
   do

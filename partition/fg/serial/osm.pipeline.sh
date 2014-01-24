@@ -1,6 +1,6 @@
 #! /bin/bash
 
-ipath=/home/hpcuser/proj/data/osm/osm.mbb.norm.filter.dat
+ipath=/home/aaji/proj/data/osm/osm.mbb.norm.filter.dat
 prog=./fg
 
 for k in 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
