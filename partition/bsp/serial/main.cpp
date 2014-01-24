@@ -20,6 +20,7 @@ const string TAB = "\t";
 const string NEW_LINE = "\n";
 
 //function defs
+void processInput();
 bool readInputFile(string);
 
 // global vars 
@@ -73,43 +74,53 @@ int main(int ac, char** av) {
     return -1;
   }
 
+  processInput();
+
   return 0;
 }
 
+void processInput() {
+  BinarySplitNode *tree = new BinarySplitNode(0.0, 1.0, 1.0, 0.0, 0);
+  for (vector<SpatialObject*>::iterator it = listAllObjects.begin(); it != listAllObjects.end(); it++) { 
+    tree->addObject(*it);
+  }
+
+  int countLeaf = 0;
+  for(vector<BinarySplitNode*>::iterator it = leafNodeList.begin(); it != leafNodeList.end(); it++ ) {
+    BinarySplitNode *tmp = *it;
+    if (tmp->isLeaf) {
+      cout << ++countLeaf << SPACE << tmp->left << SPACE  << tmp->bottom 
+          <<SPACE << tmp->right << SPACE << tmp->top << SPACE << tmp->size << endl ;
+    }
+  }
+}
 
 bool readInputFile(string inputFilePath) {
   ifstream inFile(inputFilePath.c_str());
   string input_line;
-  int countLeaf = 0;
 
   /* Read in the MBBs */
-
-  BinarySplitNode *tree = new BinarySplitNode(0.0, 1.0, 1.0, 0.0, 0);
 
   while (std::getline(inFile, input_line)) {
     mystr.str(input_line);
     mystr.clear();
 
     SpatialObject *obj = new SpatialObject(0, 0, 0, 0);
-
-    listAllObjects.push_back(obj);
-
     mystr >> id >> obj->left >> obj->bottom >> obj->right >> obj->top;
-    tree->addObject(obj);
-
-  }
-
-  for(vector<BinarySplitNode*>::iterator it = leafNodeList.begin(); it != leafNodeList.end(); it++ ) {
-    BinarySplitNode *tmp = *it;
-    if (tmp->isLeaf) {
-      cout << ++countLeaf << TAB << tmp->left << TAB << tmp->bottom 
-          <<TAB << tmp->right << TAB << tmp->top <<  TAB << tmp->size << endl ;
-    }
+    listAllObjects.push_back(obj);
   }
 
   // Memeory cleanup here. 
   // delete the stuff inside your vector
   //
+  for (vector<SpatialObject*>::iterator it = listAllObjects.begin(); it != listAllObjects.end(); it++) 
+    delete *it;
+
+  for(vector<BinarySplitNode*>::iterator it = leafNodeList.begin(); it != leafNodeList.end(); it++ ) {
+    delete *it;
+  }
+
+  delete tree;
 
   leafNodeList.clear();
   listAllObjects.clear(); 
