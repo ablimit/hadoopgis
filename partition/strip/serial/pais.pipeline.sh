@@ -16,7 +16,6 @@ do
     #  continue ;
     # fi
 
-    echo -e "\n------------------------------------"
     # echo "partition size ${k}"
 
 
@@ -29,5 +28,6 @@ do
       exit $rc ;
     fi
   done
+    echo "------------------------------------"
 done
 
