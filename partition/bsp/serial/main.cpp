@@ -38,7 +38,7 @@ double left, right, top, bottom;
 
 // main method
 int main(int ac, char** av) {
-
+  cout.precision(15);
   string inputPath;
 
   try {
@@ -83,6 +83,13 @@ int main(int ac, char** av) {
   double elapsed_time = t.elapsed();
   cout<< "stat:ptime," << bucket_size << "," << tiles.size()<<"," << elapsed_time << endl;
 
+  //print tile memory and cleanup tiles space 
+  for (vector<RTree::Data*>::iterator it = tiles.begin() ; it != tiles.end(); ++it) 
+  {
+      cerr << (*it)->m_id << " " << (*it)->m_region <<endl;
+   delete *it;
+  }
+  tiles.clear();
   return 0;
 }
 

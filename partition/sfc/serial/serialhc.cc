@@ -163,12 +163,13 @@ int main(int ac, char* av[]){
       delete [] obj; 
   }
   m_fin.close();
-
-   cerr << "start sorting." << endl;
+  
+  // cerr << "start sorting." << endl;
+  
   Timer t;                         
   // sort object based on Hilbert Curve value
   std::sort (socoll.begin(), socoll.end(), hcsorter); 
-  cerr << "sort ------ done. " << endl;
+  // cerr << "sort ------ done. " << endl;
   // partition based ob hilbert curve
   double low[2], high[2];
   vector<RTree::Data*> tiles;
