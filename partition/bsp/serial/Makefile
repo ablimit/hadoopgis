@@ -19,11 +19,11 @@ CFLAGS      = $(OPTFLAGS) $(INCBASE) $(INCFLAGS)
 LDFLAGS     = $(LIBBASE) $(LIBS)
 
 ifeq ($(UNAME), Darwin)
-    CC = gcc -arch x86_64
-    CXX = g++ -arch x86_64
+    CC = gcc -arch x86_64 -std=c++0x
+    CXX = g++ -arch x86_64 -std=c++0x
 else 
-    CC = gcc
-    CXX = g++44
+    CC = gcc -std=c++0x
+    CXX = g++44 -std=c++0x
 endif
 
 

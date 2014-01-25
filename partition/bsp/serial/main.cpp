@@ -6,9 +6,12 @@
 #include <map>
 #include <cstdlib> 
 #include "commonspatial.h"
+#include "Timer.hpp"
 
 #include <boost/program_options.hpp>
+#include <spatialindex/SpatialIndex.h>
 
+using namespace SpatialIndex;
 using namespace std;
 // using namespace boost;
 namespace po = boost::program_options;
@@ -25,6 +28,7 @@ bool readInputFile(string);
 
 // global vars 
 int bucket_size ;
+vector<RTree::Data*> tiles;
 vector<BinarySplitNode*> leafNodeList;
 vector<SpatialObject*> listAllObjects;
 BinarySplitNode *tree;
@@ -74,7 +78,10 @@ int main(int ac, char** av) {
     return -1;
   }
 
+  Timer t; 
   processInput();
+  double elapsed_time = t.elapsed();
+  cout<< "stat:ptime," << bucket_size << "," << tiles.size()<<"," << elapsed_time << endl;
 
   return 0;
 }
@@ -85,12 +92,20 @@ void processInput() {
     tree->addObject(*it);
   }
 
-  int countLeaf = 0;
+  id_type tid=1; //bucket id
+  double low[2], high[2];
+  //int countLeaf = 0;
   for(vector<BinarySplitNode*>::iterator it = leafNodeList.begin(); it != leafNodeList.end(); it++ ) {
     BinarySplitNode *tmp = *it;
     if (tmp->isLeaf) {
-      cout << ++countLeaf << SPACE << tmp->left << SPACE  << tmp->bottom 
-          <<SPACE << tmp->right << SPACE << tmp->top << SPACE << tmp->size << endl ;
+      // cout << ++countLeaf << SPACE << tmp->left << SPACE  << tmp->bottom 
+      //    << SPACE << tmp->right << SPACE << tmp->top << SPACE << tmp->size << endl ;
+      low[0] = tmp->left ;
+      low[1] = tmp->bottom;
+      high[0] = tmp->right;
+      high[1] = tmp->top;
+      Region r(low, high, 2);
+      tiles.push_back(new RTree::Data(0, 0 , r, tid++));
     }
   }
 }

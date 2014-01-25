@@ -4,7 +4,6 @@
 #include "Timer.hpp"
 
 vector<RTree::Data*> tiles;
-id_type bid; //bucket id
 
 // using namespace boost;
 namespace po = boost::program_options;
