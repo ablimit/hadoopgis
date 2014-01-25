@@ -9,6 +9,14 @@ dpath=/data2/ablimit/Data/spatialdata/bakup/data/partition/osm
 
 for k in 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
 do
+  algo=hc
+  echo "[${k}] [${algo}]"
+  if [ -e ${dpath}/${algo}/center/c${k}/osm.geom.dat.gz ] ;
+  then
+    zcat ${dpath}/${algo}/center/c${k}/osm.geom.dat.gz | ./sample.py 0.5 > ${dpath}/${algo}/center/c${k}/osm.geom.2.dat
+  fi
+  continue ;
+
   for algo in rp rt fg
   do
     echo "[${k}] [${algo}]"
@@ -24,5 +32,7 @@ do
   then
     zcat ${opath}/${algo}/x/c${k}/osm.geom.dat.gz | ./sample.py 0.5 > ${dpath}/${algo}/x/c${k}/osm.geom.2.dat
   fi
+
+
 done
 

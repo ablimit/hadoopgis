@@ -164,7 +164,7 @@ int main(int ac, char* av[]){
   }
   m_fin.close();
 
-   cerr << "About to sort. " << endl;
+   cerr << "start sorting." << endl;
   Timer t;                         
   // sort object based on Hilbert Curve value
   std::sort (socoll.begin(), socoll.end(), hcsorter); 
