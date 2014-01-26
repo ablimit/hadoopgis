@@ -33,13 +33,13 @@ int main(int argc, char** argv)
 	ISpatialIndex* tree = RTree::createAndBulkLoadNewRTree(
 		RTree::BLM_STR, stream, *file, fillFactor, indexCapacity, leafCapacity, 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
 
-	std::cerr << *tree;
+	//std::cerr << *tree;
 	//std::cerr << "Buffer hits: " << file->getHits() << std::endl;
 	//std::cerr << "Index ID: " << indexIdentifier << std::endl;
 
 	bool ret = tree->isIndexValid();
 	if (ret == false) std::cerr << "ERROR: Structure is invalid!" << std::endl;
-	else std::cerr << "The stucture seems O.K." << std::endl;
+	else std::cerr << "The index is O.K." << std::endl;
 
 	delete tree;
 	delete file;
