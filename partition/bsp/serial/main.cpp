@@ -90,6 +90,23 @@ int main(int ac, char** av) {
    delete *it;
   }
   tiles.clear();
+
+
+   // Memeory cleanup here. 
+  // delete the stuff inside your vector
+  //
+  for (vector<SpatialObject*>::iterator it = listAllObjects.begin(); it != listAllObjects.end(); it++) 
+    delete *it;
+
+  for(vector<BinarySplitNode*>::iterator it = leafNodeList.begin(); it != leafNodeList.end(); it++ ) {
+    delete *it;
+  }
+
+  delete tree;
+
+  leafNodeList.clear();
+  listAllObjects.clear(); 
+
   return 0;
 }
 
@@ -132,21 +149,8 @@ bool readInputFile(string inputFilePath) {
     listAllObjects.push_back(obj);
   }
 
-  // Memeory cleanup here. 
-  // delete the stuff inside your vector
-  //
-  for (vector<SpatialObject*>::iterator it = listAllObjects.begin(); it != listAllObjects.end(); it++) 
-    delete *it;
-
-  for(vector<BinarySplitNode*>::iterator it = leafNodeList.begin(); it != leafNodeList.end(); it++ ) {
-    delete *it;
-  }
-
-  delete tree;
-
-  leafNodeList.clear();
-  listAllObjects.clear(); 
 
   return true;
 }
+
 

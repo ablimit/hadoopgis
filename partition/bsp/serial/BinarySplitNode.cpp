@@ -42,8 +42,6 @@ BinarySplitNode::BinarySplitNode(double _left, double _right,
 
 
 BinarySplitNode::~BinarySplitNode() {
-  delete first;
-  delete second;
   objectList.clear();
   objectList.empty();
 }
