@@ -25,8 +25,8 @@ set style line 2 lc rgb '#D95F02' lt 1 # dark orange
 
 # set style fill solid 1.0 border rgb 'grey30'
 
-#set style fill pattern 
-set style fill solid
+set style fill pattern 
+# set style fill solid
 # 1.0 border rgb "black"
 set style histogram clustered 
 set style data histograms
@@ -37,4 +37,4 @@ set key left top
 #set y2range [0:200]
 
 # plot 'perf.dat' u 2:xtic(1) axes x1y2 t "PI" ls 1 , "" u 3:xtic(1) axes x1y1 t "OSM" ls 2 
-plot 'perf.dat' u ($2*10.03):xtic(1) t "PI" ls 1 , "" u 3:xtic(1) t "OSM" ls 2 
+plot 'perf.dat' u ($2*10.03):xtic(1) t "PI" ls 2 , "" u 3:xtic(1) t "OSM" ls 1
