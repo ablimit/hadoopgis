@@ -112,6 +112,7 @@ int main(int ac, char** av) {
 
 void processInput() {
   BinarySplitNode *tree = new BinarySplitNode(0.0, 1.0, 1.0, 0.0, 0);
+  leafNodeList.push_back(tree);
   for (vector<SpatialObject*>::iterator it = listAllObjects.begin(); it != listAllObjects.end(); it++) { 
     tree->addObject(*it);
   }

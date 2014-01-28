@@ -46,5 +46,5 @@ public:
     
     bool addObject(SpatialObject *object);
     bool intersects(SpatialObject *object);
-    
+    bool addObjectIgnore(SpatialObject *object);    
 };
