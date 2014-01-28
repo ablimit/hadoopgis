@@ -1,7 +1,7 @@
 spatial=/home/aaji/softs
 
 UNAME		= $(shell uname)
-OPTFLAGS	= -O2
+OPTFLAGS	= -O2 -Wall -std=c++0x 
 INCBASE		= -I.
 LIBBASE		= -lspatialindex
 
@@ -40,16 +40,16 @@ fixedgridPartition: FixedGridPartitioner.cc SpaceStreamReader.h
 	$(CXX) $< $(CFLAGS) $(LDFLAGS) -o $@
 
 genRplusPartition: RplusPartitioner.cc SpaceStreamReader.h
-	$(CXX) $< -std=c++0x $(CFLAGS) $(LDFLAGS) -o $@
+	$(CXX) $< $(CFLAGS) $(LDFLAGS) -o $@
 
 rplusGroupPartition: RplusGroupPartitioner.cc SpaceStreamReader.h
-	$(CXX) $< -std=c++0x $(CFLAGS) $(LDFLAGS) -o $@
+	$(CXX) $< $(CFLAGS) $(LDFLAGS) -o $@
 
 stripGroupPartition: StripGroupPartitioner.cc SpaceStreamReader.h
-	$(CXX) $< -std=c++0x $(CFLAGS) $(LDFLAGS) -o $@
+	$(CXX) $< $(CFLAGS) $(LDFLAGS) -o $@
 
 hilbertPartition: HilbertPartitioner.cc SpaceStreamReader.h
-	$(CXX) $< -std=c++0x $(CFLAGS) $(LDFLAGS) -o $@
+	$(CXX) $< $(CFLAGS) $(LDFLAGS) -o $@
 
 genRtreeIndex: RTreeBulkLoad.cc
 	$(CXX) $< $(CFLAGS) $(LDFLAGS) -o $@

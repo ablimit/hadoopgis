@@ -81,18 +81,18 @@ int main(int ac, char** av) {
   Timer t; 
   processInput();
   double elapsed_time = t.elapsed();
-  cerr<< "stat:ptime," << bucket_size << "," << tiles.size()<<"," << elapsed_time << endl;
+  cout<< "stat:ptime," << bucket_size << "," << tiles.size()<<"," << elapsed_time << endl;
 
   //print tile memory and cleanup tiles space 
   for (vector<RTree::Data*>::iterator it = tiles.begin() ; it != tiles.end(); ++it) 
   {
-    cout<< (*it)->m_id << " " << (*it)->m_region <<endl;
-    delete *it;
+      cerr << (*it)->m_id << " " << (*it)->m_region <<endl;
+   delete *it;
   }
   tiles.clear();
 
 
-  // Memeory cleanup here. 
+   // Memeory cleanup here. 
   // delete the stuff inside your vector
   //
   for (vector<SpatialObject*>::iterator it = listAllObjects.begin(); it != listAllObjects.end(); it++) 

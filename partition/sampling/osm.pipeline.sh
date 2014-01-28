@@ -3,7 +3,7 @@
 indexCapacity=1000
 fillFactor=0.99
 
-tempPath=/dev/shm/osm
+tempPath=/dev/shm/osm/samp
 if [ ! -e ${tempPath} ] ;
 then
   mkdir -p ${tempPath};
