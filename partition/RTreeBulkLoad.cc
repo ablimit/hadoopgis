@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     IStorageManager* diskfile = StorageManager::createNewDiskStorageManager(baseName, 4096);
     // Create a new storage manager with the provided base name and a 4K page size.
 
-    StorageManager::IBuffer* file = StorageManager::createNewRandomEvictionsBuffer(*diskfile, 100000, false);
+    StorageManager::IBuffer* file = StorageManager::createNewRandomEvictionsBuffer(*diskfile, 10000, false);
     // applies a main memory random buffer on top of the persistent storage manager
     // (LRU buffer, etc can be created the same way).
 
