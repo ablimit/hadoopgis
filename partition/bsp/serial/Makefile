@@ -1,7 +1,7 @@
 spatial=/home/aaji/softs
 
 UNAME		= $(shell uname)
-OPTFLAGS	= -O2
+OPTFLAGS	= -O2 -Wall -std=c++0x
 INCBASE		= -I. -I../../
 LIBBASE		= -lspatialindex -lboost_program_options
 
@@ -19,11 +19,11 @@ CFLAGS      = $(OPTFLAGS) $(INCBASE) $(INCFLAGS)
 LDFLAGS     = $(LIBBASE) $(LIBS)
 
 ifeq ($(UNAME), Darwin)
-    CC = gcc -arch x86_64 -std=c++0x
-    CXX = g++ -arch x86_64 -std=c++0x
+    CC = gcc -arch x86_64
+    CXX = g++ -arch x86_64
 else 
-    CC = gcc -std=c++0x
-    CXX = g++44 -std=c++0x
+    CC = gcc 
+    CXX = g++
 endif
 
 

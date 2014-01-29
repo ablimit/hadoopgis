@@ -44,9 +44,9 @@ int main(int ac, char** av) {
   try {
     po::options_description desc("Options");
     desc.add_options()
-        ("help", "this help message")
-        ("bucket,b", po::value<int>(&bucket_size), "Expected bucket size")
-        ("input,i", po::value<string>(&inputPath), "Data input file path");
+      ("help", "this help message")
+      ("bucket,b", po::value<int>(&bucket_size), "Expected bucket size")
+      ("input,i", po::value<string>(&inputPath), "Data input file path");
 
     po::variables_map vm;        
     po::store(po::parse_command_line(ac, av, desc), vm);
@@ -81,18 +81,18 @@ int main(int ac, char** av) {
   Timer t; 
   processInput();
   double elapsed_time = t.elapsed();
-  cout<< "stat:ptime," << bucket_size << "," << tiles.size()<<"," << elapsed_time << endl;
+  cerr << "stat:ptime," << bucket_size << "," << tiles.size()<<"," << elapsed_time << endl;
 
   //print tile memory and cleanup tiles space 
   for (vector<RTree::Data*>::iterator it = tiles.begin() ; it != tiles.end(); ++it) 
   {
-      cerr << (*it)->m_id << " " << (*it)->m_region <<endl;
-   delete *it;
+    cout << (*it)->m_id << " " << (*it)->m_region <<endl;
+    delete *it;
   }
   tiles.clear();
 
 
-   // Memeory cleanup here. 
+  // Memeory cleanup here. 
   // delete the stuff inside your vector
   //
   for (vector<SpatialObject*>::iterator it = listAllObjects.begin(); it != listAllObjects.end(); it++) 

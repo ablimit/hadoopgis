@@ -51,6 +51,7 @@ bool BinarySplitNode::addObjectIgnore(SpatialObject *object) {
 	if (size > bucket_size) {
 		canBeSplit = false;
 	}
+        return true ;
 }
 
 bool BinarySplitNode::addObject(SpatialObject *object) {
