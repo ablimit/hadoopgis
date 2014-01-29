@@ -1,4 +1,4 @@
-#include "./SpaceStreamReader.h"
+#include "SpaceStreamReader.h"
 
 using namespace SpatialIndex;
 
