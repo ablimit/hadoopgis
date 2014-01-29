@@ -2,8 +2,7 @@
 
 dir=/shared/data/osm
 osmdata=${dir}/osm.mbb.norm.filter.dat
-regionpath=/data2/ablimit/Data/spatialdata/bakup/data/partition/samp/osm
-datapath=${dir}/partition/samp/osm
+datapath=${dir}/partition/bsp
 
 
 ipath=/data2/ablimit/Data/spatialdata/bakup/data/osm.mbb.norm.filter.dat
@@ -20,24 +19,22 @@ do
   then
     mkdir -p ${opath}/c${k}
   fi
-  echo "----------------------------------------"
-  # ${prog}  --bucket ${k} --input ${ipath} > ${opath}/c${k}/regionmbb.txt
-  
-  src=${regionpath}/${algo}/f${f}/c${k}
-  dest=${datapath}/${algo}/f${f}/c${k}
 
-  if [ ! -e ${src}/regionmbb.txt ] ;
+  # ${prog}  --bucket ${k} --input ${ipath} > ${opath}/c${k}/regionmbb.txt
+
+  if [ ! -e ${opath}/c${k}/regionmbb.txt ] ;
   then
     continue ;
   fi
 
+  dest=${datapath}/c${k}
   mkdir -p ${dest}
 
-  echo "0.${f} --------- ${k} -------------- ${algo}"
+  echo "--------- ${k} --------------"
 
   echo -e "---------------------------------------------"
   echo "generate pid oid mapping ...."
-  ../rquery ${src}/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
+  ../rquery ${opath}/c${k}/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
   rc=$?
   if [ $rc -eq 0 ];then
     echo ""
