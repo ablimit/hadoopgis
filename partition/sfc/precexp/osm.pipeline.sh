@@ -1,25 +1,38 @@
 #! /bin/bash
 
-ipath=/home/aaji/proj/data/osm/osm.mbb.norm.filter.dat
-prog=./hc
+ipath=/data2/ablimit/Data/spatialdata/bakup/data/osm.mbb.norm.filter.dat
+opath=/data2/ablimit/Data/spatialdata/bakup/data/prec
+
+tempPath=/dev/shm/osm/prec
+indexPath=/dev/shm
+mkdir -p ${tempPath}
 
 for p in 4 8 10 12 14 16 18 20 25 30
 do
-  echo "--------------------------------"
-  echo ${dest}
-
-  ${prog}  --prec ${p} --bucket ${param} --input ${ipath} # > ${dest}/regionmbb.txt
-  rc=$?
-  if [ ! $rc -eq 0 ];then
-    echo -e "\nERROR: partition generation failed."
-    exit $rc ;
-  fi
-
   for k in 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
   do
-    dest=/home/aaji/proj/data/prec/p${p}/c${k}
-    mkdir -p ${dest}
-    mv c${k}.txt ${dest}/regionmbb.txt
+    if [ ! -e ${opath}/p${p}/c${k}/regionmbb.txt ] ;
+    then
+      continue;
+    fi
+
+    echo "--------- ${k} --------------"
+    echo "generate pid oid mapping ...."
+    ../../rquery ${opath}/p${p}/c${k}/regionmbb.txt ${indexPath}/spatial  > ${tempPath}/pidoid.txt
+    rc=$?
+    if [ $rc -eq 0 ];then
+      echo ""
+    else
+      echo -e "\nERROR: rqueryfailed."
+      exit $rc ;
+    fi
+
+    echo -e "\n---------------------------------------------"
+    echo "remapping objects"
+    python ../../mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/p${p}/c${k}/osm.part
+
+    rm -f ${tempPath}/pidoid.txt
+
   done
 done
 
