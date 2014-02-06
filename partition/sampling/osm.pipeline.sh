@@ -28,11 +28,11 @@ else
 fi
 
 
-for f in 01 05 10 15 20 25 
+for algo in fg bsp hc slc bos str
 do
-  for k in 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
+  for f in 01 05 10 15 20 25 
   do
-    for algo in fg bsp hc slc bos str
+    for k in 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
     do
       echo -e "\n------------------------------------"
 
