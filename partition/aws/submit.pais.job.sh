@@ -67,9 +67,9 @@ if [ ! "$jobid" ] ; then
 fi
 
 # argument checking 
-if [ "${algo}" != "st" ] && [ "${algo}" != "rt" ] && [ "${algo}" != "rp" ] && [ "${algo}" != "fg" ] ;
+if [ "${algo}" != "st" ] && [ "${algo}" != "rt" ] && [ "${algo}" != "rp" ] && [ "${algo}" != "fg" ] && [ "${algo}" != "hc" ];
 then
-  echo "Parameter [${algo}] is NOT recognized. Alternatives are [ st | rp | rt | fg ]"
+  echo "Parameter [${algo}] is NOT recognized. Alternatives are [ st | rp | rt | fg | hc ]"
   exit 1;
 fi
 

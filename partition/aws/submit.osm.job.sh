@@ -4,6 +4,7 @@ usage(){
     echo -e "submitall.sh  --job [job flow id]\n \
     --job \t Amazon EMR Job Flow ID to submit steps. \n \
     --alg \t partition algorithm to test. \n \
+    --log \t directory to log. \n \
     --help \t show this information.
     "
     exit 1
@@ -66,9 +67,9 @@ if [ ! "$jobid" ] ; then
 fi
 
 # argument checking 
-if [ "${algo}" != "st" ] && [ "${algo}" != "rt" ] && [ "${algo}" != "rp" ] && [ "${algo}" != "fg" ] ;
+if [ "${algo}" != "st" ] && [ "${algo}" != "rt" ] && [ "${algo}" != "rp" ] && [ "${algo}" != "fg" ] && [ "${algo}" != "hc" ] && [ "${algo}" != "bsp" ];
 then
-  echo "Parameter [${algo}] is NOT recognized. Alternatives are [ st | rp | rt | fg ]"
+  echo "Parameter [${algo}] is NOT recognized. Alternatives are [ st | rp | rt | fg | hc | bsp ]"
   exit 1;
 fi
 
@@ -91,10 +92,10 @@ else
   s3input="s3://aaji/data/partitions/osm/${algo}"
 fi
 
-for c in 4322 8644 17288 43220 86441 # 172882 432206 864412 4322062
+for c in 864 #4322 8644 17288 43220 86441 172882 # 432206 864412 4322062 864 
 do
   echo -n "job param: [${c}] -- "
-  elastic-mapreduce --jobflow ${jobid} --stream --step-name "osm.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input ${s3input}/c${c} --output s3://aaji/scratch/pout/${log}/osm/${algo}c${c} --jobconf mapred.reduce.tasks=1000
+  elastic-mapreduce --jobflow ${jobid} --stream --step-name "osm.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py osm.geom.1.dat osm.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input ${s3input}/c${c} --output s3://aaji/scratch/pout/${log}/osm/${algo}c${c} --jobconf mapred.reduce.tasks=1000
 
   sleep 15 ;
 done
