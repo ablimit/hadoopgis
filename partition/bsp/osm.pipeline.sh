@@ -8,6 +8,7 @@ datapath=${dir}/partition/bsp
 ipath=/data2/ablimit/Data/spatialdata/bakup/data/osm.mbb.norm.filter.dat
 opath=/data2/ablimit/Data/spatialdata/bakup/data/partition/osm/bsp
 tempPath=/dev/shm/osm/bsp
+indexPath=/dev/shm
 mkdir -p ${tempPath}
 
 prog=./serial/bsp
@@ -27,14 +28,14 @@ do
     continue ;
   fi
 
-  dest=${datapath}/c${k}
-  mkdir -p ${dest}
+  # dest=${datapath}/c${k}
+  # mkdir -p ${dest}
 
   echo "--------- ${k} --------------"
 
   echo -e "---------------------------------------------"
   echo "generate pid oid mapping ...."
-  ../rquery ${opath}/c${k}/regionmbb.txt ${tempPath}/spatial  > ${tempPath}/pidoid.txt
+  ../rquery ${opath}/c${k}/regionmbb.txt ${indexPath}/spatial  > ${tempPath}/pidoid.txt
   rc=$?
   if [ $rc -eq 0 ];then
     echo ""
@@ -45,7 +46,7 @@ do
 
   echo -e "\n---------------------------------------------"
   echo "remapping objects"
-  python ../mappartition.py ${tempPath}/pidoid.txt < ${osmdata} > ${dest}/osm.part
+  python ../mappartition.py ${tempPath}/pidoid.txt < ${ipath} > ${opath}/c${k}/osm.part
 
   rm -f ${tempPath}/pidoid.txt
 
