@@ -15,7 +15,6 @@ set style line 6 lc rgb '#E6AB02' lt 2 pt 6 ps 2 # dark banana
 set style line 7 lc rgb '#A6761D' lt 2 pt 19 ps 2 # dark tan
 set style line 8 lc rgb '#666666' lt 2 pt 21 ps 2 # dark gray
 
-
 # palette
 set palette maxcolors 9
 set palette defined ( 0 '#1B9E77',\
