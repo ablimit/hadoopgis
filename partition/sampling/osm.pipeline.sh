@@ -24,13 +24,15 @@ else
 fi
 
 
-for algo in fg bsp hc slc bos str
+# for algo in fg bsp hc slc bos str
+for algo in bsp slc bos
 do
   if [ ! -e parr/part.${algo} ] ;
   then
     touch parr/part.${algo} ;
 
-    for f in 01 05 10 15 20 25 
+    # for f in 01 05 10 15 20 25 
+    for f in 0001 0005 001 0015 0020 0025
     do
       for k in 864 4322 8644 17288 43220 86441 172882 432206 864412 4322062
       do
