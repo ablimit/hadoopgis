@@ -1,0 +1,71 @@
+#!/usr/bin/gnuplot
+
+reset
+
+# set terminal postscript eps size 3.5,2.62 enhanced color font 'Helvetica,20' lw 2
+set terminal postscript eps size 3.5,2.62 enhanced color font ',28'
+set output 'osm.part.perf.multi.eps'
+load '../../gnucolor.plt'
+unset key 
+
+set lmargin at screen 0.25
+set rmargin at screen 0.95
+
+TOP=1.00
+
+set multiplot
+#set offset 0,0,graph 0.05, graph 0.05
+
+set xlabel 'Bucket size' offset 0,0.5
+
+set tmargin at screen 0.40
+set bmargin at screen 0.25
+set logscale x 10
+set xrange[500:5000000]
+set yrange[0:0.05]
+set ytics (0.01,0.03)
+set format x "10^{%L}"
+plot 'osm.perf.dat' using 1:2  notitle with lines ls 2,	\
+       '' using 1:2  with points ls 2
+
+set xtics format ''
+unset ylabel
+set ylabel 'Time (sec)' offset -0.35 
+unset xlabel
+set tmargin at screen 0.55
+set bmargin at screen 0.40
+set logscale x 10
+set xrange[500:5000000]
+set yrange[50:100]
+set ytics (65,90)
+plot 'osm.perf.dat' using 1:3  notitle with lines ls 1,	\
+       '' using 1:3  with points ls 1
+
+set xtics format ''
+unset ylabel
+unset xlabel
+set tmargin at screen 0.80
+set bmargin at screen 0.55
+set logscale x 10
+set xrange[500:5000000]
+set yrange[600:1200]
+set ytics (800,1000)
+plot 'osm.perf.dat' using 1:4  notitle with lines ls 3,	\
+       '' using 1:4  with points ls 3, \
+       '' using 1:7  notitle with lines ls 6, \
+       '' using 1:7  with points ls 6
+
+set xtics format ''
+unset ylabel
+unset xlabel
+set tmargin at screen 0.98
+set bmargin at screen 0.80
+set logscale x 10
+set xrange[500:5000000]
+set yrange[4000:5000]
+set ytics (4400,4800)
+plot 'osm.perf.dat' using 1:5  notitle with lines ls 4,	\
+       '' using 1:5  with points ls 4, \
+       '' using 1:6  notitle with lines ls 5, \
+       '' using 1:6  with points ls 5
+
