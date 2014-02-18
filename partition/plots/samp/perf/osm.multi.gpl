@@ -4,7 +4,7 @@ reset
 
 # set terminal postscript eps size 3.5,2.62 enhanced color font 'Helvetica,20' lw 2
 set terminal postscript eps size 3.5,2.62 enhanced color font ',28'
-set output 'osm.part.perf.multi.eps'
+set output 'osm.multi.eps'
 load '../../gnucolor.plt'
 unset key 
 

@@ -29,6 +29,10 @@ def main():
         sys.stdout.write("unrecognized field name: " + field + "\n")
         sys.exit(1)
 
+    keys = [864,4322,8644,17288,43220,86441,172882,432206,864412,4322062]
+
+    labels = ["0001", "0005", "001", "0015", "0020", "0025", "01", "05", "10",
+              "15", "20", "25", "100"] 
     datalog = defaultdict(dict) 
     for line in sys.stdin:
         sp = line.strip().split(",")
@@ -45,12 +49,12 @@ def main():
             datalog[key][method_name]= val
 
     printheader = True
-    for x in sorted(datalog.iterkeys()):
-        header = sorted(datalog[x].iterkeys())
+    for x in keys:
         if printheader:
-            print "x " +" ".join([str(head) for head in header])
+            print "x " +" ".join(["1.0" if l == "100" else "0."+l for l in
+                                  labels])
             printheader = False
-        vals = [str(datalog[x][name]) for name in header]
+        vals = [datalog[x][name] if name in datalog[x] else "?" for name in labels]
         vals.insert(0,str(x))
         print " ".join(vals)
 

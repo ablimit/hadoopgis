@@ -11,7 +11,7 @@ set output 'statlegend.eps'
 #set output 'ratioosm.eps'
 
 # color style 
-load '../gnucolor.plt'
+load '../../gnucolor.plt'
 
 # Legend
 set key center center horizontal samplen 2 autotitle columnheader

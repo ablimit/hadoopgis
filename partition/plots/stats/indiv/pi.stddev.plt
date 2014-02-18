@@ -21,7 +21,7 @@ set key right top
 set key box
 
 # Axes label 
-set xlabel 'Bucket size'
+set xlabel 'Bucket size' offset 0,0.5
 #set ylabel 'Time (min)'
 
 # Axes scale 
