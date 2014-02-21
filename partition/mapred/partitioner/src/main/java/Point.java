@@ -1,5 +1,3 @@
-package corner;
-
 public class Point implements Comparable<Point> {
 	private double x;
 	private double y;

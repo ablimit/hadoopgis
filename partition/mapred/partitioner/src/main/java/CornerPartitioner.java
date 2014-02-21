@@ -1,5 +1,3 @@
-package corner;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -19,10 +17,10 @@ public class CornerPartitioner<K, V> extends Partitioner<K, V> {
 		// TODO Auto-generated constructor stub
 		splitPoints = getSplitPoints("splitpoints.dat");
 	}
-
-	/** Use {@link Object#hashCode()} to partition. */
+	
+	@Override
 	public int getPartition(K key, V value, int numReduceTasks) {
-		return this.findPartition(key) % numReduceTasks;
+		return (this.findPartition(key) % numReduceTasks);
 	}
 
 	public static ArrayList<Point> getSplitPoints(String p) throws IOException {
@@ -31,8 +29,9 @@ public class CornerPartitioner<K, V> extends Partitioner<K, V> {
 		String line = br.readLine();
 		while (line != null) {
 			String[] fields = line.split(" ");
+			/*
 			System.err.println(Double.parseDouble(fields[0])+ "," + Double
-					.parseDouble(fields[1]));
+					.parseDouble(fields[1])); */
 			points.add(new Point(Double.parseDouble(fields[0]), Double
 					.parseDouble(fields[1])));
 			line = br.readLine();
@@ -44,15 +43,12 @@ public class CornerPartitioner<K, V> extends Partitioner<K, V> {
 	public int findPartition(K key) {
 		String k = key.toString();
 		String[] fields = k.split(" ", 2);
-		double[] coor = { Double.parseDouble(fields[0]),
-				Double.parseDouble(fields[1]) };
+		double[] coor = {Double.parseDouble(fields[0]),
+				Double.parseDouble(fields[1])};
 		final int pos = Collections.binarySearch(this.splitPoints, new Point(
 				coor[0], coor[1]))+1;
 		return (pos < 0) ? -pos : pos;
 	}
-
-	// ObjectInputStream is = new ObjectInputStream(new
-	// FileInputStream("targets"));
 
 	public static void main(String[] args) throws IOException {
 		/*
@@ -71,9 +67,7 @@ public class CornerPartitioner<K, V> extends Partitioner<K, V> {
 		System.exit(0);*/
 		Text key = new Text("0.5 0.5");
 		if (args.length ==2)
-		{
-			key = new Text(args[0].trim() + " " + args[1].trim());
-		}
+			key.set(args[0].trim() + " " + args[1].trim());
 		CornerPartitioner<Text, Text> part = new CornerPartitioner<Text, Text>();
 		System.out.println(part.findPartition(key));
 	}
