@@ -97,7 +97,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>corner.CornerPartitioner</mainClass>
+							<mainClass>CornerPartitioner</mainClass>
 							<classpathPrefix>dependency-jars/</classpathPrefix>
 						</manifest>
 					</archive>
