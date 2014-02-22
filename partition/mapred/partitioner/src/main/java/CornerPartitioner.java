@@ -12,9 +12,10 @@ public class CornerPartitioner<K, V> implements Partitioner<K, V> {
 
 	private ArrayList<Point> splitPoints;
 
-	public CornerPartitioner(){
+	public CornerPartitioner() throws IOException{
 		super();
 		// TODO Auto-generated constructor stub
+		splitPoints = getSplitPoints("splitpoints.dat");
 	}
 	
 	@Override
@@ -73,12 +74,5 @@ public class CornerPartitioner<K, V> implements Partitioner<K, V> {
 
 	@Override
 	public void configure(JobConf arg0) {
-		// TODO Auto-generated method stub
-		try {
-			splitPoints = getSplitPoints("splitpoints.dat");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }
