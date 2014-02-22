@@ -45,5 +45,5 @@ if [ ! ${n} ] ;then
   exit 1;
 fi
 
-sed -n "0~${n}p" /data2/ablimit/Data/spatialdata/bakup/data/osm.mbb.center.sorted.dat
+sed -n "0~${n}p" /data2/ablimit/Data/spatialdata/bakup/data/osm.mbb.center.sorted.dat | cut -d" " -f6,7 
 

@@ -42,7 +42,7 @@ public class CornerPartitioner<K, V> implements Partitioner<K, V> {
 
 	public int findPartition(K key) {
 		String k = key.toString();
-		String[] fields = k.split(" ", 2);
+		String[] fields = k.split(",", 2);
 		double[] coor = {Double.parseDouble(fields[0]),
 				Double.parseDouble(fields[1])};
 		final int pos = Collections.binarySearch(this.splitPoints, new Point(

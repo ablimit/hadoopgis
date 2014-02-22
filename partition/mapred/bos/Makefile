@@ -23,7 +23,7 @@ ifeq ($(UNAME), Darwin)
     CXX = g++ -arch x86_64
 else 
     CC = gcc
-    CXX = g++
+    CXX = g++44
 endif
 
 TARGET = bos
