@@ -4,18 +4,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.apache.hadoop.mapreduce.Partitioner;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.Partitioner;
 import org.apache.hadoop.io.Text;
 
-/** Partition keys by their {@link Object#hashCode()}. */
-public class CornerPartitioner<K, V> extends Partitioner<K, V> {
+public class CornerPartitioner<K, V> implements Partitioner<K, V> {
 
 	private ArrayList<Point> splitPoints;
 
-	public CornerPartitioner() throws IOException {
+	public CornerPartitioner(){
 		super();
 		// TODO Auto-generated constructor stub
-		splitPoints = getSplitPoints("splitpoints.dat");
 	}
 	
 	@Override
@@ -70,5 +69,16 @@ public class CornerPartitioner<K, V> extends Partitioner<K, V> {
 			key.set(args[0].trim() + " " + args[1].trim());
 		CornerPartitioner<Text, Text> part = new CornerPartitioner<Text, Text>();
 		System.out.println(part.findPartition(key));
+	}
+
+	@Override
+	public void configure(JobConf arg0) {
+		// TODO Auto-generated method stub
+		try {
+			splitPoints = getSplitPoints("splitpoints.dat");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
