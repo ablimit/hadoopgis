@@ -1,4 +1,6 @@
 #include <spatialindex/SpatialIndex.h>
+#include <sstream> 
+//#include "tokenizer.h"
 
 using namespace SpatialIndex;
 using namespace std;
@@ -50,20 +52,28 @@ class StdinStreamReader : public IDataStream
 
     void readNextEntry()
     {
-      double low[2], high[2];
+      double low[2], high[2], center[2];
       id_type id;
-
-
-      cin >> id >> low[0] >> low[1] >> high[0] >> high[1] ;
+      /* if (std::getline(cin, input_line))
+         {
+         tokenize(input_line, fields, tab, true);
+         }
+         */
+      cin >> input_line >> id >> low[0] >> low[1] >> high[0] >> high[1] ;
 
       if (cin.good())
       {
         Region r(low, high, 2);
         m_pNext = new RTree::Data(0, 0 , r, id);// store a zero size null poiter.
-        cerr << id << " " << low[0] << " " << low [1]  << " "  << high[0] << " " << high[1] << endl;
+        // cerr << id << " " << low[0] << " " << low [1]  << " "  << high[0] << " " << high[1] << endl;
       }
     }
 
     RTree::Data* m_pNext;
+    string input_line ;
+    /*vector<string> fields;
+      stringstream ss;
+      string sep = "\t";
+      */
 };
 
