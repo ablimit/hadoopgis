@@ -1,5 +1,5 @@
 #include "Timer.hpp"
-#include <boost/program_options.hpp>
+//#include <boost/program_options.hpp>
 #include "StdinStreamReader.h"
 #include <unordered_map>
 #include <cstring>
@@ -8,7 +8,7 @@
 using namespace std;
 using namespace SpatialIndex;
 using namespace SpatialIndex::RTree;
-namespace po = boost::program_options;
+//namespace po = boost::program_options;
 
 const uint32_t DIM_X = 0;
 const uint32_t DIM_Y = 1;
@@ -60,39 +60,16 @@ void cleanup(std::vector<uint64_t> & spatial_objects);
 
 int main(int ac, char** av)
 {
+  if (ac < 2 )
+  {
+    cerr << "Missing arguments: [bucket_size]" << endl;
+    return 1;
+  }
   cout.precision(15);
-
-  uint32_t bucket_size ;
-
-  try {
-    po::options_description desc("Options");
-    desc.add_options()
-        ("help", "this help message")
-        ("bucket,b", po::value<uint32_t>(&bucket_size), "Expected bucket size");
-        //("input,i", po::value<string>(&inputPath), "Data input file path");
-
-    po::variables_map vm;        
-    po::store(po::parse_command_line(ac, av, desc), vm);
-    po::notify(vm);    
-
-    if ( vm.count("help") || (! vm.count("bucket"))) {
-      cerr << desc << endl;
-      return 0; 
-    }
-
-  }
-  catch(exception& e) {
-    cerr << "error: " << e.what() << "\n";
-    return 1;
-  }
-  catch(...) {
-    cerr << "Exception of unknown type!\n";
-    return 1;
-  }
-
-
-  StdinStreamReader stream;
+  uint32_t bucket_size = atoi(av[1]);
+  
   uint64_t cc = 0; 
+  StdinStreamReader stream;
   vector<Data*> inMemData;
   while (stream.hasNext())
   {

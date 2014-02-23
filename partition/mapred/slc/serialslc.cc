@@ -1,5 +1,5 @@
 #include "Timer.hpp"
-#include <boost/program_options.hpp>
+//#include <boost/program_options.hpp>
 #include "StdinStreamReader.h"
 #include <unordered_map>
 #include <cstring>
@@ -7,7 +7,7 @@
 using namespace std;
 using namespace SpatialIndex;
 using namespace SpatialIndex::RTree;
-namespace po = boost::program_options;
+//namespace po = boost::program_options;
 
 
 const uint32_t DIM_X = 0;
@@ -67,37 +67,13 @@ int main(int ac, char** av)
   cout.precision(15);
   cerr.precision(15);
 
-  uint32_t bucket_size ;
-  uint32_t orientation ;
-
-  try {
-    po::options_description desc("Options");
-    desc.add_options()
-        ("help", "this help message")
-        ("orient,o", po::value<uint32_t>(&orientation), "partition orientation [0 for x axis, 1 for y axis]")
-        ("bucket,b", po::value<uint32_t>(&bucket_size), "Expected bucket size");
-        //("input,i", po::value<string>(&inputPath), "Data input file path");
-
-    po::variables_map vm;        
-    po::store(po::parse_command_line(ac, av, desc), vm);
-    po::notify(vm);    
-
-    if ( vm.count("help") || (! vm.count("bucket"))) {
-      cerr << desc << endl;
-      return 0; 
-    }
-
-    cerr << "Bucket size: "<<bucket_size <<endl;
-  }
-  catch(exception& e) {
-    cerr << "error: " << e.what() << "\n";
+  if (ac < 3 )
+  {
+    cerr << "Missing arguments: [orientation] [bucket_size]" << endl;
     return 1;
   }
-  catch(...) {
-    cerr << "Exception of unknown type!\n";
-    return 1;
-  }
-
+  uint32_t orientation = atoi(av[1]);
+  uint32_t bucket_size = atoi(av[2]);
 
   StdinStreamReader stream;
   uint64_t cc = 0; 
@@ -124,26 +100,26 @@ int main(int ac, char** av)
   }
   double elapsed_time = t.elapsed();
 
-    // initilization 
-    TotalEntries = buffer.size();
-    universe =  *(buffer.begin()->second);
-    calculateSpatialUniverse();
-    // summary info 
-    /*std::cerr << "Spatial Universe: " << universe<< std::endl;
+  // initilization 
+  TotalEntries = buffer.size();
+  universe =  *(buffer.begin()->second);
+  calculateSpatialUniverse();
+  // summary info 
+  /*std::cerr << "Spatial Universe: " << universe<< std::endl;
     std::cerr << "|spatial objects| = " << TotalEntries
-	<< ", |X| = " << xsorted_buffer.size() 
-	<< ", |Y| = " << ysorted_buffer.size() << std::endl;
+    << ", |X| = " << xsorted_buffer.size() 
+    << ", |Y| = " << ysorted_buffer.size() << std::endl;
     std::cerr << "RTree::BulkLoader::R+ packing objects .." << std::endl;
-*/
+    */
 
 
   t.restart(); // reset timer 
-	// loop vars 
-	double cost [] = {0.0, 0.0};
-	uint64_t iteration = 0; 
-	Region pr(universe);
-	uint32_t size = 0;
-	uint32_t pid = 1;
+  // loop vars 
+  double cost [] = {0.0, 0.0};
+  uint64_t iteration = 0; 
+  Region pr(universe);
+  uint32_t size = 0;
+  uint32_t pid = 1;
 
   while (true)
   {

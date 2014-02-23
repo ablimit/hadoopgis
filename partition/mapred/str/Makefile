@@ -3,7 +3,8 @@ spatial=/home/aaji/softs
 UNAME		= $(shell uname)
 OPTFLAGS	= -O2
 INCBASE		= -I. -I../../
-LIBBASE		= -lspatialindex -lboost_program_options
+LIBBASE		= -lspatialindex
+#-lboost_program_options
 
 ifneq (,$(findstring emory,$(shell uname -a)))
     INCFLAGS = -I$(spatial)/include

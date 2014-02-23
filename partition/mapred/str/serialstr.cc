@@ -2,12 +2,6 @@
 #include "VecStreamReader.h"
 #include <Timer.hpp>
 #include<cmath>
-#include <boost/program_options.hpp>
-
-
-// using namespace boost;
-namespace po = boost::program_options;
-
 
 vector<Data*> tiles;
 id_type bid = 1; //bucket id
@@ -71,40 +65,17 @@ class MyQueryStrategy : public SpatialIndex::IQueryStrategy
 
 
 int main(int ac, char* av[]){
-  uint32_t bucket_size ;
+  if (ac < 2 )
+  {
+    cerr << "Missing arguments: [bucket_size]" << endl;
+    return 1;
+  }
+  cout.precision(15);
+  uint32_t bucket_size = atoi(av[1]);
+
   int indexCapacity = 20;
   double fillFactor =0.9999;
 
-  try {
-    po::options_description desc("Options");
-    desc.add_options()
-        ("help", "this help message")
-        ("bucket,b", po::value<uint32_t>(&bucket_size), "Expected bucket size")
-        //("input,i", po::value<string>(&inputPath), "Data input file path")
-        // ("index", po::value<string>(&indexPath), "index file path")
-        ;
-
-    po::variables_map vm;        
-    po::store(po::parse_command_line(ac, av, desc), vm);
-    po::notify(vm);    
-
-    if ( vm.count("help") || (! vm.count("bucket")) ) {
-      cerr << desc << endl;
-      return 0; 
-    }
-
-    cerr << "Bucket size: "<<bucket_size <<endl;
-    //return 0; 
-
-  }
-  catch(exception& e) {
-    cerr << "error: " << e.what() << "\n";
-    return 1;
-  }
-  catch(...) {
-    cerr << "Exception of unknown type!\n";
-    return 1;
-  }
   vector<Data*> vec;
   StdinStreamReader stream;
   while (stream.hasNext())
