@@ -7,13 +7,15 @@ $HADOOP_COMMON_HOME/bin/hadoop jar $HADOOP_COMMON_HOME/share/hadoop/tools/lib/ha
   -D map.output.key.field.separator=, \
   -D mapred.text.key.comparator.options=-k1,2n \
   -libjars corner-0.0.1.jar \
-  -files splitpoints.dat,centerMapper.py \
-  -D mapred.reduce.tasks=100 \
+  -files splitpoints.dat,centerMapper.py,slicer \
+  -D mapred.reduce.tasks=865 \
   -input /user/aaji/osm/osm.mbb.norm.filter.dat\
   -output /user/aaji/temp/sort \
   -mapper centerMapper.py \
-  -reducer org.apache.hadoop.mapred.lib.IdentityReducer \
-  -partitioner CornerPartitioner
+  -reducer 'slicer 0 10000'\
+  -partitioner CornerPartitioner \
+  -cmdenv LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/aaji/softs/lib
 
 #  -mapper org.apache.hadoop.mapred.lib.IdentityMapper \
+# -reducer org.apache.hadoop.mapred.lib.IdentityReducer \
 
