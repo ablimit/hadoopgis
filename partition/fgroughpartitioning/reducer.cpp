@@ -18,10 +18,25 @@ void performSplit();
 long getCount(int minX, int minY, int width, int height);
 int getSplitPoint(struct stnode *tmpNode);
 void updateCount(struct stnode *tmpNode);
+void outputPolygonWkt(int id, double x_min, double y_min, 
+	double x_max, double y_max);
+
+/*  ADJUST FOR SPECIFIC DATASET!
+ * Keep this as true if operating on OSM data set:
+ * Will convert the normalized [0, 1][0, 1] to [-180,180][-90,90] 
+ */
+const bool convertOsm = true;
+const double MIN_X = -180;
+const double MAX_X = 180;
+const double MIN_Y = -90;
+const double MAX_Y = 90;
 
 const int DEFAULT_KEY = 0;
 const string TAB = "\t";
 const string SPACE = " ";
+const string PREFIX_POLYGON = "POLYGON((";
+const string SUFFIX_POLYGON = "))";
+const string COMMA = ",";
 
 double min_x;
 double max_x;
@@ -165,13 +180,19 @@ int main(int argc, char** argv) {
 	/* Output the result */
 	for(list<struct stnode*>::iterator it = listNodes.begin(); it != listNodes.end(); it++ ) {
 		tmpNode = *it;
-		cout << ++count 
+		
+		outputPolygonWkt(count++, min_x + (tmpNode->min_x) * x_length,
+						min_y + (tmpNode->min_y) * y_length,
+						min_x + (tmpNode->min_x + tmpNode->width ) * x_length,
+						min_y + (tmpNode->min_y + tmpNode->height ) * y_length);
+		/* cout << ++count 
 			<< SPACE << min_x + (tmpNode->min_x) * x_length
 			<< SPACE << min_y + (tmpNode->min_y) * y_length
 			<< SPACE << min_x + (tmpNode->min_x + tmpNode->width ) * x_length
 			<< SPACE << min_y + (tmpNode->min_y + tmpNode->height ) * y_length 
 			<< SPACE << tmpNode->count 
 			<< endl;
+		*/
 	}
 
 
@@ -187,6 +208,28 @@ int main(int argc, char** argv) {
 	delete[] arr;
 	return 0;
 }
+
+/* Output the wkt format for MBB of the region */
+void outputPolygonWkt(int id, double x_min, double y_min, 
+	double x_max, double y_max) {
+
+	if (convertOsm) {
+		x_min = x_min * (MAX_X - MIN_X) + MIN_X;
+		x_max = x_max * (MAX_X - MIN_X) + MIN_X;
+		y_min = y_min * (MAX_Y - MIN_Y) + MIN_Y;
+		y_max = y_max * (MAX_Y - MIN_Y) + MIN_Y;
+	}
+
+
+	cout << id << TAB << PREFIX_POLYGON
+		<< x_min << SPACE << y_min << COMMA
+		<< x_min << SPACE << y_max << COMMA
+		<< x_max << SPACE << y_max << COMMA
+		<< x_min << SPACE << y_max << COMMA
+		<< x_min << SPACE << y_min
+		<< SUFFIX_POLYGON << endl;
+}
+
 
 /* 0 means failure
    positive number means split along the y-axis (x-coordinate of split line)

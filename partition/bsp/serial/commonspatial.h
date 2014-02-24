@@ -16,8 +16,8 @@ extern "C" {
 
 using namespace std;
 
-static int FACTOR = 9;
-static int GLOBAL_MAX_LEVEL = 100;
+static int FACTOR = 4;
+static int GLOBAL_MAX_LEVEL = 10000000;
 
 class SpatialObject {
 public:

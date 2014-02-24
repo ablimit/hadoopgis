@@ -1,8 +1,9 @@
 spatial=/home/aaji/softs
+hoangboost=/home/hoang/Downloads/boost_1_48_0
 
 UNAME		= $(shell uname)
 OPTFLAGS	= -O2 -Wall -std=c++0x
-INCBASE		= -I. -I../../
+INCBASE		= -I. -I../../ -I${hoangboost}
 LIBBASE		= -lspatialindex -lboost_program_options
 
 ifneq (,$(findstring emory,$(shell uname -a)))
@@ -28,14 +29,17 @@ endif
 
 
 TARGET = bsp
+TARGET2 = reducerBsp
 Obj = $(TARGET).o 
 
-all: $(TARGET)
+all: $(TARGET) ${TARGET2}
 
 debug: CXX += -DDEBUG -g
 debug: CC += -DDEBUG -g
 debug: all 
 
+reducerBsp: reducerBsp.cpp commonspatial.h $(Obj)
+	$(CXX) $^ $(CFLAGS) $(LDFLAGS) -o $@
 
 bsp: main.cpp commonspatial.h $(Obj)
 	$(CXX) $^ $(CFLAGS) $(LDFLAGS) -o $@
