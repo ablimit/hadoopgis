@@ -77,9 +77,15 @@ int main(int ac, char* av[]){
     return 1;
   }
 
-  SpaceStreamReader stream(inputPath);
-  Region universe;
+  double low[2], high[2];
+  low[0] = 0.0 ;
+  low[1] = 0.0 ;
+  high[0] = 1.0 ;
+  high[1] = 1.0 ;
 
+  Region universe(low,high,2);
+
+  SpaceStreamReader stream(inputPath);
   uint64_t recs = 0 ;
   while (stream.hasNext())
   {
@@ -88,14 +94,15 @@ int main(int ac, char* av[]){
       throw Tools::IllegalArgumentException(
           "bulkLoadUsingRPLUS: RTree bulk load expects SpatialIndex::RTree::Data entries."
           );
+    /*
     Region *obj = d->m_region.clone();
     if (0 == recs)
       universe = *obj;
     else 
       universe.combineRegion(*obj);
-
-    delete d;
     delete obj;
+    */
+    delete d;
 
     if ((++recs % 5000000) == 0)
       std::cerr << "Procestd::couted records " <<  recs  << std::endl;

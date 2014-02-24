@@ -67,9 +67,9 @@ if [ ! "$jobid" ] ; then
 fi
 
 # argument checking 
-if [ "${algo}" != "st" ] && [ "${algo}" != "rt" ] && [ "${algo}" != "rp" ] && [ "${algo}" != "fg" ] ;
+if [ "${algo}" != "st" ] && [ "${algo}" != "rt" ] && [ "${algo}" != "rp" ] && [ "${algo}" != "fg" ] && [ "${algo}" != "hc" ];
 then
-  echo "Parameter [${algo}] is NOT recognized. Alternatives are [ st | rp | rt | fg ]"
+  echo "Parameter [${algo}] is NOT recognized. Alternatives are [ st | rp | rt | fg | hc ]"
   exit 1;
 fi
 
@@ -87,7 +87,7 @@ for c in 20 100 200 400 1000 2000 4000 10000 20000 100000
 do
   s3input="s3://aaji/data/partitions/pais/${algo}/c${c}"
   echo -n "job param: [${c}] -- "
-  elastic-mapreduce --jobflow ${jobid} --stream --step-name "pais.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py pais.geom.1.tsv pais.geom.2.tsv' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input ${s3input} --output s3://aaji/scratch/pout/${log}/pais/${algo}c${c} --jobconf mapred.reduce.tasks=1000
+  elastic-mapreduce --jobflow ${jobid} --stream --step-name "pais.${algo}.${c}" --step-action CONTINUE --mapper 's3://aaji/scratch/awsjoin/tagmapper.py pais.geom.1.dat pais.geom.2.dat' --reducer "s3://aaji/scratch/deps/bins/resque st_intersects 1 1" --input ${s3input} --output s3://aaji/scratch/pout/${log}/pais/${algo}c${c} --jobconf mapred.reduce.tasks=1000
 
   sleep 15 ;
 done

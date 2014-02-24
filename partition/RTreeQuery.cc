@@ -79,7 +79,8 @@ int main(int argc, char** argv)
 		    tree->intersectsWithQuery(r, vis);
 		    cout << endl;
 		    // this will find all data that intersect with the query range.
-
+                    //cerr << "Region: " << id << ", area =" << (x2-x1)*(y2-y1) <<  ", visited leafs =" 
+                      //<< vis.m_leafIO << endl;
 		}
 
 
