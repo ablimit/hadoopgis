@@ -15,6 +15,7 @@ def main():
     global dic
     if len(sys.argv) < 2:
         sys.stderr.write("Usage: "+ sys.argv[0] + "\n")
+
     readstdin()
     i = 0
     for line in open(sys.argv[1],'r'):
@@ -25,8 +26,9 @@ def main():
                 print " ".join((pid,dic[oid]))
             else:
                 i +=1
+    
     sys.stdout.flush()
-    sys.stderr.write(' '.join("missing records:",str(i),"\n"))
+    sys.stderr.write(' '.join(("missing records:",str(i),"\n")))
     sys.stderr.flush()
 
 if __name__ == '__main__':
