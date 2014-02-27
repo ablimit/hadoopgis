@@ -4,14 +4,14 @@ reset
 
 # eps
 set terminal postscript eps size 3.5,0.22 enhanced color font 'Times-Roman,16'
-#set output 'ratioosm.eps'
+set output 'statlegend.eps'
 
 # latex
 #set terminal epslatex size 3.5,2.62 color colortext
-set output 'statlegend.eps'
+#set output 'ratioosm.eps'
 
 # color style 
-load 'gnucolor.plt'
+load '../gnucolor.plt'
 
 # Legend
 set key center center horizontal samplen 2 autotitle columnheader
@@ -27,8 +27,8 @@ unset object
 set xrange [-1:2]
 set yrange [-1:2]
 # Plot
-plot NaN t 'BSP' with points ls 1, \
-     NaN t 'FG' with points ls 2, \
+plot NaN t 'FG' with points ls 1, \
+     NaN t 'BSP' with points ls 2, \
      NaN t 'BOS' with points ls 3, \
      NaN t 'HC' with points ls 4, \
      NaN t 'STR' with points ls 5, \

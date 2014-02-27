@@ -5,11 +5,11 @@ reset
 # set terminal postscript eps size 3.5,2.62 enhanced color font 'Helvetica,20' lw 2
 set terminal postscript eps size 3.5,2.62 enhanced color font ',28'
 set output 'osm.medium.50.eps'
-load 'gnucolor.plt'
+load '../../gnucolor.plt'
 unset key 
 
-#set lmargin at screen 0.15
-#set rmargin at screen 0.95
+set lmargin at screen 0.23
+set rmargin at screen 0.95
 
 TOP=1.00
 
@@ -17,9 +17,9 @@ set multiplot
 #set offset 0,0,graph 0.05, graph 0.05
 
 set xlabel 'Bucket size' offset 0,0.5 
-set ylabel 'Time (min)' offset 0.67
+set ylabel 'Time (min)' offset 1.0,1.0
 set tmargin at screen 0.75
-set bmargin at screen 0.25
+set bmargin at screen 0.20
 set logscale x 10
 set xrange[500:100000]
 set yrange[0:300]

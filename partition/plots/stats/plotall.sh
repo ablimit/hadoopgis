@@ -59,10 +59,12 @@ fi
 for metric in stddev ratio
 do
 	grep -v qt ${name}.eval.csv | python genPlotData.py "${metric}" > pltdata.dat
+  cp pltdata.dat indiv/${name}.${metric}.dat
 	cp template.${name}.plt draw.plt
 	perl -p -i -e "s/_chartname_/${metric}${name}.eps/g" draw.plt
 	perl -p -i -e "s/_dataset_/pltdata.dat/g" draw.plt
 	perl -p -i -e "s/_keyposition_/right top/g" draw.plt
 	gnuplot draw.plt
+	cp draw.plt indiv/${name}.${metric}.plt
 done
 
