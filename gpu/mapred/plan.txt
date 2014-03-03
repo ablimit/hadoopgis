@@ -1,0 +1,14 @@
+Reducer Algorithm:
+  1. read a tile from standard input 
+  2. aggregate: count number of polygons, count number of verticies (as byproduct of step 1)
+  3. initilize structures and arrays
+  4. load_polys_and_build_index
+  5. MBR filter with spatial index searching
+  6. GEOM refine on CPU/GPU
+  7. output result
+
+Data format:
+tile_id TAB num_ver, MBR, polygon vertecies
+  Note: chain code the polygon verticies.
+
+
