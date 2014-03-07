@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/time.h>
-#include "justdoit.h"
+#include "crossmatch.h"
 #include "cuda/cuda_spatial.h"
 
+int nr_polys, nr_vertices;
+vector<string>  **geom_meta_array = {NULL,NULL} ;
 
 void init_spatial_data(spatial_data_t *data)
 {
@@ -21,76 +23,65 @@ void free_spatial_data(spatial_data_t *data)
 // Each text line has the following format:
 // poly_id, mbr.l mbr.r mbr.b mbr.t, x0 y0, x1 y1, ..., xn yn, x0 y0,
 // Note: there is a tailing `,' at the end of each line, to ease parsing
-static int load_polys_from_file(
-	poly_array_t *polys,
-	FILE *file,
-	char *parsebuf,
-	const int parsebuf_size)
+static int parse_polys(poly_array_t *polys, const int did)
 {
+  if (did >=2)
+  {
+    std::cerr << "Error: did >=2" << std::endl;
+    return 1;
+  }
+
+  vector<string> * poly_meta = geom_meta_array[did];
 	int offset = 0;
-	int ipoly = 0;
-	char *p, *q;
+  size_t i= 0;
+  int nv = 0;
 
 	// read and parse each text line
-	while(fgets(parsebuf, parsebuf_size, file)) {
-		if(parsebuf[0] == '\n' || parsebuf[0] == '\0')
-			continue;
-		polys->offsets[ipoly] = offset;
-
-		// omit prefix chars until the first ','
-		p = parsebuf;
+  for (i =0 ; i< poly_meta->size(); i++ ){
+	  char *p = (*poly_meta)[i].c_str();
+    polys->offsets[i] = offset;
+    
+    // read in number of vertices
+		sscanf(p, "%d", &nv);
+		
+    // skip nvtext
 		while(*p != ',') p++;
 		p++;
 
 		// read in mbr data
-		sscanf(p, " %d %d %d %d", &polys->mbrs[ipoly].l, &polys->mbrs[ipoly].r,
-			&polys->mbrs[ipoly].b, &polys->mbrs[ipoly].t);
+		sscanf(p, "%d %d %d %d", &polys->mbrs[i].l, &polys->mbrs[i].r,
+			&polys->mbrs[i].b, &polys->mbrs[i].t);
 
-		// omit mbr text
+		// skip mbr text
 		while(*p != ',') p++;
 		p++;
 
 		// parse vertex data
-		do {
-			q = p;
-			while(*q != ',') q++;
-			sscanf(p, " %d %d", &polys->x[offset], &polys->y[offset]);
-			p = q + 1;
+    for (int j =0; j < nv; j++)
+		{
+			sscanf(p, "%d %d", &polys->x[offset], &polys->y[offset]);
 			offset++;
-		} while(*p != '\n' && *p != '\0');
-
-		// move on to the next poly
-		ipoly++;
+      // skip the already processed vertices text 
+			while(*p!= ',') p++;
+      p++;
+		} //while(*p != '\n' && *p != '\0');
 	}
 
 	// the last offset indexes beyond the end of x,y arrays
-	polys->offsets[ipoly] = offset;
+	polys->offsets[i] = offset;
 	return 0;
 }
 
-int load_polys(poly_array_t *polys, FILE *file)
+int load_polys(poly_array_t *polys, const int did)
 {
-	int readbuf_size = 1024 * 8;
-	char *readbuf = NULL;
 	int retval = 0;
+  polys->nr_polys = nr_polys;
+  polys->nr_vertices = nr_vertices;
 
-	readbuf = malloc(readbuf_size);
-	if(!readbuf) {
-		retval = -1;
-		goto out;
-	}
-
-	// read number of polygons and total number of vertices
-	if(!fgets(readbuf, readbuf_size, file)) {
-		retval = -1;
-		goto out;
-	}
-	sscanf(readbuf, "%d, %d\n", &polys->nr_polys, &polys->nr_vertices);
-
-	// to optimize memory layout on cpu/gpu, we allocate a large continuous space
-	// that accomodates mbrs, offsets, x and y arrays together; in this manner,
-	// only one memory movement is needed to transfer all these data from cpu
-	// to gpu
+	/* to optimize memory layout on cpu/gpu, we allocate a large continuous space
+	that accomodates mbrs, offsets, x and y arrays together; in this manner,
+	only one memory movement is needed to transfer all these data from cpu
+	to gpu */
 	int size_mbrs = polys->nr_polys * sizeof(mbr_t);
 	int size_offsets = (polys->nr_polys + 1) * sizeof(int);
 	int size_x = polys->nr_vertices * sizeof(int);
@@ -99,24 +90,22 @@ int load_polys(poly_array_t *polys, FILE *file)
 	polys->mbrs = malloc(size_mbrs + size_offsets + size_x + size_y);
 	if(!polys->mbrs) {
 		retval = -1;
-		goto out;
+		return retval;
 	}
 	polys->offsets = (int *)((char *)(polys->mbrs) + size_mbrs);
 	polys->x = (int *)((char *)(polys->offsets) + size_offsets);
 	polys->y = (int *)((char *)(polys->x) + size_x);
 
 	// load polys data
-	if(load_polys_from_file(polys, file, readbuf, readbuf_size)) {
+	if(parse_polys(polys,did)) {
 		retval = -1;
-		goto out;
+		return retval;
 	}
 
-out:
-	FREE(readbuf);
 	return retval;
 }
 
-spatial_data_t *load_polys_and_build_index(FILE *file)
+spatial_data_t *load_polys_and_build_index(const int did)
 {
 	spatial_data_t *data = NULL;
 
@@ -127,7 +116,7 @@ spatial_data_t *load_polys_and_build_index(FILE *file)
 
 	// load polys
 	poly_array_t *polys = &data->polys;
-	if(load_polys(polys, file))
+	if(load_polys(polys,did))
 		goto error;
 
 	// build index
@@ -163,10 +152,7 @@ float *refine_and_do_spatial_op(
 		polys2->nr_vertices, polys2->x, polys2->y);
 }
 
-float *just_do_it(
-	FILE *file1, FILE *file2,
-//	int **idx1, int **idx2,
-	float **ratios, int *count)
+float *crossmatch(vector<string> **tileset, float **ratios, int *count)
 {
 	spatial_data_t *data1 = NULL, *data2 = NULL;
 	poly_pair_array_t *poly_pairs = NULL;
@@ -176,10 +162,10 @@ float *just_do_it(
 
 	gettimeofday(&t1, NULL);
 	// load polys and build indexes
-	data1 = load_polys_and_build_index(file1);
+	data1 = load_polys_and_build_index(0);
 	if(!data1)
 		goto out;
-	data2 = load_polys_and_build_index(file2);
+	data2 = load_polys_and_build_index(1);
 	if(!data2)
 		goto out;
 	gettimeofday(&t2, NULL);
@@ -242,26 +228,53 @@ int main(int argc, char *argv[])
   string tab = "\t";
   string comma = ",";
   string input_line;
-  string key ;
-  string value;
+  string tid ;
+  string prev_tid = "";
+  
+  string geom_info;
+  geom_meta_array[0] = new vector<string>;
+  geom_meta_array[1] = new vector<string>;
 
+  size_t pos, pos2;
+  /* vector<float> rat; //collection of all ratios */
   while(cin && getline(cin, input_line) && !cin.eof()) {
-    size_t pos=input_line.find_first_of(tab,0);
+    pos=input_line.find_first_of(tab,0);
     if (pos == string::npos){
       cerr << "no TAB in the input! We are toasted." << endl;
       return 1; // failure
     }
 
-    key = input_line.substr(0,pos); // tile id 
-    value= input_line.substr(pos+1);
-    // cout << index << key<< tab << value << endl;
-    for (int i=0; i < rep ; i++)
-      cout << key<< "_" <<i<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
+    tid= input_line.substr(0,pos); // tile id
+
+    // finished reading in a tile data, so perform cross matching
+    if (0 != tid.compare(prev_tid) && prev_tid.size()>0) 
+    {
+      crossmatch(geom_meta_array,ratios,count);
+      geom_meta_array[0].clear();
+      geom_meta_array[1].clear();
+      nr_polys = 0;
+      nr_vertices = 0;
+    }
+    // actual geometry info: did,oid,num_ver,mbb, geom
+    int i = input_line[pos+1] - '1'; // array position 
+    pos2=input_line.find_first_of(comma,pos+3); //oid = input_line.substr(pos+3,pos2-pos-3) 
+    pos=input_line.find_first_of(comma,pos2+1); //num_ver = input_line.substr(pos2+1,pos)
+    nr_vertices += atoi(input_line.substr(pos2+1,pos-pos2-1));
+    nr_polys +=1;
+
+    geom_info = input_line.substr(pos2+1); // nv,mbb,geom
+    geom_meta_array[i].push_back(geom_info);
+    prev_tid = tid; 
   }
 
+  //clear memory 
+  for (int i =0; i <2; i++){
+    geom_meta_array[i].clear();
+    delete geom_meta_array[i];
+  }
 
-}
-cout.flush();
+  cout.flush();
+  cerr.flush();
 
-return 0;
+  return 0;
 }
