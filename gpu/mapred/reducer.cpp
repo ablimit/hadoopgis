@@ -237,8 +237,31 @@ out:
 
 int main(int argc, char *argv[])
 {
-	float *ratios = NULL;
-	int i;
+  float *ratios = NULL;
+  int count = 0;
+  string tab = "\t";
+  string comma = ",";
+  string input_line;
+  string key ;
+  string value;
 
-  return 0;
+  while(cin && getline(cin, input_line) && !cin.eof()) {
+    size_t pos=input_line.find_first_of(tab,0);
+    if (pos == string::npos){
+      cerr << "no TAB in the input! We are toasted." << endl;
+      return 1; // failure
+    }
+
+    key = input_line.substr(0,pos); // tile id 
+    value= input_line.substr(pos+1);
+    // cout << index << key<< tab << value << endl;
+    for (int i=0; i < rep ; i++)
+      cout << key<< "_" <<i<< tab << index<< tab << shapebegin <<value <<shapeend<< endl;
+  }
+
+
+}
+cout.flush();
+
+return 0;
 }
