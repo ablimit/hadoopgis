@@ -152,7 +152,7 @@ float *refine_and_do_spatial_op(
 		polys2->nr_vertices, polys2->x, polys2->y);
 }
 
-float *crossmatch(vector<string> **tileset, float **ratios, int *count)
+float *crossmatch(float **ratios, int *count)
 {
 	spatial_data_t *data1 = NULL, *data2 = NULL;
 	poly_pair_array_t *poly_pairs = NULL;
@@ -249,7 +249,7 @@ int main(int argc, char *argv[])
     // finished reading in a tile data, so perform cross matching
     if (0 != tid.compare(prev_tid) && prev_tid.size()>0) 
     {
-      crossmatch(geom_meta_array,ratios,count);
+      crossmatch(ratios,count);
       geom_meta_array[0].clear();
       geom_meta_array[1].clear();
       nr_polys = 0;
@@ -266,6 +266,8 @@ int main(int argc, char *argv[])
     geom_meta_array[i].push_back(geom_info);
     prev_tid = tid; 
   }
+  // last tile 
+  crossmatch(ratios,count);
 
   //clear memory 
   for (int i =0; i <2; i++){

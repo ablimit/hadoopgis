@@ -1,17 +1,20 @@
 CC= gcc
 CFLAGS= -c -O2 -Wall
-LDFLAGS= -L./cuda -lcudaspatial
-SOURCES= main.c justdoit.c spatialindex.c rtree.c spatial.c hilbert.c rstar.c
-#SOURCES= testcuda.c justdoit.c spatialindex.c rtree.c spatial.c hilbert.c rstar.c
-OBJECTS= $(SOURCES:.cpp=.o)
-EXECUTABLE= spatialjoin
+LDFLAGS= -L./cuda -lgpuspatial
+SOURCES= reducer.c spatialindex.c spatial.c
 
-all: $(SOURCES) $(EXECUTABLE)
+EXECUTABLE = cudareducer
+OBJECTS = spatial.o spatialindex.o
 
-$(EXECUTABLE): $(OBJECTS) 
+all: $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS) crossmatch.h
 	$(CC) $(LDFLAGS) $(OBJECTS) -Wl,-rpath,./cuda -o $@
 
-.cpp.o:
+spatial.o: spatial.c spatial.h
+	$(CC) $(CFLAGS) $< -o $@
+
+spatialindex.o: spatialindex.c spatialindex.h
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
