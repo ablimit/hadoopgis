@@ -115,7 +115,7 @@ int make_poly_pair_array(poly_pair_array_t *poly_pairs, const int nr_poly_pairs)
 	int size_mbrs = nr_poly_pairs * sizeof(mbr_t);
 	int size_idx = nr_poly_pairs * sizeof(int);
 
-	poly_pairs->mbrs = malloc(size_mbrs + 2 * size_idx);
+	poly_pairs->mbrs = (mbr_t*)malloc(size_mbrs + 2 * size_idx);
 	if(!poly_pairs->mbrs)
 		return -1;
 	poly_pairs->idx1 = (int *)((char *)(poly_pairs->mbrs) + size_mbrs);

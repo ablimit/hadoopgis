@@ -1,34 +1,35 @@
 CC= gcc
 CXX= g++
-CFLAGS= -c -O2 -Wall
+CFLAGS= -c -O2 -Wall -fpermissive
+CXXFLAGS= -c -O2 -Wall -std=c++11
 LDFLAGS= -L./cuda -lgpuspatial
 SOURCES= reducer.c spatialindex.c spatial.c
 
 EXECUTABLE = cudareducer
-OBJECTS = rtree.o hilbert.o rstar.o spatial.o spatialindex.o crossmatch.o
+OBJECTS = hilbert.o rstar.o spatial.o spatialindex.o crossmatch.o
 
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -Wl,-rpath,./cuda -o $@
+	$(CXX) $(LDFLAGS) $(OBJECTS) -Wl,-rpath,./cuda -o $@
 
 crossmatch.o: reducer.cpp crossmatch.h
-	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) $< -o $@
 
 spatial.o: spatial.c spatial.h
-	$(CC) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 
 spatialindex.o: spatialindex.c spatialindex.h
-	$(CC) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 
 rtree.o: rtree.c rtree.h
-	$(CC) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 
 rstar.o: rstar.c rstar.h
-	$(CC) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 
 hilbert.o: hilbert.c hilbert.h
-	$(CC) $(CFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 
 clean:
 	rm -f *.o $(EXECUTABLE)

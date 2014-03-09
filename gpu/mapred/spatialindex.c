@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "spatialindex.h"
-#include "rtree.h"
+//#include "rtree.h"
 #include "hilbert.h"
 #include "rstar.h"
 
@@ -13,10 +13,11 @@ void init_spatial_index(spatial_index_t *index)
 void fini_spatial_index(spatial_index_t *index)
 {
 	switch(index->scheme) {
-		case INDEX_R_TREE:
+		/*
+    case INDEX_R_TREE:
 			free_spatial_index_r((r_tree_t *)(index->index));
 			break;
-
+    */
 		case INDEX_R_STAR_TREE:
 			free_spatial_index_r_star((r_tree_t *)(index->index));
 			break;
@@ -43,12 +44,13 @@ int build_spatial_index(
 
 	index->scheme = scheme;
 	switch(scheme) {
-		case INDEX_R_TREE:
+		/*
+     case INDEX_R_TREE:
 			ret = build_spatial_index_r(
 				(r_tree_t **)&index->index, mbrs, nr_polys
 			);
 			break;
-
+    */
 		case INDEX_R_STAR_TREE:
 			ret = build_spatial_index_r_star(
 				(r_tree_t **)&index->index, mbrs, nr_polys
@@ -86,12 +88,13 @@ poly_pair_array_t *spatial_filter(
 		return NULL;
 
 	switch(index1->scheme) {
-		case INDEX_R_TREE:
+		/*
+    case INDEX_R_TREE:
 			poly_pairs = spatial_filter_r(
 				(r_tree_t *)(index1->index), (r_tree_t *)(index2->index)
 			);
 			break;
-
+  */
 		case INDEX_R_STAR_TREE:
 			poly_pairs = spatial_filter_r_star(
 				(r_tree_t *)(index1->index), (r_tree_t *)(index2->index)
