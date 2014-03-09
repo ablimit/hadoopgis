@@ -1,11 +1,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/time.h>
+
+#include <string>
+#include <vector>
+#include <iostream>
+
 #include "crossmatch.h"
 #include "cuda/cuda_spatial.h"
 
+using namespace std;
+
 int nr_polys, nr_vertices;
-vector<string>  **geom_meta_array = {NULL,NULL} ;
+vector<string>*  geom_meta_array [2] = {NULL,NULL} ;
 
 void init_spatial_data(spatial_data_t *data)
 {
@@ -27,7 +34,7 @@ static int parse_polys(poly_array_t *polys, const int did)
 {
   if (did >=2)
   {
-    std::cerr << "Error: did >=2" << std::endl;
+    cerr << "Error: did >=2" << endl;
     return 1;
   }
 
