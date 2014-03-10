@@ -18,6 +18,13 @@ const string TAB = "\t";
 const string COMMA = ",";
 const string SPACE = " ";
 
+void report(float *ratios, int count)
+{ 
+  int i;
+  for(i = 0; i < count; i++) 
+    cout << ratios[i] << endl;
+}
+
 void init_spatial_data(spatial_data_t *data)
 {
   init_poly_array(&data->polys);
@@ -59,9 +66,9 @@ static int parse_polys(poly_array_t *polys, const int did)
     /* #ifdef DEBUG
        cerr << "DEBUG Polygon MBR: " << polys->mbrs[i].l << COMMA << polys->mbrs[i].r  
        << COMMA << polys->mbrs[i].b << COMMA << polys->mbrs[i].t<<endl;
-      #endif
-    */
-    
+#endif
+*/
+
     // parse vertex data
     size_t pos ;
     for (vector<string>::size_type j =1; j < tokens.size(); j++)
@@ -153,7 +160,7 @@ out:
   if(data) {
     free_spatial_data(data);
   }
-    return NULL;
+  return NULL;
 }
 
 float *refine_and_do_spatial_op(
@@ -283,6 +290,7 @@ int main(int argc, char *argv[])
           <<": |T1| = " << geom_meta_array[0]->size() <<", |T2| = " << geom_meta_array[1]->size() 
           <<" |V1| = " << nr_vertices[0] <<", |V2| = " << nr_vertices[1] <<endl;
       crossmatch(&ratios,&count);
+      report(ratios,count);
       geom_meta_array[0]->clear();
       geom_meta_array[1]->clear();
       nr_vertices[0]= 0;
@@ -303,7 +311,7 @@ int main(int argc, char *argv[])
       <<": |T1| = " << geom_meta_array[0]->size() <<", |T2| = " << geom_meta_array[1]->size() 
       <<" |V1| = " << nr_vertices[0] <<", |V2| = " << nr_vertices[1] <<endl;
   crossmatch(&ratios,&count);
-
+  report(ratios,count);
   //clear memory 
   for (int i =0; i <2; i++){
     geom_meta_array[i]->clear();
