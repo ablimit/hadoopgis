@@ -1,7 +1,5 @@
-#ifndef SPATIAL_INDEX_H
-#define SPATIAL_INDEX_H
-
 #include "spatial.h"
+#include "dbg.h"
 
 // spatial index types
 typedef enum
@@ -35,4 +33,3 @@ poly_pair_array_t *spatial_filter_2(
 	const spatial_index_t *index1,
 	const poly_array_t *polys2);
 
-#endif

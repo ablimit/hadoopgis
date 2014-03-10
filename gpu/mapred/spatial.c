@@ -2,13 +2,13 @@
 #include "spatial.h"
 
 // area of an mbr
-inline int mbr_area(const mbr_t *mbr)
+static inline int mbr_area(const mbr_t *mbr)
 {
 	return (mbr->r - mbr->l) * (mbr->t - mbr->b);
 }
 
 // area of the rectangular covering both mbrs
-inline int mbr_area_2(const mbr_t *mbr1, const mbr_t *mbr2)
+static inline int mbr_area_2(const mbr_t *mbr1, const mbr_t *mbr2)
 {
 	int l, r, b, t;
 	l = MIN(mbr1->l, mbr2->l);
@@ -19,20 +19,20 @@ inline int mbr_area_2(const mbr_t *mbr1, const mbr_t *mbr2)
 }
 
 // enlargement of mbr area in order to combine mbr_inc to mbr
-inline int mbr_area_inc(const mbr_t *mbr, const mbr_t *mbr_inc)
+static inline int mbr_area_inc(const mbr_t *mbr, const mbr_t *mbr_inc)
 {
 	return mbr_area_2(mbr, mbr_inc) - mbr_area(mbr);
 }
 
 // whether two mbrs are the same
-inline int mbr_diff(const mbr_t *mbr1, const mbr_t *mbr2)
+static inline int mbr_diff(const mbr_t *mbr1, const mbr_t *mbr2)
 {
 	return !((mbr1->l == mbr2->l) && (mbr1->r == mbr2->r) &&
 		(mbr1->b == mbr2->b) && (mbr1->t == mbr2->t));
 }
 
 // whether a point falls within a mbr
-inline int in_mbr(const mbr_t *mbr, int x, int y)
+static inline int in_mbr(const mbr_t *mbr, int x, int y)
 {
 	return (x >= mbr->l) && (x < mbr->r) && (y <= mbr->t) && (y > mbr->b);
 }
@@ -40,7 +40,7 @@ inline int in_mbr(const mbr_t *mbr, int x, int y)
 // return whether mbr1 intersects with mbr2, providing that the left edge
 // belongs to a rectangular while the right edge does not and the top edge
 // belongs to a rectangular while the bottom edge does not
-inline int mbr_intersect(const mbr_t *mbr1, const mbr_t *mbr2)
+static inline int mbr_intersect(const mbr_t *mbr1, const mbr_t *mbr2)
 {
 	return	(
 		(mbr1->l < mbr2->r) && (mbr1->r > mbr2->l) &&
@@ -50,7 +50,7 @@ inline int mbr_intersect(const mbr_t *mbr1, const mbr_t *mbr2)
 
 // update mbr by combining mbr_inc to it; return whether mbr was actually
 // updated
-inline int mbr_update(mbr_t *mbr, const mbr_t *mbr_inc)
+static inline int mbr_update(mbr_t *mbr, const mbr_t *mbr_inc)
 {
 	int mbr_changed = 0;
 
@@ -75,7 +75,7 @@ inline int mbr_update(mbr_t *mbr, const mbr_t *mbr_inc)
 }
 
 // merge_to is set to the covering rectangular of mbr1 and mbr2
-inline void mbr_merge(mbr_t *merge_to, const mbr_t *mbr1, const mbr_t *mbr2)
+static inline void mbr_merge(mbr_t *merge_to, const mbr_t *mbr1, const mbr_t *mbr2)
 {
 	merge_to->l = MIN(mbr1->l, mbr2->l);
 	merge_to->r = MAX(mbr1->r, mbr2->r);

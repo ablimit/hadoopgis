@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include "spatialindex.h"
-//#include "rtree.h"
+#include "rtree.h"
 #include "hilbert.h"
 #include "rstar.h"
 

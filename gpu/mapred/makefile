@@ -1,20 +1,26 @@
 CC= gcc
 CXX= g++
-CFLAGS= -c -O2 -Wall -fpermissive
-CXXFLAGS= -c -O2 -Wall -std=c++11
+CFLAGS= -c -O2 -Wall -std=c++11 -fpermissive
+# CXXFLAGS= -c -O2 -Wall -std=c++11
 LDFLAGS= -L./cuda -lgpuspatial
 SOURCES= reducer.c spatialindex.c spatial.c
 
+
+debug: CXX += -DDEBUG -g
+debug: CC += -DDEBUG -g
+debug: all
+
 EXECUTABLE = cudareducer
-OBJECTS = hilbert.o rstar.o spatial.o spatialindex.o crossmatch.o
+OBJECTS = rtree.o hilbert.o rstar.o spatial.o spatialindex.o crossmatch.o
 
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CXX) $(LDFLAGS) $(OBJECTS) -Wl,-rpath,./cuda -o $@
+	$(CXX) $(LDFLAGS) $(OBJECTS) -o $@
+# $(CXX) $(LDFLAGS) $(OBJECTS) -Wl,-rpath,./cuda -o $@
 
 crossmatch.o: reducer.cpp crossmatch.h
-	$(CXX) $(CXXFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $< -o $@
 
 spatial.o: spatial.c spatial.h
 	$(CXX) $(CFLAGS) $< -o $@

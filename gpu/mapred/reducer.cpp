@@ -9,9 +9,10 @@
 #include "crossmatch.h"
 #include "cuda/cuda_spatial.h"
 
-// using namespace std;
+#include "dbg.h"
 
-int nr_polys, nr_vertices;
+
+int nr_vertices [2] = {0,0};
 vector<string>*  geom_meta_array [2] = {NULL,NULL} ;
 const string TAB = "\t";
 const string COMMA = ",";
@@ -19,15 +20,15 @@ const string SPACE = " ";
 
 void init_spatial_data(spatial_data_t *data)
 {
-	init_poly_array(&data->polys);
-	init_spatial_index(&data->index);
+  init_poly_array(&data->polys);
+  init_spatial_index(&data->index);
 }
 
 void free_spatial_data(spatial_data_t *data)
 {
-	fini_poly_array(&data->polys);
-	fini_spatial_index(&data->index);
-	free(data);
+  fini_poly_array(&data->polys);
+  fini_spatial_index(&data->index);
+  free(data);
 }
 
 // Each text line has the following format:
@@ -41,22 +42,26 @@ static int parse_polys(poly_array_t *polys, const int did)
   }
 
   vector<string> * poly_meta = geom_meta_array[did];
-	int offset = 0;
+  int offset = 0;
   vector<string>::size_type i= 0;
   vector<string> tokens ;
-	
+
   // read and parse each text line
   for (i =0 ; i< poly_meta->size(); i++ ){
     polys->offsets[i] = offset;
-    
+
     // parse record 
     tokenize((*poly_meta)[i], tokens,COMMA, true);
-    
+
     // parse mbr
     istringstream ss(tokens[0]) ;
     ss >> polys->mbrs[i].l >> polys->mbrs[i].r >> polys->mbrs[i].b >> polys->mbrs[i].t;
-    // cerr << polys->mbrs[i].l << COMMA << polys->mbrs[i].r  << COMMA << polys->mbrs[i].b << COMMA << polys->mbrs[i].t<<endl;
-
+    /* #ifdef DEBUG
+       cerr << "DEBUG Polygon MBR: " << polys->mbrs[i].l << COMMA << polys->mbrs[i].r  
+       << COMMA << polys->mbrs[i].b << COMMA << polys->mbrs[i].t<<endl;
+      #endif
+    */
+    
     // parse vertex data
     size_t pos ;
     for (vector<string>::size_type j =1; j < tokens.size(); j++)
@@ -83,8 +88,8 @@ static int parse_polys(poly_array_t *polys, const int did)
 int load_polys(poly_array_t *polys, const int did)
 {
   int retval = 0;
-  polys->nr_polys = nr_polys;
-  polys->nr_vertices = nr_vertices;
+  polys->nr_polys = geom_meta_array[did]->size();
+  polys->nr_vertices = nr_vertices[did];
 
   /* to optimize memory layout on cpu/gpu, we allocate a large continuous space
      that accomodates mbrs, offsets, x and y arrays together; in this manner,
@@ -109,7 +114,6 @@ int load_polys(poly_array_t *polys, const int did)
     retval = -1;
     return retval;
   }
-
   return retval;
 }
 
@@ -119,21 +123,37 @@ spatial_data_t *load_polys_and_build_index(const int did)
 
   data = (spatial_data_t*)malloc(sizeof(spatial_data_t));
   if(!data)
+  {
+    debug("data is NULL");
     return data;
-  
+  }
+
   init_spatial_data(data);
 
   poly_array_t *polys = &data->polys;
   spatial_index_t *index = &data->index;
   // load polys || build index
-  if(load_polys(polys,did) || build_spatial_index(index, polys->mbrs, polys->nr_polys, INDEX_R_TREE))
+  int en = load_polys(polys,did);
+  if (en)
   {
-    if(data) {
-      free_spatial_data(data);
-      data = NULL;
-    }
+    debug("Polygon parsing error %d.",en);
+    goto out;
+  }
+  debug("load_poly set %d -- OK",did);
+
+  en = build_spatial_index(index, polys->mbrs, polys->nr_polys, INDEX_HILBERT_R_TREE);
+  if(en)
+  {
+    debug("indexing error %d", en);
+    goto out;
   }
   return data;
+
+out: 
+  if(data) {
+    free_spatial_data(data);
+  }
+    return NULL;
 }
 
 float *refine_and_do_spatial_op(
@@ -159,16 +179,29 @@ float *crossmatch(float **ratios, int *count)
   float *result_ratios = NULL;
   struct timeval t1, t2;
 
+  if (geom_meta_array[0]->size()==0 || geom_meta_array[1]->size()==0)
+  {
+    cerr<< "tile is empty: |T1| = " << geom_meta_array[0]->size() << ", |T2| = " << geom_meta_array[1]->size() <<endl;
+    goto out;
+  }
+
   gettimeofday(&t1, NULL);
   // load polys and build indexes
   data1 = load_polys_and_build_index(0);
   if(!data1)
+  {
+    debug("data1 is NULL.");
     goto out;
+  }
+  debug("T1 -- OK.");
+
   data2 = load_polys_and_build_index(1);
   if(!data2)
     goto out;
+  debug("T2 -- OK.");
+
   gettimeofday(&t2, NULL);
-  printf("Time on loading and building indexes: %lf s\n", DIFF_TIME(t1, t2));
+  cerr << "Time on loading and building indexes: " << DIFF_TIME(t1, t2) << " s." <<endl;
 
   gettimeofday(&t1, NULL);
   // filering
@@ -176,7 +209,7 @@ float *crossmatch(float **ratios, int *count)
   if(!poly_pairs)
     goto out;
   gettimeofday(&t2, NULL);
-  printf("Time on filtering: %lf s\n", DIFF_TIME(t1, t2));
+  cerr<<"Time on filtering: " <<DIFF_TIME(t1, t2) << " s." <<endl;
 
   gettimeofday(&t1, NULL);
   // refinement and spatial operations
@@ -206,7 +239,7 @@ float *crossmatch(float **ratios, int *count)
     *count = poly_pairs->nr_poly_pairs;
   }
   gettimeofday(&t2, NULL);
-  printf("Time on refinement and spatial op: %lf s\n", DIFF_TIME(t1, t2));
+  cerr<< "Time on refinement and spatial op: " <<DIFF_TIME(t1, t2) <<" s." <<endl;
 
 out:
   // free stuff
@@ -246,24 +279,29 @@ int main(int argc, char *argv[])
     // finished reading in a tile data, so perform cross matching
     if (0 != tid.compare(prev_tid) && prev_tid.size()>0) 
     {
+      cerr << prev_tid 
+          <<": |T1| = " << geom_meta_array[0]->size() <<", |T2| = " << geom_meta_array[1]->size() 
+          <<" |V1| = " << nr_vertices[0] <<", |V2| = " << nr_vertices[1] <<endl;
       crossmatch(&ratios,&count);
       geom_meta_array[0]->clear();
       geom_meta_array[1]->clear();
-      nr_polys = 0;
-      nr_vertices = 0;
+      nr_vertices[0]= 0;
+      nr_vertices[1]= 0;
     }
     // actual geometry info: did,oid,num_ver,mbb, geom
     int i = input_line[pos+1] - '1'; // array position 
     pos2=input_line.find_first_of(COMMA,pos+3); //oid = input_line.substr(pos+3,pos2-pos-3) 
     pos=input_line.find_first_of(COMMA,pos2+1); //num_ver = input_line.substr(pos2+1,pos)
-    nr_vertices += std::stoi(input_line.substr(pos2+1,pos-pos2-1));
-    nr_polys +=1;
+    nr_vertices[i] += std::stoi(input_line.substr(pos2+1,pos-pos2-1));
 
     geom_info = input_line.substr(pos+1); // nv,mbb,geom
     geom_meta_array[i]->push_back(geom_info);
     prev_tid = tid; 
   }
   // last tile 
+  cerr << prev_tid 
+      <<": |T1| = " << geom_meta_array[0]->size() <<", |T2| = " << geom_meta_array[1]->size() 
+      <<" |V1| = " << nr_vertices[0] <<", |V2| = " << nr_vertices[1] <<endl;
   crossmatch(&ratios,&count);
 
   //clear memory 
