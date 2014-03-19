@@ -1,12 +1,13 @@
 #include "../spatial.h"
 
 extern "C" {
-float *cpu_clip(
-	int nr_poly_pairs, mbr_t *mbrs,
-	int *idx1,int *idx2,
-	int no1, int *offsets1,
-	int no2, int *offsets2,
-	int nv1, int *x1, int *y1,
-	int nv2, int *x2, int *y2);
+  float *clip(
+	const int nr_poly_pairs, 
+  const mbr_t *mbrs,
+	const int *idx1, const int *idx2,
+	const int no1, const int *offsets1,
+	const int no2, const int *offsets2,
+	const int nv1, const int *x1, const int *y1,
+	const int nv2, const int *x2, const int *y2);
 
 }

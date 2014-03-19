@@ -65,13 +65,14 @@ static int in_poly(
   return crossing & 1;
 }
 
-float *cpu_clip(
-    int nr_poly_pairs, mbr_t *mbrs,	// mbr of each poly pair
-    int *idx1, int *idx2,			// index to poly_array 1 and 2
-    int no1, int *offsets1,			// offset to poly_arr1's vertices
-    int no2, int *offsets2,			// offset to poly_arr2's vertices
-    int nv1, int *x1, int *y1,// poly_arr1's vertices
-    int nv2, int *x2, int *y2)// poly_arr2's vertices
+float *clip(
+    const int nr_poly_pairs, // mbr of each poly pair
+    const mbr_t *mbrs,
+    const int *idx1, const int *idx2,			// index to poly_array 1 and 2
+    const int no1, const int *offsets1,			// offset to poly_arr1's vertices
+    const int no2, const int *offsets2,			// offset to poly_arr2's vertices
+    const int nv1, const int *x1, const int *y1,// poly_arr1's vertices
+    const int nv2, const int *x2, const int *y2)// poly_arr2's vertices
 {
   float *ratios = NULL;
 

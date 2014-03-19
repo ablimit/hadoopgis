@@ -97,7 +97,7 @@ static __global__ void kernel_clip(
 	}
 }
 
-float *cuda_clip(
+float *clip(
 	const int nr_poly_pairs, const mbr_t *mbrs,	// mbr of each poly pair
 	const int *idx1, const int *idx2,			// index to poly_array 1 and 2
 	const int no1, const int *offsets1,			// offset to poly_arr1's vertices

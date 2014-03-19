@@ -7,7 +7,11 @@
 
 #include "tokenizer.h"
 #include "crossmatch.h"
+#ifdef GPU
 #include "cuda/cuda_spatial.h"
+#else
+#include "cpu/cpu_spatial.h"
+#endif
 
 #include "dbg.h"
 
@@ -127,6 +131,7 @@ int load_polys(poly_array_t *polys, const int did)
 spatial_data_t *load_polys_and_build_index(const int did)
 {
   spatial_data_t *data = NULL;
+  struct timeval t1, t2;
 
   data = (spatial_data_t*)malloc(sizeof(spatial_data_t));
   if(!data)
@@ -140,7 +145,11 @@ spatial_data_t *load_polys_and_build_index(const int did)
   poly_array_t *polys = &data->polys;
   spatial_index_t *index = &data->index;
   // load polys || build index
+  gettimeofday(&t1, NULL);
   int en = load_polys(polys,did);
+  gettimeofday(&t2, NULL);
+  cerr << "Time on parsing polygons: " << DIFF_TIME(t1, t2) << " s." <<endl;
+  
   if (en)
   {
     debug("Polygon parsing error %d.",en);
@@ -148,7 +157,10 @@ spatial_data_t *load_polys_and_build_index(const int did)
   }
   debug("load_poly set %d -- OK",did);
 
+  gettimeofday(&t1, NULL);
   en = build_spatial_index(index, polys->mbrs, polys->nr_polys, INDEX_HILBERT_R_TREE);
+  gettimeofday(&t2, NULL);
+  cerr << "Time on building indexes: " << DIFF_TIME(t1, t2) << " s." <<endl;
   if(en)
   {
     debug("indexing error %d", en);
@@ -169,7 +181,7 @@ float *refine_and_do_spatial_op(
     poly_array_t *polys2)
 {
   // we do this operation on gpu/cpu
-  return cuda_clip(
+  return clip(
       poly_pairs->nr_poly_pairs,
       poly_pairs->mbrs,
       poly_pairs->idx1, poly_pairs->idx2,
@@ -262,6 +274,8 @@ out:
 
 int main(int argc, char *argv[])
 {
+  struct timeval t1, t2;
+  gettimeofday(&t1, NULL);
   float *ratios = NULL;
   int count = 0;
   string input_line;
@@ -290,7 +304,9 @@ int main(int argc, char *argv[])
           <<": |T1| = " << geom_meta_array[0]->size() <<", |T2| = " << geom_meta_array[1]->size() 
           <<" |V1| = " << nr_vertices[0] <<", |V2| = " << nr_vertices[1] <<endl;
       crossmatch(&ratios,&count);
+#ifdef DEBUG
       report(ratios,count);
+#endif
       geom_meta_array[0]->clear();
       geom_meta_array[1]->clear();
       nr_vertices[0]= 0;
@@ -311,13 +327,17 @@ int main(int argc, char *argv[])
       <<": |T1| = " << geom_meta_array[0]->size() <<", |T2| = " << geom_meta_array[1]->size() 
       <<" |V1| = " << nr_vertices[0] <<", |V2| = " << nr_vertices[1] <<endl;
   crossmatch(&ratios,&count);
+#ifdef DEBUG
   report(ratios,count);
+#endif
   //clear memory 
   for (int i =0; i <2; i++){
     geom_meta_array[i]->clear();
     delete geom_meta_array[i];
   }
 
+  gettimeofday(&t2, NULL);
+  cerr<< "Time exec: " <<DIFF_TIME(t1, t2) <<" s." <<endl;
   cout.flush();
   cerr.flush();
 

@@ -1,6 +1,6 @@
 all: polytest deviceQuery
 
-NVCC 		= /opt/local/cuda/bin/nvcc -m64
+NVCC 		= /usr/local/cuda/bin/nvcc -m64
 CC			= g++
 
 
@@ -14,7 +14,7 @@ ifeq ($(UNAME), Darwin)
 CUDALIBS    = -lcudart
 LDFLAGS		= -shared -flat_namespace -undefined suppress
 else 
-CUDALIBS    = -L/opt/local/cuda/lib64 -lcudart
+CUDALIBS    = -L/usr/local/cuda/lib64 -lcudart
 endif
 HFILES		= spatial.cuh 
 

@@ -19,7 +19,7 @@ LDFLAGS     = $(LIBBASE) $(LIBS)
 ifeq ($(UNAME), Darwin)
     CC = gcc -arch x86_64
 else 
-    CC = gcc
+    CC = gcc -pg
 endif
 
 all: clip

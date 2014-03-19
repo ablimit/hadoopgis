@@ -291,115 +291,134 @@ void clip()
 
 void add(int which_poly, int x, int y) 
 { 
-    node *newNode; 
+  node *newNode; 
 
-    newNode = (node*)malloc(sizeof(node)); 
-    newNode->x = x; 
-    newNode->y = y; 
-    newNode->prev = 0;        /* not need to initialize with 0 after malloc ... */ 
-    newNode->nextPoly = 0; 
-    newNode->neighbor = 0; 
-    newNode->intersect = 0; 
-    newNode->entry = 0; 
-    newNode->visited = 0; 
-    newNode->alpha = 0.; 
-    if (which_poly == 1) 
-    { 
-	newNode->next = s; 
-	if (s) s->prev = newNode; 
-	s = newNode; 
-    } 
-    else if (which_poly == 2) 
-    { 
-	newNode->next = c; 
-	if (c) c->prev = newNode; 
-	c = newNode; 
-    } 
-    else {
-	deleteNode(newNode);
-	printf("%d is not a valid polygon index.\n",which_poly);
-	quit();
-    }
+  newNode = (node*)malloc(sizeof(node)); 
+  newNode->x = x; 
+  newNode->y = y; 
+  newNode->prev = 0;        /* not need to initialize with 0 after malloc ... */ 
+  newNode->nextPoly = 0; 
+  newNode->neighbor = 0; 
+  newNode->intersect = 0; 
+  newNode->entry = 0; 
+  newNode->visited = 0; 
+  newNode->alpha = 0.0; 
+  if (which_poly == 1) 
+  { 
+    newNode->next = s; 
+    if (s) s->prev = newNode; 
+    s = newNode; 
+  } 
+  else if (which_poly == 2) 
+  { 
+    newNode->next = c; 
+    if (c) c->prev = newNode; 
+    c = newNode; 
+  } 
+  else {
+    deleteNode(newNode);
+    printf("%d is not a valid polygon index.\n",which_poly);
+    quit();
+  }
 }
 
 void result(){
-    node *aux=root; 
-    while (root){
-	while (aux){
-	    printf("(%d,%d)\t",aux->x,aux->y);
-	    aux = aux->next;
-	}
-	printf("\n");
-	aux = root->nextPoly; 
-	deleteNode(root);
-	root =aux;
+  node *aux=root; 
+  while (root){
+    while (aux){
+      printf("(%d,%d)\t",aux->x,aux->y);
+      aux = aux->next;
     }
+    printf("\n");
+    aux = root->nextPoly; 
+    deleteNode(root);
+    root =aux;
+  }
 }
 
 void test1();
 void test2();
 void test3();
+void test4();
 
 int main(int argc, char **argv) 
 {
-    if (argc>1 )
-	switch (argv[1][0]){
-	    case '1':
-		test1();
-		break;
-	    case '2':
-		test2();
-		break;
-	    case '3':
-		test3();
-		break;
-	    case '4':
-		break;
-	    default:
-		;
-	}
-    clip();
-    result();
-    quit();
+  if (argc>1 )
+    switch (argv[1][0]){
+      case '1':
+        printf("simple rectangle intersection:\n");
+        test1();
+        break;
+      case '2':
+        printf("a rectangle clipping a concave polygon:\n");
+        test2();
+        break;
+      case '3':
+        printf("a rectangle self intersection:\n");
+        test3();
+        break;
+      case '4':
+        printf("a rectangle contains another rectangle:\n");
+        test4();
+        break;
+      default:
+        ;
+    }
+  clip();
+  result();
+  quit();
 } 
 
 void test1()
 {
-    add(1,3,2);
-    add(1,1,2);
-    add(1,1,4);
-    add(1,3,4);
+  add(1,3,2);
+  add(1,1,2);
+  add(1,1,4);
+  add(1,3,4);
 
-    add(2,4,1);
-    add(2,2,1);
-    add(2,2,3);
-    add(2,4,3);
+  add(2,4,1);
+  add(2,2,1);
+  add(2,2,3);
+  add(2,4,3);
 }
 
 void test2()
 {
-    add(2,7,3);
-    add(2,1,3);
-    add(2,1,6);
-    add(2,7,6);
+  add(2,7,3);
+  add(2,1,3);
+  add(2,1,6);
+  add(2,7,6);
 
-    add(1,6,1);
-    add(1,2,1);
-    add(1,2,4);
-    add(1,4,2);
-    add(1,6,4);
+  add(1,6,1);
+  add(1,2,1);
+  add(1,2,4);
+  add(1,4,2);
+  add(1,6,4);
 }
 
 void test3()
 {
-    add(2,4,4);
-    add(2,1,4);
-    add(2,1,1);
-    add(2,4,1);
+  add(2,7,3);
+  add(2,1,3);
+  add(2,1,6);
+  add(2,7,6);
+  
+  add(1,7,3);
+  add(1,1,3);
+  add(1,1,6);
+  add(1,7,6);
+}
 
-    add(1,3,3);
-    add(1,2,3);
-    add(1,2,2);
-    add(1,3,2);
+void test4()
+{
+  add(1,4,4);
+  add(1,1,4);
+  add(1,1,1);
+  add(1,4,1);
+
+  add(2,3,3);
+  add(2,2,3);
+  add(2,2,2);
+  add(2,3,2);
 }
 

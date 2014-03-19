@@ -9,7 +9,7 @@ extern "C" {
 //#endif
 //#endif
 
-float *cuda_clip(
+float *clip(
 	const int nr_poly_pairs, 
   const mbr_t *mbrs,
 	const int *idx1, const int *idx2,
