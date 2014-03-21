@@ -1,6 +1,6 @@
 TARGET = libcpuspatial.so
 
-CC= gcc
+CC= g++
 CFLAGS= -O2 -Wall -fPIC -shared -Wl,-soname,$(TARGET)
 LDFLAGS = -L/usr/local/lib
 
@@ -11,9 +11,9 @@ debug: CC += -pg
 debug: all
 
 
-$(TARGET): pixelgrid.cpp cpu_spatial.h
+$(TARGET): polyclip.cpp cpu_spatial.h
 	${CC} ${CFLAGS} ${LDFLAGS} $< -o $@
-	cp $(TARGET) ~/softs/lib/
+	#cp $(TARGET) ~/softs/lib/
 
 clean:
 	rm -f *.o $(TARGET)
