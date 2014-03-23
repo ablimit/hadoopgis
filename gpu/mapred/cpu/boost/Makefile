@@ -11,10 +11,11 @@ debug: CC += -pg
 debug: all
 
 
-$(TARGET): polyclip.cpp cpu_spatial.h
+$(TARGET): polyclip.cpp
 	${CC} ${CFLAGS} ${LDFLAGS} $< -o $@
-	#cp $(TARGET) ~/softs/lib/
 
 clean:
 	rm -f *.o $(TARGET)
 
+install:
+	cp $(TARGET) ~/softs/lib/

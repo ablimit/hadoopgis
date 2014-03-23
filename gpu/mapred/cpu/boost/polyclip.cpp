@@ -1,6 +1,4 @@
-// #include <stdlib.h>
-//#include <stdio.h>
-#include "cpu_spatial.h"
+#include "../cpu_spatial.h"
 
 #include <boost/foreach.hpp>
 #include <boost/geometry.hpp>
@@ -33,26 +31,29 @@ float *clip(
     return NULL;
   }
 
-  for (size_t i = 0 ; i< nr_poly_pairs ; i++){
+  for (int i = 0 ; i< nr_poly_pairs ; i++){
     float area_union = 0.0 ; 
     float area_inter = 0.0 ; 
     polygon p; polygon q;
 
     for (int j = offsets1[idx1[i]]; j < offsets1[idx1[i]+1] - 1; j++ )
       p.outer().push_back(point(x1[j], y1[j]));
+    boost::geometry::correct(p);
     for (int j = offsets2[idx2[i]]; j < offsets2[idx2[i]+1] - 1; j++ )
       q.outer().push_back(point(x2[j], y2[j]));
+    boost::geometry::correct(q);
 
     std::vector<polygon> output;
     boost::geometry::intersection(p,q, output);
+    if (output.size()==0) 
+    {
+      //std::cerr << "0" << std::endl;
+      ratios[i] = 0.0; 
+      continue ;
+    }
     BOOST_FOREACH(polygon const& a, output)
     {
       area_inter += boost::geometry::area(a) ;
-    }
-    if (output.size()==0) 
-    {
-      ratios[i] = 0.0; 
-      continue ;
     }
 
     area_union = boost::geometry::area(p) + boost::geometry::area(q) - area_inter ; 

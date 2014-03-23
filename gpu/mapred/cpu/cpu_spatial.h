@@ -1,4 +1,4 @@
-#include "../../spatial.h"
+#include "../spatial.h"
 
 extern "C" {
   float *clip(

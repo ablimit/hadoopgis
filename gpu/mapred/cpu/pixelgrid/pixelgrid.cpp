@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "cpu_spatial.h"
+#include "../cpu_spatial.h"
 
 // compute whether point (x, y) lays within a polygon whose contour
 // is specified by xs and ys in the range of [istart, iend); the last
@@ -82,7 +82,7 @@ float *clip(
     return NULL;
   }
 
-  for (size_t i = 0 ; i< nr_poly_pairs ; i++){
+  for (int i = 0 ; i< nr_poly_pairs ; i++){
     int area_union = 0 ; 
     int area_inter = 0 ; 
     int inp1, inp2, x, y;

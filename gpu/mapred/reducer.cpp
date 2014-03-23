@@ -145,10 +145,10 @@ spatial_data_t *load_polys_and_build_index(const int did)
   poly_array_t *polys = &data->polys;
   spatial_index_t *index = &data->index;
   // load polys || build index
-  gettimeofday(&t1, NULL);
+  //gettimeofday(&t1, NULL);
   int en = load_polys(polys,did);
-  gettimeofday(&t2, NULL);
-  cerr << "Time on parsing polygons: " << DIFF_TIME(t1, t2) << " s." <<endl;
+  //gettimeofday(&t2, NULL);
+  //cerr << "Time on parsing polygons: " << DIFF_TIME(t1, t2) << " s." <<endl;
   
   if (en)
   {
@@ -157,10 +157,10 @@ spatial_data_t *load_polys_and_build_index(const int did)
   }
   debug("load_poly set %d -- OK",did);
 
-  gettimeofday(&t1, NULL);
+  //gettimeofday(&t1, NULL);
   en = build_spatial_index(index, polys->mbrs, polys->nr_polys, INDEX_HILBERT_R_TREE);
-  gettimeofday(&t2, NULL);
-  cerr << "Time on building indexes: " << DIFF_TIME(t1, t2) << " s." <<endl;
+  //gettimeofday(&t2, NULL);
+  //cerr << "Time on building indexes: " << DIFF_TIME(t1, t2) << " s." <<endl;
   if(en)
   {
     debug("indexing error %d", en);
@@ -228,7 +228,7 @@ float *crossmatch(float **ratios, int *count)
   if(!poly_pairs)
     goto out;
   gettimeofday(&t2, NULL);
-  cerr<<"Time on filtering: " <<DIFF_TIME(t1, t2) << " s." <<endl;
+  cerr << "Time on filtering: " <<DIFF_TIME(t1, t2) << " s." <<endl;
 
   gettimeofday(&t1, NULL);
   // refinement and spatial operations
@@ -258,7 +258,7 @@ float *crossmatch(float **ratios, int *count)
     *count = poly_pairs->nr_poly_pairs;
   }
   gettimeofday(&t2, NULL);
-  cerr<< "Time on refinement and spatial op: " <<DIFF_TIME(t1, t2) <<" s." <<endl;
+  cerr << "Time on refinement and spatial op: " <<DIFF_TIME(t1, t2) <<" s." <<endl;
 
 out:
   // free stuff
@@ -327,9 +327,9 @@ int main(int argc, char *argv[])
       <<": |T1| = " << geom_meta_array[0]->size() <<", |T2| = " << geom_meta_array[1]->size() 
       <<" |V1| = " << nr_vertices[0] <<", |V2| = " << nr_vertices[1] <<endl;
   crossmatch(&ratios,&count);
-#ifdef DEBUG
+//#ifdef DEBUG
   report(ratios,count);
-#endif
+//#endif
   //clear memory 
   for (int i =0; i <2; i++){
     geom_meta_array[i]->clear();
@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
   }
 
   gettimeofday(&t2, NULL);
-  cerr<< "Time exec: " <<DIFF_TIME(t1, t2) <<" s." <<endl;
+  cerr << "Time exec: " <<DIFF_TIME(t1, t2) <<" s." <<endl;
   cout.flush();
   cerr.flush();
 
