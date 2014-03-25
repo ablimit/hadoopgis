@@ -66,6 +66,7 @@ static int in_poly(
 }
 
 float *clip(
+    int stream_no,
     const int nr_poly_pairs, // mbr of each poly pair
     const mbr_t *mbrs,
     const int *idx1, const int *idx2,			// index to poly_array 1 and 2

@@ -11,7 +11,7 @@ extern "C" {
 //#endif
 #endif
 
-float *gpu_clip(
+float *clip(
 	int stream_no,
 	int nr_poly_pairs, const mbr_t *mbrs,
 	const int *idx1, const int *idx2,

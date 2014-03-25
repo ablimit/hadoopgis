@@ -186,7 +186,7 @@ poly_array_t *gpu_parse(int dno, char *file_name)
 	cudaMemcpy(dev_MBRRaw, MBRRaw, getSizeBasedGPUConf1(20*nr_polys*sizeof(char)),  cudaMemcpyHostToDevice);
 
 	cudaEvent_t start, stop;
-	float elapsedTime;
+	// float elapsedTime;
 	cudaEventCreate( &start );
     cudaEventCreate( &stop );
 	cudaEventRecord( start, 0 );

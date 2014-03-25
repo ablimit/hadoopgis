@@ -107,7 +107,7 @@ static __global__ void kernel_clip(
 	}
 }
 
-float *gpu_clip(
+float *clip(
 	int stream_no,
 	const int nr_poly_pairs, const mbr_t *mbrs,	// mbr of each poly pair
 	const int *idx1, const int *idx2,			// index to poly_array 1 and 2

@@ -9,40 +9,48 @@ GPUEXECUTABLE = gpureducer
 CPUEXECUTABLE = cpureducer
 OBJECTS = rtree.o hilbert.o rstar.o spatial.o spatialindex.o crossmatch.o
 
+all: cpu
+
+prof: PROFILE_FLAG = -pg
+prof: all
+
+gpu: DEVICE = GPU
 gpu: $(GPUEXECUTABLE)
 
+cpu: DEVICE = CPU
 cpu: $(CPUEXECUTABLE)
 
-all: cpu gpu
 
-debug: CXX += -pg
-debug: CC += -pg
+debug: CXX += -g
+debug: CC += -g
 debug: all
 
+
 $(GPUEXECUTABLE): $(OBJECTS)
-	$(CXX) -DGPU $(LDFLAGS) -lgpuspatial $(OBJECTS) -o $@
+	$(CXX) -D$(DEVICE) $(PROFILE_FLAG) $(LDFLAGS) -lgpuspatial $(OBJECTS) -o $@
 # $(CXX) $(LDFLAGS) $(OBJECTS) -Wl,-rpath,./cuda -o $@
 
 $(CPUEXECUTABLE): $(OBJECTS)
-	$(CXX) -DCPU $(LDFLAGS) -lcpuspatial $(OBJECTS) -o $@
+	$(CXX) -D$(DEVICE) $(PROFILE_FLAG) $(LDFLAGS) -lcpuspatial $(OBJECTS) -o $@
 
-crossmatch.o: reducer.f.cpp crossmatch.h
-	$(CXX) $(CFLAGS) $< -o $@
+crossmatch.o: reducer.fgpu.parse.cpp crossmatch.h
+	$(CXX) -D$(DEVICE) $(PROFILE_FLAG) $(CFLAGS) $< -o $@
 
 spatial.o: spatial.c spatial.h
-	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) $(PROFILE_FLAG) $(CFLAGS) $< -o $@
 
 spatialindex.o: spatialindex.c spatialindex.h
-	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) $(PROFILE_FLAG) $(CFLAGS) $< -o $@
 
 rtree.o: rtree.c rtree.h
-	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) $(PROFILE_FLAG) $(CFLAGS) $< -o $@
 
 rstar.o: rstar.c rstar.h
-	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) $(PROFILE_FLAG) $(CFLAGS) $< -o $@
 
 hilbert.o: hilbert.c hilbert.h
-	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) $(PROFILE_FLAG) $(CFLAGS) $< -o $@
+
 
 clean:
 	rm -f *.o $(GPUEXECUTABLE) $(CPUEXECUTABLE)
