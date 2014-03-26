@@ -53,10 +53,11 @@ static int parse_polys(poly_array_t *polys, const int did)
     return 1;
   }
 
+  const int BUFFER_SIZE = 10240;
   vector<string> * poly_meta = geom_meta_array[did];
   int offset = 0;
   vector<string>::size_type i= 0;
-	char *buf = new char[10240];
+	char *buf = new char[BUFFER_SIZE];
   // read and parse each text line
   for (i =0 ; i< poly_meta->size(); i++ ){
     polys->offsets[i] = offset;
@@ -65,7 +66,7 @@ static int parse_polys(poly_array_t *polys, const int did)
     // parse record
     //cerr << (*poly_meta)[i] << endl;
 
-    std::size_t len = (*poly_meta)[i].copy(buf,10240);
+    std::size_t len = (*poly_meta)[i].copy(buf,BUFFER_SIZE);
     buf[len]= ',';
     buf[len+1]= '\0';
     // parse mbr
@@ -127,7 +128,6 @@ int load_polys(poly_array_t *polys, const int did)
     retval = -1;
     return retval;
   }
-  exit(0);
   return retval;
 }
 
