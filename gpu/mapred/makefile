@@ -16,6 +16,7 @@ prof: all
 
 gpu: DEVICE = GPU
 gpu: $(GPUEXECUTABLE)
+gpu: OBJECTS += gpu/parser.o gpu/util.o gpu/clip.o
 
 cpu: DEVICE = CPU
 cpu: $(CPUEXECUTABLE)
@@ -27,8 +28,10 @@ debug: all
 
 
 $(GPUEXECUTABLE): $(OBJECTS)
-	$(CXX) -D$(DEVICE) $(PROFILE_FLAG) $(LDFLAGS) -lgpuspatial $(OBJECTS) -o $@
-# $(CXX) $(LDFLAGS) $(OBJECTS) -Wl,-rpath,./cuda -o $@
+	nvcc -arch=sm_20 -O --ptxas-options=-v $(OBJECTS) -o $@
+
+#$(CXX) $(PROFILE_FLAG) $(LDFLAGS) $(OBJECTS) -o $@
+#$(CXX) $(LDFLAGS) $(OBJECTS) -Wl,-rpath,./cuda -o $@
 
 $(CPUEXECUTABLE): $(OBJECTS)
 	$(CXX) -D$(DEVICE) $(PROFILE_FLAG) $(LDFLAGS) -lcpuspatial $(OBJECTS) -o $@

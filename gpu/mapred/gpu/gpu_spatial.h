@@ -2,14 +2,13 @@
 #define GPU_SPATIAL_H
 
 #include "../spatial.h"
-
 #define CUDA_FREE(m)	if(m) cudaFree(m)
 
-#ifdef __cplusplus
+//#ifdef __cplusplus
 //#ifdef IN_GPU_SPATIAL_LIB
-extern "C" {
+//extern "C" {
 //#endif
-#endif
+//#endif
 
 float *clip(
 	int stream_no,
@@ -20,16 +19,10 @@ float *clip(
 	const int nv1, const int *x1, const int *y1,
 	const int nv2, const int *x2, const int *y2);
 
-poly_array_t *gpu_parse(int dno, char *file_name);
-
-int get_gpu_device_count(void);
-void init_device_streams(int);
-void fini_device_streams();
-
-#ifdef __cplusplus
+//#ifdef __cplusplus
 //#ifdef IN_GPU_SPATIAL_LIB
-}
+//}
 //#endif
-#endif
+//#endif
 
 #endif
