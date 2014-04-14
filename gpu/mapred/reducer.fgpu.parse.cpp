@@ -173,7 +173,8 @@ spatial_data_t *load_polys_and_build_index(const int did)
   gettimeofday(&t1, NULL);
   int en = load_polys(polys,did);
   gettimeofday(&t2, NULL);
-  cerr << "Time on parsing polygons: " << DIFF_TIME(t1, t2) << " s." <<endl;
+  // Time on parsing polygons 
+  cerr << TAB << DIFF_TIME(t1, t2);
 
   if (en)
   {
@@ -182,10 +183,11 @@ spatial_data_t *load_polys_and_build_index(const int did)
   }
   debug("load_poly set %d -- OK",did);
 
-  //gettimeofday(&t1, NULL);
+  gettimeofday(&t1, NULL);
   en = build_spatial_index(index, polys->mbrs, polys->nr_polys, INDEX_HILBERT_R_TREE);
-  //gettimeofday(&t2, NULL);
-  //cerr << "Time on building indexes: " << DIFF_TIME(t1, t2) << " s." <<endl;
+  gettimeofday(&t2, NULL);
+  // Time on building indexes 
+  cerr << TAB << DIFF_TIME(t1, t2) ;
   if(en)
   {
     debug("indexing error %d", en);
@@ -245,7 +247,8 @@ float *crossmatch(float **ratios, int *count)
   debug("T2 -- OK.");
 
   gettimeofday(&t2, NULL);
-  cerr << "Time on loading and building indexes: " << DIFF_TIME(t1, t2) << " s." <<endl;
+  // Time on loading and building indexes.
+  //cerr << TAB << DIFF_TIME(t1, t2) ; 
 
   gettimeofday(&t1, NULL);
   // filering
@@ -253,7 +256,8 @@ float *crossmatch(float **ratios, int *count)
   if(!poly_pairs)
     goto out;
   gettimeofday(&t2, NULL);
-  cerr<<"Time on filtering: " <<DIFF_TIME(t1, t2) << " s." <<endl;
+  // Time on filtering 
+  cerr << TAB << DIFF_TIME(t1, t2); 
 
   gettimeofday(&t1, NULL);
   // refinement and spatial operations
@@ -283,7 +287,8 @@ float *crossmatch(float **ratios, int *count)
     *count = poly_pairs->nr_poly_pairs;
   }
   gettimeofday(&t2, NULL);
-  cerr<< "Time on refinement and spatial op: " <<DIFF_TIME(t1, t2) <<" s." <<endl;
+  // Time on refinement and spatial op
+  cerr<< TAB <<DIFF_TIME(t1, t2) ;
 
 out:
   // free stuff
@@ -329,11 +334,7 @@ int main(int argc, char *argv[])
   gettimeofday(&t1, NULL);
   size_t pos, pos2;
   /* vector<float> rat; //collection of all ratios */
-#ifdef GPU 
-  std::ifstream infile("/home/aaji/proj/hadoopgis/gpu/mapred/data/t1372.gpu.dat");
-#else 
-  std::ifstream infile("/home/aaji/proj/hadoopgis/gpu/mapred/data/t1372.dat");
-#endif
+  std::ifstream infile(argv[1]);
   while(getline(infile, input_line)) {
     pos=input_line.find_first_of(TAB,0);
     if (pos == string::npos){
@@ -351,8 +352,11 @@ int main(int argc, char *argv[])
          <<": |T1| = " << geom_meta_array[0]->size() <<", |T2| = " << geom_meta_array[1]->size() 
          <<" |V1| = " << nr_vertices[0] <<", |V2| = " << nr_vertices[1] <<endl;
          */
+      cerr << tid;  
       crossmatch(&ratios,&count);
-      if (argc>1)
+      cerr << endl;
+
+      if (argc>2)
         report(ratios,count);
       free(ratios);
       geom_meta_array[0]->clear();
@@ -376,7 +380,9 @@ int main(int argc, char *argv[])
      <<": |T1| = " << geom_meta_array[0]->size() <<", |T2| = " << geom_meta_array[1]->size() 
      <<" |V1| = " << nr_vertices[0] <<", |V2| = " << nr_vertices[1] <<endl;
      */ 
+  cerr << tid ;  
   crossmatch(&ratios,&count);
+  cerr << endl;
 
   if (argc>1)
     report(ratios,count);
@@ -389,7 +395,7 @@ int main(int argc, char *argv[])
   }
 
   gettimeofday(&t2, NULL);
-  cerr<< "Time exec: " <<DIFF_TIME(t1, t2) <<" s." <<endl;
+  cout << "Overall: " << DIFF_TIME(t1, t2) <<endl;
   cout.flush();
   cerr.flush();
 
