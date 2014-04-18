@@ -227,7 +227,7 @@ float *crossmatch(float **ratios, int *count)
 
   if (geom_meta_array[0]->size()==0 || geom_meta_array[1]->size()==0)
   {
-    cerr << "tile is empty: |T1| = " << geom_meta_array[0]->size() << ", |T2| = " << geom_meta_array[1]->size() <<endl;
+    // cerr << "tile is empty: |T1| = " << geom_meta_array[0]->size() << ", |T2| = " << geom_meta_array[1]->size() <<endl;
     goto out;
   }
 
@@ -334,6 +334,11 @@ int main(int argc, char *argv[])
   gettimeofday(&t1, NULL);
   size_t pos, pos2;
   /* vector<float> rat; //collection of all ratios */
+  if (argc <2 )
+  {
+    cerr << "Error: missing tile info file."<<endl;
+    exit(1);
+  }
   std::ifstream infile(argv[1]);
   while(getline(infile, input_line)) {
     pos=input_line.find_first_of(TAB,0);
@@ -347,18 +352,22 @@ int main(int argc, char *argv[])
     // finished reading in a tile data, so perform cross matching
     if (0 != tid.compare(prev_tid) && prev_tid.size()>0) 
     {
-      /*
-         cerr << prev_tid 
-         <<": |T1| = " << geom_meta_array[0]->size() <<", |T2| = " << geom_meta_array[1]->size() 
-         <<" |V1| = " << nr_vertices[0] <<", |V2| = " << nr_vertices[1] <<endl;
+         /* cerr << prev_tid 
+         *<<": |T1| = " << geom_meta_array[0]->size() <<", |T2| = " << geom_meta_array[1]->size() 
+         *<<" |V1| = " << nr_vertices[0] <<", |V2| = " << nr_vertices[1] <<endl;
          */
-      cerr << tid;  
+         cerr << prev_tid 
+         <<TAB << geom_meta_array[0]->size() << TAB << geom_meta_array[1]->size() 
+         <<TAB << nr_vertices[0] << TAB << nr_vertices[1];
+         
+      cerr << TAB ;
       crossmatch(&ratios,&count);
       cerr << endl;
 
-      if (argc>2)
+      if (argc>2) { 
         report(ratios,count);
-      free(ratios);
+        free(ratios);
+      }
       geom_meta_array[0]->clear();
       geom_meta_array[1]->clear();
       nr_vertices[0]= 0;
@@ -374,17 +383,12 @@ int main(int argc, char *argv[])
     geom_meta_array[i]->push_back(geom_info);
     prev_tid = tid; 
   }
-  // last tile 
-  /*
-     cerr << prev_tid 
-     <<": |T1| = " << geom_meta_array[0]->size() <<", |T2| = " << geom_meta_array[1]->size() 
-     <<" |V1| = " << nr_vertices[0] <<", |V2| = " << nr_vertices[1] <<endl;
-     */ 
+  // last tile
   cerr << tid ;  
   crossmatch(&ratios,&count);
   cerr << endl;
 
-  if (argc>1)
+  if (argc>2)
     report(ratios,count);
   free(ratios);
 
@@ -406,3 +410,4 @@ int main(int argc, char *argv[])
 
   return 0;
 }
+
