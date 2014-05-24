@@ -9,6 +9,7 @@
 #define UTIL_H_
 
 #include <sys/time.h>
+#include <cstddef>
 
 class Util {
 private:

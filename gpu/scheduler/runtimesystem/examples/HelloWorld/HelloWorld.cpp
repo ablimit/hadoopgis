@@ -17,7 +17,7 @@
 int main (int argc, char **argv){
 	SysEnv sysEnv;
 
-	sysEnv.startupSystem(argc, argv, "libcomponents.dylib");
+	sysEnv.startupSystem(argc, argv, "libcomponents.so");
 	// Create Dependency Graph
 
 	CompA *cpCache;

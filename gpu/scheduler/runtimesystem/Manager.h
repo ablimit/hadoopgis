@@ -12,6 +12,7 @@
 #include <vector>
 #include <assert.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "MessageTag.h"
 #include "PipelineComponentBase.h"

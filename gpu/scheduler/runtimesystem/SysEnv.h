@@ -8,7 +8,10 @@
 #ifndef SYSENV_H_
 #define SYSENV_H_
 
+#include <string.h>
 #include <string>
+#include <stdint.h>
+
 #include "Types.hpp"
 #include "Manager.h"
 #include "Argument.h"
