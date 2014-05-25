@@ -32,5 +32,5 @@ include_directories(./ResourceManager)
 add_library("${libname}" SHARED ${libsyssrcs})
 
 #set_target_properties("${libname}" PROPERTIES LINK_FLAGS "${MPI_LINK_FLAGS}") 
-target_link_libraries("${libname}" ${MPI_LIBRARIES} execengine)
+target_link_libraries("${libname}" ${MPI_LIBRARIES} execengine dl)
 
