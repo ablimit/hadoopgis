@@ -13,10 +13,12 @@ int main(int argc, char **argv){
 
 	int nextTaskDependency;
   unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
-  std::cout << "# of CPU " << concurentThreadsSupported << std::endl;
+  std::cerr  << "Number of threads: [" << concurentThreadsSupported << "]" <<std::endl;
 	// Creates first task, which does not have dependencies
 	TaskId *ts = new TaskId();
 	ts->setSpeedup(ExecEngineConstants::GPU, 1.0);
+	// Dispatches current tasks for execution
+	execEngine->insertTask(ts);
 
 	// Gets Id of the current task to set as dependency of the following
 	nextTaskDependency = ts->getId();
@@ -24,35 +26,10 @@ int main(int argc, char **argv){
 	// Create a second task without dependencies
 	TaskId *ts1 = new TaskId();
 	int seconTaskId = ts1->getId();
+  ts1->addDependency(nextTaskDependency);
+	execEngine->insertTask(ts1);
 
-	// Dispatches current tasks for execution
-	execEngine->insertTask(ts);
 
-
-	// Create the following tasks as a pipeline
-	for(int i = 0; i < NUM_TASKS-1; i++){
-		// Create empty task
-		TaskId *ts = new TaskId();
-
-		// Set GPU speedup
-		ts->setSpeedup(ExecEngineConstants::GPU, 2.0);
-
-		// Associates dependency for task
-		ts->addDependency(nextTaskDependency);
-		if(i==0){
-			ts->addDependency(seconTaskId);
-			execEngine->insertTask(ts);
-			execEngine->insertTask(ts1);
-			nextTaskDependency = ts->getId();
-		}else{
-
-			// Updates the dependency to be used in the next tasks in the pipeline
-			nextTaskDependency = ts->getId();
-
-			// Dispatches current task for execution
-			execEngine->insertTask(ts);
-		}
-	}
 	// Computing threads startup consuming tasks
 	execEngine->startupExecution();
 

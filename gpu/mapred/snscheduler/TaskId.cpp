@@ -4,20 +4,20 @@ TaskId::TaskId() {
 }
 
 TaskId::~TaskId() {
-  std::cout << "~TaskId" << std::endl;
+  std::cerr << "~TaskId" << std::endl;
 }
 
 bool TaskId::run(int procType, int tid)
 {
   if (procType == ExecEngineConstants::CPU) {
     sleep(2);
-    std::cout << "executing on the CPU engine. " << std::endl;
+    std::cerr << "executing on the CPU engine. " << std::endl;
 
   }
   else if( procType == ExecEngineConstants::GPU ) {
 
     sleep(1);
-    std::cout << "executing on the GPU engine. " << std::endl;
+    std::cerr << "executing on the GPU engine. " << std::endl;
 
     //sleep(5/this->getSpeedup(ExecEngineConstants::GPU));
   }
