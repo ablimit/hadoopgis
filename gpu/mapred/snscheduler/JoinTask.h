@@ -7,9 +7,12 @@
 
 class JoinTask: public Task {
 private:
+ vector<string>** geom_arr = NULL;
+ vector<int> nr_vertices;
+ int N ;
 
 public:
-	JoinTask();
+	JoinTask(int n);
 
 	virtual ~JoinTask();
 

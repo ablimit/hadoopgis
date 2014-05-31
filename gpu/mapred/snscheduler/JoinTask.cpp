@@ -1,6 +1,7 @@
 #include "JoinTask.h"
 
-JoinTask::JoinTask() {
+JoinTask::JoinTask(int n): N(n) {
+
 }
 
 JoinTask::~JoinTask() {
