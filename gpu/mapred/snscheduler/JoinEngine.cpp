@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <thread>
 #include <sys/time.h>
-#include "TaskId.h"
+#include "JoinTask.h"
 #include "ExecutionEngine.h"
 
 #define NUM_TASKS	6
@@ -15,7 +15,7 @@ int main(int argc, char **argv){
   unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
   std::cerr  << "Number of threads: [" << concurentThreadsSupported << "]" <<std::endl;
 	// Creates first task, which does not have dependencies
-	TaskId *ts = new TaskId();
+	JoinTask *ts = new JoinTask();
 	ts->setSpeedup(ExecEngineConstants::GPU, 1.0);
 	// Dispatches current tasks for execution
 	execEngine->insertTask(ts);
@@ -24,8 +24,8 @@ int main(int argc, char **argv){
 	nextTaskDependency = ts->getId();
 
 	// Create a second task without dependencies
-	TaskId *ts1 = new TaskId();
-	int seconTaskId = ts1->getId();
+	JoinTask *ts1 = new JoinTask();
+	int seconJoinTask = ts1->getId();
   ts1->addDependency(nextTaskDependency);
 	execEngine->insertTask(ts1);
 

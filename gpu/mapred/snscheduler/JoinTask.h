@@ -5,13 +5,13 @@
 
 #include "Task.h"
 
-class CrossMatch: public Task {
+class JoinTask: public Task {
 private:
 
 public:
-	CrossMatch();
+	JoinTask();
 
-	virtual ~CrossMatch();
+	virtual ~JoinTask();
 
 	bool run(int procType=ExecEngineConstants::CPU, int tid=0);
 };

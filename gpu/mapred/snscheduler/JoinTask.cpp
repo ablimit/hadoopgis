@@ -1,13 +1,13 @@
-#include "TaskId.h"
+#include "JoinTask.h"
 
-TaskId::TaskId() {
+JoinTask::JoinTask() {
 }
 
-TaskId::~TaskId() {
-  std::cerr << "~TaskId" << std::endl;
+JoinTask::~JoinTask() {
+  std::cerr << "~JoinTask" << std::endl;
 }
 
-bool TaskId::run(int procType, int tid)
+bool JoinTask::run(int procType, int tid)
 {
   if (procType == ExecEngineConstants::CPU) {
     sleep(2);

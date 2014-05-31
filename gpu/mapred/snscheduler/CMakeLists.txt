@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(CrossMatch)
+project(crossmatch)
 
 list( APPEND CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 set(RM_SRC_DIR /home/aaji/proj/hadoopgis/gpu/scheduler/runtimesystem/ResourceManager )
@@ -10,7 +10,7 @@ include_directories(${RM_SRC_DIR})
 link_directories(${RM_SRC_DIR})
 
 # Add an executable to be built from the files listed
-add_executable(crossmatch CrossMatchTask.cpp CrossMatchEngine.cpp)
+add_executable(crossmatch JoinTask.cpp JoinEngine.cpp)
 
 # Link the executable to the execution engine library
 target_link_libraries(crossmatch execengine)
