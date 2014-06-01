@@ -7,13 +7,14 @@
 
 class JoinTask: public Task {
 private:
- vector<string>** geom_arr = NULL;
- vector<int> nr_vertices;
  int N ;
 
 public:
-	JoinTask(int n);
-
+ vector<string>** geom_arr = NULL;
+ vector<int> nr_vertices;
+	
+ JoinTask(int n);
+	
 	virtual ~JoinTask();
 
 	bool run(int procType=ExecEngineConstants::CPU, int tid=0);

@@ -6,6 +6,7 @@
 #include "ExecutionEngine.h"
 
 #define NUM_TASKS	6
+#define JCARDINALITY 2 
 
 int main(int argc, char **argv){
 	
@@ -15,7 +16,7 @@ int main(int argc, char **argv){
   unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
   std::cerr  << "Number of threads: [" << concurentThreadsSupported << "]" <<std::endl;
 	// Creates first task, which does not have dependencies
-	JoinTask *ts = new JoinTask();
+	JoinTask *ts = new JoinTask(JCARDINALITY);
 	ts->setSpeedup(ExecEngineConstants::GPU, 1.0);
 	// Dispatches current tasks for execution
 	execEngine->insertTask(ts);
@@ -24,7 +25,7 @@ int main(int argc, char **argv){
 	nextTaskDependency = ts->getId();
 
 	// Create a second task without dependencies
-	JoinTask *ts1 = new JoinTask();
+	JoinTask *ts1 = new JoinTask(JCARDINALITY);
 	int seconJoinTask = ts1->getId();
   ts1->addDependency(nextTaskDependency);
 	execEngine->insertTask(ts1);
