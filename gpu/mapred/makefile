@@ -1,8 +1,12 @@
 CC= gcc
 CXX= g++
-CFLAGS= -c -O2 -Wall -std=c++11 -fpermissive
+CFLAGS= -c -O2 -Wall -std=c++0x -fpermissive
 # CXXFLAGS= -c -O2 -Wall -std=c++11
-LDFLAGS= -L ~/softs/lib
+ifneq (,$(findstring emory,$(shell uname -a)))
+	LDFLAGS= -L ~/softs/lib
+else 
+	LDFLAGS= -L /usr/local/lib
+endif
 #SOURCES= reducer.c spatialindex.c spatial.c
 
 GPUEXECUTABLE = gpureducer

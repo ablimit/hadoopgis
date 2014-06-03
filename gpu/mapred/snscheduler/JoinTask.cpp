@@ -53,13 +53,13 @@ bool JoinTask::run(int procType, int tid)
 }
 
 
-float * crossmatch_gpu() {
+float * JoinTask::crossmatch_gpu() {
   return NULL;
 }
 
-float * crossmatch_cpu()
+float * JoinTask::crossmatch_cpu()
 {
-  struct timeval t1, t2;
+  // struct timeval t1, t2;
 
   if (geom_arr[0]->size()==0 || geom_arr[1]->size()==0)
   {
@@ -68,9 +68,9 @@ float * crossmatch_cpu()
   }
 
   parse_cpu();
-  index();
-  filter();
-  float *result_ratios = refine_cpu();
+  //index();
+  //filter();
+  float *result_ratios = NULL; //refine_cpu();
 
   /* out:
   // free stuff
@@ -84,7 +84,7 @@ float * crossmatch_cpu()
   return result_ratios;
 }
 
-int alloc_poly_array(poly_array_t *polys, const int nr_polys, const int nr_vertices)
+int JoinTask::alloc_poly_array(poly_array_t *polys, const int nr_polys, const int nr_vertices)
 {
   int size_mbrs = nr_polys * sizeof(mbr_t);
   int size_offsets = (nr_polys + 1) * sizeof(int);
@@ -108,7 +108,7 @@ int alloc_poly_array(poly_array_t *polys, const int nr_polys, const int nr_verti
 
 // Each text line has the following format:
 // poly_id, mbr.l mbr.r mbr.b mbr.t, x0 y0, x1 y1, ..., xn yn, x0 y0,
-int parse_polys(poly_array_t *polys, const int did)
+int JoinTask::parse_polys(poly_array_t *polys, const int did)
 {
   // cerr << "inCPU poly parsing ..." <<endl; 
   const int BUFFER_SIZE = 10240;
@@ -160,7 +160,7 @@ int parse_polys(poly_array_t *polys, const int did)
   return 0;
 }
 
-int parse_cpu()
+int JoinTask::parse_cpu()
 {
   /* to optimize memory layout on cpu/gpu, we allocate a large continuous space
      that accomodates mbrs, offsets, x and y arrays together; in this manner,
@@ -177,5 +177,4 @@ int parse_cpu()
   }
   return 0;
 }
-
 

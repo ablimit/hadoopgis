@@ -16,7 +16,7 @@ extern mbr_t get_mbr(r_tree_node_t *node);
 int build_spatial_index_hilbert(
 	r_tree_t **rtree,
 	mbr_t *mbrs,
-	int nr_polys);
+	const int nr_polys);
 
 void free_spatial_index_hilbert(r_tree_t *rtree);
 poly_pair_array_t *spatial_filter_hilbert(

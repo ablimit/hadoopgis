@@ -23,7 +23,7 @@ int main(int argc, char **argv){
   const string SPACE = " ";
   ExecutionEngine *execEngine = new ExecutionEngine(2, 1, ExecEngineConstants::PRIORITY_QUEUE);
 
-  int nextTaskDependency;
+  // int nextTaskDependency;
   unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
   std::cerr  << "Number of threads: [" << concurentThreadsSupported << "]" <<std::endl;
   // Creates first task, which does not have dependencies

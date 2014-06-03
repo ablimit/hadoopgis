@@ -99,7 +99,7 @@ static unsigned int hbt_encode(int x, int y, int r) {
 int build_spatial_index_hilbert(
 	r_tree_t **index,
 	mbr_t *mbrs,
-	int nr_polys)
+	const int nr_polys)
 {
 	const int height=log(nr_polys)/log(MAX_NR_ENTRIES_PER_NODE)+1;
 	int nr_nodes, idx;

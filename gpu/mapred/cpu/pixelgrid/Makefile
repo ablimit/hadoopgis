@@ -13,6 +13,8 @@ debug: all
 
 $(TARGET): pixelgrid.cpp
 	${CC} ${CFLAGS} ${LDFLAGS} $< -o $@
+
+install: 
 	cp $(TARGET) ~/softs/lib/
 
 clean:

@@ -2,7 +2,9 @@
 #define TASKID_H_
 
 #include "Task.h"
+extern "C" {
 #include "spatialindex.h"
+}
 
 // spatial data: polygon array and its spatial index
 typedef struct spatial_data_struct
@@ -19,7 +21,7 @@ class JoinTask: public Task {
   spatial_data_t **d;
   poly_array_t **polys; // sudo pointers to the spatial_data_t 
   spatial_index_t **indexes; 
-  poly_pair_array_t *poly_pairs ;
+  poly_pair_array_t *poly_pairs;
   
   // main entry 
   float * crossmatch_cpu();
@@ -29,10 +31,10 @@ class JoinTask: public Task {
   int parse_cpu();
   int parse_polys(poly_array_t *polys, const int did);
   int alloc_poly_array(poly_array_t *polys, const int nr_polys, const int nr_vertices);
-
+  /*
   spatial_data_t *load_polys_and_build_index(const int did);
   float *refine_and_do_spatial_op(poly_pair_array_t *poly_pairs, poly_array_t *polys1,poly_array_t *polys2);
-
+*/
  public:
   vector<string>** geom_arr;
   vector<int> nr_vertices;

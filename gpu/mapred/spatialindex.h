@@ -23,7 +23,7 @@ void init_spatial_index(spatial_index_t *index);
 void fini_spatial_index(spatial_index_t *index);
 int build_spatial_index(
 	spatial_index_t *index,
-	const mbr_t *mbrs,
+	mbr_t *mbrs,
 	const int nr_polys,
 	index_scheme_t scheme);
 poly_pair_array_t *spatial_filter(
