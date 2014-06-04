@@ -60,6 +60,7 @@ float * JoinTask::crossmatch_gpu() {
 float * JoinTask::crossmatch_cpu()
 {
   // struct timeval t1, t2;
+  int ev; 
 
   if (geom_arr[0]->size()==0 || geom_arr[1]->size()==0)
   {
@@ -67,9 +68,9 @@ float * JoinTask::crossmatch_cpu()
     return NULL;
   }
 
-  parse_cpu();
-  //index();
-  //filter();
+  ev = parse_cpu(); check_debug(ev==0, "Parsing failed.");
+  ev = index(); check_debug(ev==0,"Indexing failed.")
+  //ev = filter();
   float *result_ratios = NULL; //refine_cpu();
 
   /* out:
@@ -174,6 +175,17 @@ int JoinTask::parse_cpu()
     int retval_parse = parse_polys(polys[i], i);
     if(retval_alloc || retval_parse) 
       return 1;
+  }
+  return 0;
+}
+
+// spatial indexing methods
+int JoinTask::index()
+{
+  for (int i =0 ; i < N ; i++) 
+  {
+    int ev = build_spatial_index(indexes[i], polys[i]->mbrs, polys[i]->nr_polys, INDEX_HILBERT_R_TREE);
+    if(ev) return 1;
   }
   return 0;
 }

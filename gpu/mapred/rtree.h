@@ -67,4 +67,52 @@ poly_pair_array_t *spatial_filter_r(
 	r_tree_t *rtree1,
 	r_tree_t *rtree2);
 
+/*******************************************************************************
+ * R-Tree routines
+ */
+// local procedure declarations
+void pick_seeds(index_entry_t **entries, int *left, int *right);
+int pick_next(
+    index_entry_t **entries,
+    int begin, int end,
+    mbr_t *mbr_left, mbr_t *mbr_right);
+void adjust_tree_r(
+    r_tree_t *rtree,
+    r_tree_node_t *node,
+    mbr_t *mbr_inc,
+    r_tree_node_t *new_node);
+r_tree_node_t *split_node_r(
+    r_tree_t *rtree,
+    r_tree_node_t *node,
+    mbr_t *mbr,
+    void *inserted);
+r_tree_node_t *choose_leaf_r(r_tree_t *rtree, mbr_t *mbr);
+inline void set_leaf_entry(index_entry_t *entry, mbr_t *mbr, int idx);
+inline void set_nonleaf_entry(
+    index_entry_t *entry,
+    mbr_t *mbr,
+    r_tree_node_t *child);
+void insert_r(r_tree_t *rtree, mbr_t *mbr, int idx);
+int spatial_filter_r_1(
+    r_tree_node_t *node1,
+    r_tree_node_t *node2,
+    poly_pair_block_t **first_block,
+    int *nr_poly_pairs);
+int spatial_filter_r_2(
+    r_tree_node_t *node1,
+    index_entry_t *leaf_entry,
+    poly_pair_block_t **first_block,
+    int *nr_poly_pairs);
+int spatial_filter_r_3(
+    index_entry_t *leaf_entry,
+    r_tree_node_t *node2,
+    poly_pair_block_t **first_block,
+    int *nr_poly_pairs);
+inline int filter_callback_r(
+    mbr_t *mbr1, int idx1,
+    mbr_t *mbr2, int idx2,
+    poly_pair_block_t **first_block,
+    int *nr_poly_pairs);
+mbr_t get_mbr(r_tree_node_t *node);
+
 #endif

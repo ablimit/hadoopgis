@@ -6,54 +6,6 @@
 // 1. the layout of tree nodes in the nodes array
 // 2. 
 
-/*******************************************************************************
- * R-Tree routines
- */
-// local procedure declarations
-static void pick_seeds(index_entry_t **entries, int *left, int *right);
-static int pick_next(
-    index_entry_t **entries,
-    int begin, int end,
-    mbr_t *mbr_left, mbr_t *mbr_right);
-static void adjust_tree_r(
-    r_tree_t *rtree,
-    r_tree_node_t *node,
-    mbr_t *mbr_inc,
-    r_tree_node_t *new_node);
-static r_tree_node_t *split_node_r(
-    r_tree_t *rtree,
-    r_tree_node_t *node,
-    mbr_t *mbr,
-    void *inserted);
-static r_tree_node_t *choose_leaf_r(r_tree_t *rtree, mbr_t *mbr);
-static inline void set_leaf_entry(index_entry_t *entry, mbr_t *mbr, int idx);
-static inline void set_nonleaf_entry(
-    index_entry_t *entry,
-    mbr_t *mbr,
-    r_tree_node_t *child);
-static void insert_r(r_tree_t *rtree, mbr_t *mbr, int idx);
-static int spatial_filter_r_1(
-    r_tree_node_t *node1,
-    r_tree_node_t *node2,
-    poly_pair_block_t **first_block,
-    int *nr_poly_pairs);
-static int spatial_filter_r_2(
-    r_tree_node_t *node1,
-    index_entry_t *leaf_entry,
-    poly_pair_block_t **first_block,
-    int *nr_poly_pairs);
-static int spatial_filter_r_3(
-    index_entry_t *leaf_entry,
-    r_tree_node_t *node2,
-    poly_pair_block_t **first_block,
-    int *nr_poly_pairs);
-static inline int filter_callback_r(
-    mbr_t *mbr1, int idx1,
-    mbr_t *mbr2, int idx2,
-    poly_pair_block_t **first_block,
-    int *nr_poly_pairs);
-mbr_t get_mbr(r_tree_node_t *node);
-
 
 // get the mbr covering all entries in a tree node
 mbr_t get_mbr(r_tree_node_t *node)
@@ -70,7 +22,7 @@ mbr_t get_mbr(r_tree_node_t *node)
 
 // This function is unused
 // NOTE: what if chosen left and right are the same?
-static void pick_seeds_linear(index_entry_t **entries, int *left, int *right)
+void pick_seeds_linear(index_entry_t **entries, int *left, int *right)
 {
   int hls_x, lhs_x, hls_y, lhs_y;
   int i_hls_x, i_lhs_x, i_hls_y, i_lhs_y;
@@ -125,7 +77,7 @@ static void pick_seeds_linear(index_entry_t **entries, int *left, int *right)
   }
 }
 
-static void pick_seeds(index_entry_t **entries, int *left, int *right)
+void pick_seeds(index_entry_t **entries, int *left, int *right)
 {
   int ei, ej, d, dij;
   int ei_area, ej_area;
@@ -153,7 +105,7 @@ static void pick_seeds(index_entry_t **entries, int *left, int *right)
   *right = ej;
 }
 
-static int pick_next(
+int pick_next(
     index_entry_t **entries,
     int begin, int end,
     mbr_t *mbr_left, mbr_t *mbr_right)
@@ -175,7 +127,7 @@ static int pick_next(
   return i_d_max;
 }
 
-static void adjust_tree_r(
+void adjust_tree_r(
     r_tree_t *rtree,			// the rtree
     r_tree_node_t *node,		// the node where update happened
     mbr_t *mbr_inc,				// the mbr of the inserted if new_node is null
@@ -253,7 +205,7 @@ static void adjust_tree_r(
   }
 }
 
-static r_tree_node_t *split_node_r(
+r_tree_node_t *split_node_r(
     r_tree_t *rtree,		// the rtree
     r_tree_node_t *node,	// the node being splitted
     mbr_t *mbr,				// the mbr of being inserted
@@ -411,7 +363,7 @@ static r_tree_node_t *split_node_r(
   return new_node;
 }
 
-static r_tree_node_t *choose_leaf_r(r_tree_t *rtree, mbr_t *mbr)
+r_tree_node_t *choose_leaf_r(r_tree_t *rtree, mbr_t *mbr)
 {
   int mbr_enlarge, mbr_enlarge_min, mbr_area_min;
   int i, ient;
@@ -442,13 +394,13 @@ static r_tree_node_t *choose_leaf_r(r_tree_t *rtree, mbr_t *mbr)
   return node;
 }
 
-static inline void set_leaf_entry(index_entry_t *entry, mbr_t *mbr, int idx)
+inline void set_leaf_entry(index_entry_t *entry, mbr_t *mbr, int idx)
 {
   entry->mbr = *mbr;
   entry->ref.idx = idx;
 }
 
-static inline void set_nonleaf_entry(
+inline void set_nonleaf_entry(
     index_entry_t *entry,
     mbr_t *mbr,
     r_tree_node_t *child)
@@ -457,7 +409,7 @@ static inline void set_nonleaf_entry(
   entry->ref.child = child;
 }
 
-static void insert_r(r_tree_t *rtree, mbr_t *mbr, int idx)
+void insert_r(r_tree_t *rtree, mbr_t *mbr, int idx)
 {
   r_tree_node_t *leaf, *new_leaf = NULL;
 
@@ -603,7 +555,7 @@ success:
   return poly_pairs;
 }
 
-static int spatial_filter_r_1(
+int spatial_filter_r_1(
     r_tree_node_t *node1,
     r_tree_node_t *node2,
     poly_pair_block_t **first_block,
@@ -699,7 +651,7 @@ static int spatial_filter_r_1(
   return 0;
 }
 
-static int spatial_filter_r_2(
+int spatial_filter_r_2(
     r_tree_node_t *node1,
     index_entry_t *leaf_entry,
     poly_pair_block_t **first_block,
@@ -742,7 +694,7 @@ static int spatial_filter_r_2(
   return 0;
 }
 
-static int spatial_filter_r_3(
+int spatial_filter_r_3(
     index_entry_t *leaf_entry,
     r_tree_node_t *node2,
     poly_pair_block_t **first_block,
@@ -785,7 +737,7 @@ static int spatial_filter_r_3(
 }
 
 // return value: 0 - filtering continues; 1 - filtering stops
-static inline int filter_callback_r(
+inline int filter_callback_r(
     mbr_t *mbr1, int idx1,
     mbr_t *mbr2, int idx2,
     poly_pair_block_t **first_block,

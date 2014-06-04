@@ -31,10 +31,15 @@ class JoinTask: public Task {
   int parse_cpu();
   int parse_polys(poly_array_t *polys, const int did);
   int alloc_poly_array(poly_array_t *polys, const int nr_polys, const int nr_vertices);
-  /*
-  spatial_data_t *load_polys_and_build_index(const int did);
-  float *refine_and_do_spatial_op(poly_pair_array_t *poly_pairs, poly_array_t *polys1,poly_array_t *polys2);
-*/
+  
+  // spatial indexing methods
+  int index();
+
+  //filter 
+  
+  //refine
+
+
  public:
   vector<string>** geom_arr;
   vector<int> nr_vertices;
