@@ -36,8 +36,10 @@ class JoinTask: public Task {
   int index();
 
   //filter 
+  int filter();
   
   //refine
+  //
 
 
  public:

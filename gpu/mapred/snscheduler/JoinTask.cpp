@@ -69,8 +69,8 @@ float * JoinTask::crossmatch_cpu()
   }
 
   ev = parse_cpu(); check_debug(ev==0, "Parsing failed.");
-  ev = index(); check_debug(ev==0,"Indexing failed.")
-  //ev = filter();
+  ev = index(); check_debug(ev==0, "Spatial indexing failed.")
+  ev = filter();
   float *result_ratios = NULL; //refine_cpu();
 
   /* out:
@@ -187,6 +187,12 @@ int JoinTask::index()
     int ev = build_spatial_index(indexes[i], polys[i]->mbrs, polys[i]->nr_polys, INDEX_HILBERT_R_TREE);
     if(ev) return 1;
   }
+  return 0;
+}
+
+int JoinTask::filter()
+{
+  poly_pairs = spatial_filter(&(d[0]->index), &(d[1]->index));
   return 0;
 }
 
