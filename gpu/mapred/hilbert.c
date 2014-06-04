@@ -102,7 +102,7 @@ int build_spatial_index_hilbert(
 	const int nr_polys)
 {
 	const int height=log(nr_polys)/log(MAX_NR_ENTRIES_PER_NODE)+1;
-	int nr_nodes, idx;
+	int nr_nodes; 
 	r_tree_t *rtree;
 	int x, y, i, j, count;
 
