@@ -3,8 +3,16 @@ project(crossmatch)
 
 # list( APPEND CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 # add_definitions(-std=c++0x)
-set(RM_SRC_DIR /home/aaji/proj/hadoopgis/gpu/scheduler/runtimesystem/ResourceManager )
-set(SP_SRC_DIR /home/aaji/proj/hadoopgis/gpu/mapred )
+if (${APPLE})
+  MESSAGE("Apple system makefile")
+  set(ROOT_SRC_DIR /Users/ablimit/Documents)
+else()
+  MESSAGE("Unix system makefile")
+  set(ROOT_SRC_DIR /home/aaji)
+endif()
+
+set(RM_SRC_DIR ${ROOT_SRC_DIR}/proj/hadoopgis/gpu/scheduler/runtimesystem/ResourceManager )
+set(SP_SRC_DIR ${ROOT_SRC_DIR}/proj/hadoopgis/gpu/mapred )
 
 ## Compiler flags
 if(CMAKE_COMPILER_IS_GNUCXX)
