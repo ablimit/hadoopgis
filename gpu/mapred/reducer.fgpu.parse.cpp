@@ -13,7 +13,9 @@
 #include "gpu/parser.cuh"
 #include "gpu/util.cuh"
 #else
-#include "cpu/cpu_spatial.h"
+extern "C++" { 
+#include "cpu/cpu_refine.h"
+}
 #endif
 #include "dbg.h"
 
@@ -208,7 +210,7 @@ float *refine_and_do_spatial_op(
     poly_array_t *polys2)
 {
   // we do this operation on gpu/cpu
-  return clip(gpu_no,
+  return HadoopGIS::CPU::refine(
               poly_pairs->nr_poly_pairs,
               poly_pairs->mbrs,
               poly_pairs->idx1, poly_pairs->idx2,

@@ -71,8 +71,15 @@ float * JoinTask::crossmatch_cpu()
   ev = parse_cpu(); check_debug(ev==0, "Parsing failed.");
   ev = index(); check_debug(ev==0, "Spatial indexing failed.")
   ev = filter();
-  float *result_ratios = NULL; //refine_cpu();
-
+  float *ratios = HadoopGIS::CPU::refine(poly_pairs->nr_poly_pairs,
+              poly_pairs->mbrs,
+              poly_pairs->idx1, poly_pairs->idx2,
+              polys[0]->nr_polys + 1, polys[0]->offsets,
+              polys[1]->nr_polys + 1, polys[1]->offsets,
+              polys[0]->nr_vertices, polys[0]->x, polys[0]->y,
+              polys[1]->nr_vertices, polys[1]->x, polys[1]->y);
+  
+  report(ratios, poly_pairs->nr_poly_pairs);
   /* out:
   // free stuff
   if(poly_pairs)
@@ -82,7 +89,7 @@ float * JoinTask::crossmatch_cpu()
   if(data2)
   free_spatial_data(data2);
   */
-  return result_ratios;
+  return ratios;
 }
 
 int JoinTask::alloc_poly_array(poly_array_t *polys, const int nr_polys, const int nr_vertices)

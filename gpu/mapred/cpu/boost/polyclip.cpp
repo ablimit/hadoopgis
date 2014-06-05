@@ -1,4 +1,4 @@
-#include "../cpu_spatial.h"
+#include "cpu_refine.h"
 
 #include <boost/foreach.hpp>
 #include <boost/geometry.hpp>
@@ -14,8 +14,7 @@ typedef boost::geometry::model::d2::point_xy<int> point;
 typedef boost::geometry::model::polygon<point> polygon;
 
 
-float *clip(
-    int stream_no,
+float * HadoopGIS::CPU::refine(
     const int nr_poly_pairs, // mbr of each poly pair
     const mbr_t *mbrs,
     const int *idx1, const int *idx2,			// index to poly_array 1 and 2

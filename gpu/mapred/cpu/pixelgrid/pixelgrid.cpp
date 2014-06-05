@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "../cpu_spatial.h"
+#include "../cpu_refine.h"
 
 // compute whether point (x, y) lays within a polygon whose contour
 // is specified by xs and ys in the range of [istart, iend); the last
@@ -65,8 +65,7 @@ static int in_poly(
   return crossing & 1;
 }
 
-float *clip(
-    int stream_no,
+float *HadoopGIS::CPU::refine(
     const int nr_poly_pairs, // mbr of each poly pair
     const mbr_t *mbrs,
     const int *idx1, const int *idx2,			// index to poly_array 1 and 2

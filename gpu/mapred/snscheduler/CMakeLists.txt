@@ -20,8 +20,9 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 # Make sure the compiler can find the includes in the Execution Engine directory
-include_directories(${RM_SRC_DIR})
-include_directories(${SP_SRC_DIR})
+include_directories( ${RM_SRC_DIR} )
+include_directories( ${SP_SRC_DIR} )
+include_directories( ${SP_SRC_DIR}/cpu )
 
 # Make sure the compiler can find the library in Execution Engine directory
 link_directories(${RM_SRC_DIR})
@@ -31,3 +32,4 @@ add_executable(crossmatch ${SP_SRC_DIR}/hilbert.c ${SP_SRC_DIR}/rstar.c ${SP_SRC
 
 # Link the executable to the execution engine library
 target_link_libraries(crossmatch execengine)
+target_link_libraries(crossmatch cpurefine)

@@ -2,9 +2,12 @@
 #define TASKID_H_
 
 #include "Task.h"
+#include "cpu_refine.h"
 extern "C" {
 #include "spatialindex.h"
 }
+
+extern "C" void init_poly_array(poly_array_t *polys);
 
 // spatial data: polygon array and its spatial index
 typedef struct spatial_data_struct
@@ -38,8 +41,6 @@ class JoinTask: public Task {
   //filter 
   int filter();
   
-  //refine
-  //
 
 
  public:
@@ -51,6 +52,13 @@ class JoinTask: public Task {
   virtual ~JoinTask();
 
   bool run(int procType=ExecEngineConstants::CPU, int tid=0);
+
+  static void report(float* ratios, int count )
+  { 
+    int i;
+    for(i = 0; i < count; i++) 
+      cout << ratios[i] << endl;
+  }
 };
 
 #endif /* TASKID_H_ */

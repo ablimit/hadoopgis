@@ -38,7 +38,7 @@ $(GPUEXECUTABLE): $(OBJECTS)
 #$(CXX) $(LDFLAGS) $(OBJECTS) -Wl,-rpath,./cuda -o $@
 
 $(CPUEXECUTABLE): $(OBJECTS)
-	$(CXX) -D$(DEVICE) $(PROFILE_FLAG) $(LDFLAGS) -lcpuspatial $(OBJECTS) -o $@
+	$(CXX) -D$(DEVICE) $(PROFILE_FLAG) $(LDFLAGS) -lcpurefine $(OBJECTS) -o $@
 
 crossmatch.o: reducer.fgpu.parse.cpp crossmatch.h
 	$(CXX) -D$(DEVICE) $(PROFILE_FLAG) $(CFLAGS) $< -o $@
