@@ -1,7 +1,6 @@
 #include "JoinTask.h"
 
 JoinTask::JoinTask(int n): N(n) {
-
   geom_arr = new vector<string>*[N];
   d = new spatial_data_t*[N];
   polys = new poly_array_t*[N];
@@ -18,17 +17,33 @@ JoinTask::JoinTask(int n): N(n) {
     init_spatial_index(indexes[i]);
     nr_vertices.push_back(0);
   }
+  poly_pairs = NULL;
+  ratios = NULL;
 }
 
 JoinTask::~JoinTask() {
-  std::cerr << "~JoinTask" << std::endl;
 
-  for (int i =0 ; i < N ; i++)
+  for (int i =0 ; i < N ; i++) {
     delete geom_arr[i];
+    fini_poly_array(polys[i]);
+    fini_spatial_index(indexes[i]);
+    delete d[i];
+  }
 
+
+  // free stuff
+  if(poly_pairs)
+    free_poly_pair_array(poly_pairs);
+  
   delete [] geom_arr ;
+  delete [] d;
+  delete [] polys; 
+  delete [] indexes;
 
   nr_vertices.clear();
+  if (ratios) free(ratios); 
+  std::cerr << "Finished Task: [" <<this->getId() <<"]" <<std::endl;
+  std::cerr << "~JoinTask" << std::endl;
 }
 
 bool JoinTask::run(int procType, int tid)
@@ -38,58 +53,68 @@ bool JoinTask::run(int procType, int tid)
     this->crossmatch_cpu();
   }
   else if( procType == ExecEngineConstants::GPU ) {
-
-    this->crossmatch_gpu();
     std::cerr << "executing on the GPU engine. " << std::endl;
+    this->crossmatch_gpu();
 
     //sleep(5/this->getSpeedup(ExecEngineConstants::GPU));
   }
   else 
-    std::cout << "No idea how to handle. " << std::endl;
+    std::cerr<< "No idea how to handle. " << std::endl;
   //	std::cout << "Task.id = "<< this->getId() << std::endl;
 
+  if (NULL!=ratios)
+    report(ratios, poly_pairs->nr_poly_pairs);
   //this->printDependencies();
   return true;
 }
 
 
-float * JoinTask::crossmatch_gpu() {
-  return NULL;
+void JoinTask::crossmatch_gpu() {
+  // struct timeval t1, t2;
+  int ev; 
+
+  if (geom_arr[0]->size()==0 || geom_arr[1]->size()==0)
+  {
+    std::cerr << "tile is empty: |T1| = " << geom_arr[0]->size() << ", |T2| = " << geom_arr[1]->size() <<std::endl;
+    std::cerr.flush();
+    return ;
+  }
+
+  ev = parse_gpu(); check_debug(ev==0, "Parsing failed.");
+  ev = index(); check_debug(ev==0, "Spatial indexing failed.");
+  ev = filter();
+  ratios = (NULL == poly_pairs) ? NULL : HadoopGIS::GPU::refine(GPUNUMBER, 
+                                  poly_pairs->nr_poly_pairs, poly_pairs->mbrs,
+                                  poly_pairs->idx1, poly_pairs->idx2,
+                                  polys[0]->nr_polys + 1, polys[0]->offsets,
+                                  polys[1]->nr_polys + 1, polys[1]->offsets,
+                                  polys[0]->nr_vertices, polys[0]->x, polys[0]->y,
+                                  polys[1]->nr_vertices, polys[1]->x, polys[1]->y);
+
 }
 
-float * JoinTask::crossmatch_cpu()
+void JoinTask::crossmatch_cpu()
 {
   // struct timeval t1, t2;
   int ev; 
 
   if (geom_arr[0]->size()==0 || geom_arr[1]->size()==0)
   {
-    // cerr << "tile is empty: |T1| = " << geom_arr[0]->size() << ", |T2| = " << geom_arr[1]->size() <<endl;
-    return NULL;
+    cerr << "tile is empty: |T1| = " << geom_arr[0]->size() << ", |T2| = " << geom_arr[1]->size() <<endl;
+    return;
   }
 
   ev = parse_cpu(); check_debug(ev==0, "Parsing failed.");
-  ev = index(); check_debug(ev==0, "Spatial indexing failed.")
+  ev = index(); check_debug(ev==0, "Spatial indexing failed.");
   ev = filter();
-  float *ratios = HadoopGIS::CPU::refine(poly_pairs->nr_poly_pairs,
-              poly_pairs->mbrs,
-              poly_pairs->idx1, poly_pairs->idx2,
-              polys[0]->nr_polys + 1, polys[0]->offsets,
-              polys[1]->nr_polys + 1, polys[1]->offsets,
-              polys[0]->nr_vertices, polys[0]->x, polys[0]->y,
-              polys[1]->nr_vertices, polys[1]->x, polys[1]->y);
-  
-  report(ratios, poly_pairs->nr_poly_pairs);
-  /* out:
-  // free stuff
-  if(poly_pairs)
-  free_poly_pair_array(poly_pairs);
-  if(data1)
-  free_spatial_data(data1);
-  if(data2)
-  free_spatial_data(data2);
-  */
-  return ratios;
+  ratios = (NULL == poly_pairs) ? NULL : HadoopGIS::CPU::refine(poly_pairs->nr_poly_pairs,
+                                  poly_pairs->mbrs,
+                                  poly_pairs->idx1, poly_pairs->idx2,
+                                  polys[0]->nr_polys + 1, polys[0]->offsets,
+                                  polys[1]->nr_polys + 1, polys[1]->offsets,
+                                  polys[0]->nr_vertices, polys[0]->x, polys[0]->y,
+                                  polys[1]->nr_vertices, polys[1]->x, polys[1]->y);
+
 }
 
 int JoinTask::alloc_poly_array(poly_array_t *polys, const int nr_polys, const int nr_vertices)
@@ -180,6 +205,8 @@ int JoinTask::parse_cpu()
   {
     int retval_alloc = alloc_poly_array(polys[i], geom_arr[i]->size(), nr_vertices[i]);
     int retval_parse = parse_polys(polys[i], i);
+
+    geom_arr[i]->clear();
     if(retval_alloc || retval_parse) 
       return 1;
   }
@@ -199,7 +226,20 @@ int JoinTask::index()
 
 int JoinTask::filter()
 {
-  poly_pairs = spatial_filter(&(d[0]->index), &(d[1]->index));
+  this->poly_pairs = spatial_filter(&(d[0]->index), &(d[1]->index));
+  return 0;
+}
+
+int JoinTask::parse_gpu()
+{
+  for (int i =0 ; i < N ; i++) 
+  {
+    poly_array_t * p = gpu_parse(GPUNUMBER, nr_vertices[i], geom_arr[i]);
+    if (!p) 
+      return 1;
+    *(polys[i]) = *p ; 
+    geom_arr[i]->clear();
+  }
   return 0;
 }
 

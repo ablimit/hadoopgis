@@ -7,32 +7,39 @@
 
 #define NUM_TASKS	6
 #define JCARDINALITY 2 
+static const string TAB = "\t";
+static const string COMMA = ",";
+static const string SPACE = " ";
 
 float cpuSpeedUp(int nv1, int nv2, int no1, int no2){
-  return 7.0 ; 
+  return 1.0 ; 
 }
 
 float gpuSpeedUp(int nv1, int nv2, int no1, int no2){
-  return 7.0 ; 
+  return 5.0 ; 
 }
 
 int main(int argc, char **argv){
 
-  const string TAB = "\t";
-  const string COMMA = ",";
-  const string SPACE = " ";
+  struct timeval t1, t2;
+  gettimeofday(&t1, NULL);
+  init_device_streams(1);
+  gettimeofday(&t2, NULL);
+  std::cerr<< "Time DEVICE init: " <<DIFF_TIME(t1, t2) <<" s." <<endl;
   ExecutionEngine *execEngine = new ExecutionEngine(2, 1, ExecEngineConstants::PRIORITY_QUEUE);
-
+  //ExecutionEngine *execEngine = new ExecutionEngine(2, 1, ExecEngineConstants::FCFS_QUEUE);
   // int nextTaskDependency;
-  unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
-  std::cerr  << "Number of threads: [" << concurentThreadsSupported << "]" <<std::endl;
+  //unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
+  //std::cerr  << "Number of threads: [" << concurentThreadsSupported << "]" <<std::endl;
   // Creates first task, which does not have dependencies
   JoinTask *ts = new JoinTask(JCARDINALITY);
   size_t pos, pos2;
   string input_line;
   string tid ;
   string prev_tid = "";
-    while(cin && getline(cin, input_line) && !cin.eof()) {
+
+  std::cerr << "I/O" ;
+  while(cin && getline(cin, input_line) && !cin.eof()) {
     pos=input_line.find_first_of(TAB,0);
     if (pos == string::npos){
       cerr << "no TAB in the input! We are toasted." << endl;
@@ -49,19 +56,30 @@ int main(int argc, char **argv){
                                 ts->nr_vertices[1],
                                 ts->geom_arr[0]->size(), 
                                 ts->geom_arr[1]->size()));
+      ts->setSpeedup(ExecEngineConstants::CPU, 
+                     cpuSpeedUp(ts->nr_vertices[0],
+                                ts->nr_vertices[1],
+                                ts->geom_arr[0]->size(), 
+                                ts->geom_arr[1]->size()));
       // Dispatches current tasks for execution
+      //std::cerr << ts->getId() << "-------" << prev_tid<< std::endl;
       execEngine->insertTask(ts);
       ts = new JoinTask(JCARDINALITY);
+      std::cerr << "  [" <<prev_tid << "]" ;
     }
     // actual geometry info: did,oid,num_ver,mbb, geom
     int i = input_line[pos+1] - '1'; // array position 
     pos2=input_line.find_first_of(COMMA,pos+3); //oid = input_line.substr(pos+3,pos2-pos-3) 
     pos=input_line.find_first_of(COMMA,pos2+1); //num_ver = input_line.substr(pos2+1,pos)
     ts->nr_vertices[i] += std::stoi(input_line.substr(pos2+1,pos-pos2-1));
-
     ts->geom_arr[i]->push_back(input_line.substr(pos2+1)); // mbb, geom
     prev_tid = tid; 
   }
+  ts->setSpeedup(ExecEngineConstants::CPU, 
+                     gpuSpeedUp(ts->nr_vertices[0],
+                                ts->nr_vertices[1],
+                                ts->geom_arr[0]->size(), 
+                                ts->geom_arr[1]->size()));
   ts->setSpeedup(ExecEngineConstants::GPU, 
                  gpuSpeedUp(ts->nr_vertices[0],
                             ts->nr_vertices[1],
@@ -69,6 +87,7 @@ int main(int argc, char **argv){
                             ts->geom_arr[1]->size()));
   // Dispatches current tasks for execution
   execEngine->insertTask(ts);
+  std::cerr << "  ["<<tid << "]" << std::endl;
 
   // Computing threads startup consuming tasks
   execEngine->startupExecution();
@@ -77,7 +96,9 @@ int main(int argc, char **argv){
   // until all currently assigned have finished.
   execEngine->endExecution();
 
+  fini_device_streams(1);
   delete execEngine;
+
   return 0;
 }
 

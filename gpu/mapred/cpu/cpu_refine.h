@@ -1,6 +1,6 @@
 
 extern "C" { 
-#include "../spatial.h"
+#include "spatial.h"
 }
 
 namespace HadoopGIS {

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "gpu_spatial.h"
+#include "gpu_refine.h"
 
 using namespace std;
 
@@ -26,8 +26,11 @@ void init_device_streams(int nr_devices)
 	}
 }
 
-void fini_device_streams()
+void fini_device_streams(int nr_devices)
 {
-	delete stream;
+  for(int i = 0; i < nr_devices; i++) {
+    cudaStreamDestroy(stream[i]);
+  }
+  delete [] stream;
 }
 

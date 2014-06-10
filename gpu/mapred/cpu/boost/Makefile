@@ -1,9 +1,9 @@
 TARGET = libcpurefine.so
 
 CC= g++
-CFLAGS= -O2 -Wall -fPIC -shared -Wl,-soname,$(TARGET)
+CFLAGS= -O2 -m64 -Wall -fPIC -shared -Wl,-soname,$(TARGET)
 LDFLAGS = -L/usr/local/lib
-INCFLAGS = -I../
+INCFLAGS = -I.. -I../..
 
 all: $(TARGET)
 

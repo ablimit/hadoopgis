@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <cuda.h>
 #define IN_GPU_SPATIAL_LIB
-#include "gpu_spatial.h"
+#include "gpu_refine.h"
 
 //extern cudaStream_t *stream;
 
@@ -262,7 +262,7 @@ static __global__ void kernel_clip(
 	} // for each polygon pair
 }
 
-float *clip(
+float* HadoopGIS::GPU::refine(
 	int stream_no,
 	const int nr_poly_pairs, const mbr_t *mbrs,	// mbr of each poly pair
 	const int *idx1, const int *idx2,			// index to poly_array 1 and 2
