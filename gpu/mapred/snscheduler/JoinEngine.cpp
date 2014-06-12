@@ -16,7 +16,7 @@ float cpuSpeedUp(int nv1, int nv2, int no1, int no2){
 }
 
 float gpuSpeedUp(int nv1, int nv2, int no1, int no2){
-  return 5.0 ; 
+  return 4.993 - 9.722 * 0.00001 *no1 + 2.455 * 0.001 * no2 - 2.604 * 0.000001*nv1 - 2.434 * 0.00001* nv2 ;
 }
 
 int main(int argc, char **argv){
