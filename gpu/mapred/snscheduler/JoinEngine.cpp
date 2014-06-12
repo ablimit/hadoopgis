@@ -26,10 +26,10 @@ int main(int argc, char **argv){
   init_device_streams(1);
   gettimeofday(&t2, NULL);
   std::cerr<< "Time DEVICE init: " <<DIFF_TIME(t1, t2) <<" s." <<endl;
-  ExecutionEngine *execEngine = new ExecutionEngine(2, 1, ExecEngineConstants::PRIORITY_QUEUE);
+  int concurentThreadsSupported = (int)std::thread::hardware_concurrency();
+  ExecutionEngine *execEngine = new ExecutionEngine(concurentThreadsSupported, 1, ExecEngineConstants::PRIORITY_QUEUE);
   //ExecutionEngine *execEngine = new ExecutionEngine(2, 1, ExecEngineConstants::FCFS_QUEUE);
   // int nextTaskDependency;
-  //unsigned concurentThreadsSupported = std::thread::hardware_concurrency();
   //std::cerr  << "Number of threads: [" << concurentThreadsSupported << "]" <<std::endl;
   // Creates first task, which does not have dependencies
   JoinTask *ts = new JoinTask(JCARDINALITY);
