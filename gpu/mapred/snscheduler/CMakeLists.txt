@@ -39,9 +39,14 @@ include_directories( ${CUDA_SRC_DIR} )
 # Add an executable to be built from the files listed
 add_executable(crossmatch ${SP_SRC_DIR}/hilbert.c ${SP_SRC_DIR}/rstar.c ${SP_SRC_DIR}/rtree.c ${SP_SRC_DIR}/spatial.c ${SP_SRC_DIR}/spatialindex.c JoinTask.cpp JoinEngine.cpp )
 
+
+add_executable(jet ${SP_SRC_DIR}/hilbert.c ${SP_SRC_DIR}/rstar.c ${SP_SRC_DIR}/rtree.c ${SP_SRC_DIR}/spatial.c ${SP_SRC_DIR}/spatialindex.c JoinTask.cpp TestJoinEngine.cpp )
 # Link the executable to the execution engine library
 target_link_libraries(crossmatch execengine)
 target_link_libraries(crossmatch cpurefine)
 target_link_libraries(crossmatch gpurefine)
 
 
+target_link_libraries(jet execengine)
+target_link_libraries(jet cpurefine)
+target_link_libraries(jet gpurefine)
