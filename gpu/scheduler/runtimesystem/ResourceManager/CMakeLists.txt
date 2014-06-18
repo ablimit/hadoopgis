@@ -14,7 +14,8 @@ set(libsrcs Task.cpp TasksQueue.cpp ExecutionEngine.cpp ThreadPool.cpp TrackDepe
 find_package( Threads REQUIRED )
 
 # Add rule to generate execution engine, as a shared library (.so)
-add_library("${libname}" SHARED ${libsrcs})
+#add_library("${libname}" SHARED ${libsrcs})
+add_library("${libname}" STATIC ${libsrcs})
 
 # Link Pthreads stuff to the execution engine
 target_link_libraries("${libname}" ${CMAKE_THREAD_LIBS_INIT})

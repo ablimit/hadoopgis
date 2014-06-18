@@ -9,12 +9,12 @@
 #include "tokenizer.h"
 #include "crossmatch.h"
 #ifdef GPU
-#include "gpu/gpu_spatial.h"
-#include "gpu/parser.cuh"
-#include "gpu/util.cuh"
+#include "gpu_refine.h"
+#include "parser.cuh"
+#include "util.cuh"
 #else
 extern "C++" { 
-#include "cpu/cpu_refine.h"
+#include "cpu_refine.h"
 }
 #endif
 #include "dbg.h"
@@ -210,7 +210,7 @@ float *refine_and_do_spatial_op(
     poly_array_t *polys2)
 {
   // we do this operation on gpu/cpu
-  return HadoopGIS::CPU::refine(
+  return HadoopGIS::GPU::refine(
               poly_pairs->nr_poly_pairs,
               poly_pairs->mbrs,
               poly_pairs->idx1, poly_pairs->idx2,

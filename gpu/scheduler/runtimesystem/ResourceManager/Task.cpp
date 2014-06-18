@@ -65,13 +65,13 @@ void Task::addDependencies(vector<int> dependenciesIds)
 // Prints task dependencies
 void Task::printDependencies(void)
 {
-	std::cout << "Task.id="<<this->getId()<<" #deps="<< this->dependencies.size()<< " :";
+	std::cerr << "Task.id="<<this->getId()<<" #deps="<< this->dependencies.size()<< " :";
 	if(this->dependencies.size() > 0){
 		for(int i = 0; i < this->dependencies.size(); i++){
-			std::cout << this->dependencies[i] <<";";
+			std::cerr << this->dependencies[i] <<";";
 		}
 	}
-	std::cout << std::endl;
+	std::cerr << std::endl;
 }
 
 int Task::getNumberDependencies()

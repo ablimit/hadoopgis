@@ -21,7 +21,7 @@ void *callThread(void *arg){
 
 	// If threads is managing GPU, than init adequate device
 	if(procType == 2){
-		printf("WarnUP: GPU id = %d\n", tid);
+		fprintf(stderr,"WarmUP: GPU id = %d\n", tid);
 //		warmUp(tid);
 
 		int cpuId=tid;
@@ -100,7 +100,7 @@ ThreadPool::~ThreadPool() {
 		double tE = lastToFinishTime.tv_sec*1000000  + (lastToFinishTime.tv_usec);
 		loadImbalance = (tE - tS)/1000000.0;
 	}
-	printf("Load imbalance = %f\n", loadImbalance);
+	fprintf(stderr,"Load imbalance = %f\n", loadImbalance);
 
 }
 
@@ -176,7 +176,7 @@ void ThreadPool::processTasks(int procType, int tid)
 //		gpuTempData[tid] = cudaMemAllocWrapper(gpuTempDataSize);
 //	}
 
-	printf("procType:%d  tid:%d waiting init of execution\n", procType, tid);
+	fprintf(stderr,"procType:%d  tid:%d waiting init of execution\n", procType, tid);
 	pthread_mutex_lock(&initExecutionMutex);
 	pthread_mutex_unlock(&initExecutionMutex);
 
@@ -197,7 +197,7 @@ void ThreadPool::processTasks(int procType, int tid)
 				continue;
 
 			}
-			printf("procType:%d  tid:%d Task NULL #t_pending=%d\n", procType, tid, this->execEngine->getCountTasksPending());
+			fprintf(stderr,"procType:%d  tid:%d Task NULL #t_pending=%d\n", procType, tid, this->execEngine->getCountTasksPending());
 			break;
 		}
 		gettimeofday(&startTime, NULL);
@@ -211,7 +211,7 @@ void ThreadPool::processTasks(int procType, int tid)
 		// calculate time in microseconds
 		double tS = startTime.tv_sec*1000000 + (startTime.tv_usec);
 		double tE = endTime.tv_sec*1000000  + (endTime.tv_usec);
-		printf("procType:%d  tid:%d Task speedup = %f procTime = %f\n", procType, tid, curTask->getSpeedup(), (tE-tS)/1000000);
+		fprintf(stderr,"procType:%d  tid:%d Task speedup = %f procTime = %f\n", procType, tid, curTask->getSpeedup(), (tE-tS)/1000000);
 		delete curTask;
 
 	}

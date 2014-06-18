@@ -21,8 +21,8 @@ void init_device_streams(int nr_devices)
 	}
 
 	for(int i = 0; i < nr_devices; i++) {
-		cudaSetDevice(i);
-		cudaStreamCreate(&stream[i]);
+		//cudaSetDevice(i);
+		cudaStreamCreate(&(stream[i]));
 	}
 }
 

@@ -21,9 +21,12 @@ prof: all
 gpu: DEVICE = GPU
 gpu: $(GPUEXECUTABLE)
 gpu: OBJECTS += gpu/parser.o gpu/util.o gpu/clip.o
+gpu: CFLAGS += -I./gpu -I.
+
 
 cpu: DEVICE = CPU
 cpu: $(CPUEXECUTABLE)
+cpu: CFLAGS += -I./cpu -I.
 
 
 debug: CXX += -g

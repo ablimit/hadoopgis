@@ -20,14 +20,19 @@ float gpuSpeedUp(int nv1, int nv2, int no1, int no2){
 }
 
 int main(int argc, char **argv){
+  int concurrency = 1;
+  if (argc>1)
+    concurrency = atoi(argv[1]);
 
   struct timeval t1, t2;
   gettimeofday(&t1, NULL);
   init_device_streams(1);
   gettimeofday(&t2, NULL);
   std::cerr<< "Time DEVICE init: " <<DIFF_TIME(t1, t2) <<" s." <<endl;
-  int concurentThreadsSupported = (int)std::thread::hardware_concurrency();
-  ExecutionEngine *execEngine = new ExecutionEngine(concurentThreadsSupported, 1, ExecEngineConstants::PRIORITY_QUEUE);
+  int concurrentThreadsSupported = (int)std::thread::hardware_concurrency();
+  if (concurrency > concurrentThreadsSupported - 2)
+    concurrency = concurrentThreadsSupported -2 ;
+  ExecutionEngine *execEngine = new ExecutionEngine(concurrency , 1, ExecEngineConstants::PRIORITY_QUEUE);
   //ExecutionEngine *execEngine = new ExecutionEngine(2, 1, ExecEngineConstants::FCFS_QUEUE);
   // int nextTaskDependency;
   //std::cerr  << "Number of threads: [" << concurentThreadsSupported << "]" <<std::endl;
