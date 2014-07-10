@@ -3,7 +3,7 @@
 import sys
 from collections import defaultdict
 
-def readITMap(path):
+def readITMap2(path):
     image_tile_map = defaultdict(dict)
     tid = 1
     for line in open(path,'r'):
@@ -12,6 +12,23 @@ def readITMap(path):
         tile  = sp[0]
         image_tile_map[image][tile] = tid
         tid += 1
+    return image_tile_map
+
+def readITMap(path):
+    tid = 1
+    image_tile_map = defaultdict(dict)
+    images = ('astroII.1', 'astroII.2', 'gbm0.1', 'gbm0.2', 'gbm1.1', 'gbm1.2',
+               'gbm2.1', 'gbm2.2', 'normal.2', 'normal.3', 'oligoastroII.1',
+               'oligoastroII.2', 'oligoastroIII.1', 'oligoastroIII.2',
+               'oligoII.1', 'oligoII.2', 'oligoIII.1', 'oligoIII.2')
+    for imageId  in images:
+        for x in xrange(0,110592,4096):
+            for y in xrange(0,57344,4096):
+                sx = str(x)
+                sy = str(y)
+                tileId = '-'.join(('0'*(10-len(sx)) + sx, '0'*(10-len(sy))+ sy ))
+                image_tile_map[imageId][tileId] = tid
+                tid += 1
     return image_tile_map
 
 
