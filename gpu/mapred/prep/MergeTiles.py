@@ -81,6 +81,7 @@ def main():
         t = str(t-yOffset)
 
         tid = dic[image][getParentTile(tileId)]
+        sys.stderr.write('|'.join((image , tileId, '\n'))
 
         mbr = '0'*(4-len(nver))+ nver + ',' + '0'*(4-len(l))+ l + ' ' + \
                 '0'*(4-len(r))+ r + ' ' + '0'*(4-len(b))+ b + ' ' +  \
