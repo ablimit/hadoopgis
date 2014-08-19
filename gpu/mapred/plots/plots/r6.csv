@@ -1,0 +1,9 @@
+cpu,gpu,runtime
+1,cpu,432
+1,cpu+gpu,310
+2,cpu,349
+2,cpu+gpu,291
+4,cpu,290
+4,cpu+gpu,294
+8,cpu,326
+8,cpu+gpu,313

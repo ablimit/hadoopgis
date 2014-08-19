@@ -1,0 +1,13 @@
+reducer,gpu,runtime
+2,cpu,789
+2,cpu+gpu,728
+3,cpu,542
+3,cpu+gpu,497
+4,cpu,439
+4,cpu+gpu,402
+5,cpu,367
+5,cpu+gpu,346
+6,cpu,326
+6,cpu+gpu,313
+7,cpu,455
+7,cpu+gpu,418
