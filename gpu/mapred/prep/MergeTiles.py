@@ -14,7 +14,7 @@ def readITMap2(path):
         tid += 1
     return image_tile_map
 
-def readITMap(path):
+def readITMap():
     tid = 1
     image_tile_map = defaultdict(dict)
     images = ('astroII.1', 'astroII.2', 'gbm0.1', 'gbm0.2', 'gbm1.1', 'gbm1.2',
@@ -50,12 +50,12 @@ def main():
     # print getOffSets(sys.argv[1].strip(),8192,8192)
     # print getParentTile(sys.argv[1].strip())
     # return
-    if len(sys.argv) < 2:
-        sys.stderr.write("Usage: "+ sys.argv[0] + "\n")
-        exit(1)
+    #if len(sys.argv) < 2:
+    #    sys.stderr.write("Usage: "+ sys.argv[0] + "\n")
+    #    exit(1)
 
-    path = sys.argv[1]
-    dic  = readITMap(path)
+    #path = sys.argv[1]
+    dic  = readITMap()
     tab  = "\t"
     seq_oid = [0,0]
     for line in sys.stdin:
@@ -98,7 +98,7 @@ def main():
         t = str(t-yOffset)
 
         tid = dic[image][getParentTile(tileId)]
-        sys.stderr.write('|'.join((image , tileId, '\n')))
+        # sys.stderr.write('|'.join((image , tileId, '\n')))
 
         mbr = '0'*(4-len(nver))+ nver + ',' + '0'*(4-len(l))+ l + ' ' + \
                 '0'*(4-len(r))+ r + ' ' + '0'*(4-len(b))+ b + ' ' +  \
