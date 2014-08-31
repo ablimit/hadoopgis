@@ -14,7 +14,7 @@ typedef boost::geometry::model::d2::point_xy<int> point;
 typedef boost::geometry::model::polygon<point> polygon;
 
 
-float * HadoopGIS::CPU::refine(
+float * refine(
     const int nr_poly_pairs, // mbr of each poly pair
     const mbr_t *mbrs,
     const int *idx1, const int *idx2,			// index to poly_array 1 and 2

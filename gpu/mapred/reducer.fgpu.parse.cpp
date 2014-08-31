@@ -210,7 +210,8 @@ float *refine_and_do_spatial_op(
     poly_array_t *polys2)
 {
   // we do this operation on gpu/cpu
-  return HadoopGIS::GPU::refine(
+#ifdef GPU
+  return HadoopGIS::GPU::refine(0,
               poly_pairs->nr_poly_pairs,
               poly_pairs->mbrs,
               poly_pairs->idx1, poly_pairs->idx2,
@@ -218,6 +219,17 @@ float *refine_and_do_spatial_op(
               polys2->nr_polys + 1, polys2->offsets,
               polys1->nr_vertices, polys1->x, polys1->y,
               polys2->nr_vertices, polys2->x, polys2->y);
+#else
+  return refine(
+              poly_pairs->nr_poly_pairs,
+              poly_pairs->mbrs,
+              poly_pairs->idx1, poly_pairs->idx2,
+              polys1->nr_polys + 1, polys1->offsets,
+              polys2->nr_polys + 1, polys2->offsets,
+              polys1->nr_vertices, polys1->x, polys1->y,
+              polys2->nr_vertices, polys2->x, polys2->y);
+#endif
+
 }
 
 float *crossmatch(float **ratios, int *count)
@@ -401,8 +413,8 @@ int main(int argc, char *argv[])
   }
 
   gettimeofday(&t2, NULL);
-  cout << "Overall: " << DIFF_TIME(t1, t2) <<endl;
-  cout.flush();
+  cerr << "Overall: " << DIFF_TIME(t1, t2) <<endl;
+  //cout.flush();
   cerr.flush();
 
   //close device
