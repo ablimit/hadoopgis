@@ -9,57 +9,57 @@ export uniform int32 get_programCount() {
 	return programCount;
 }
 
-export uniform double ptarray_signed_area_aos(uniform double pa[] , const uniform int npoints)
+export uniform float ptarray_signed_area_aos(uniform float pa[] , const uniform int npoints)
 {
 	if (! pa || npoints < 3 )
 		return 0.0;
 
-	uniform double * uniform ap = pa;
-	varying double sum = 0.0;
+	uniform float * uniform ap = pa;
+	varying float sum = 0.0;
 	//assert(programCount <= 8);
 	//int step = programCount*2; 
 
 	//for(int i= programIndex; i< npoints ; i+=step) {
-	
+
 	foreach(i=0 ... npoints/2) {
 		sum += pa[i*2] * pa[i*2+3] - pa[i*2+1] * pa[i*2+2];
 	}
 
 	return reduce_add(sum) * 0.5;	
 }
-
-export uniform double ptarray_signed_area_soa(uniform double pa[], const uniform int npoints)
+/*
+export uniform float ptarray_signed_area_soa(uniform float pa[], const uniform int npoints)
 {
 	if (! pa || npoints < 3 )
 		return 0.0;
 
 	assert(programCount <= 16);
 
-	uniform double * uniform ap = pa;
-	varying double sum = 0.0;
+	uniform float * uniform ap = pa;
+	varying float sum = 0.0;
 	uniform int iter = npoints/programCount;
 
 
-	for (uniform int i = 0; i < iter; i++, ap += 32) {
-		for (uniform int j = 0; j < 32; j += programCount) {
-			double x0 = ap[j + programIndex];
-			double y0 = ap[8 + j + programIndex];
-			double x1 = ap[j +1 + programIndex];
-			double y1 = ap[8 + j + 1 + programIndex];
+	for (uniform int i = 0; i < iter; i++, ap += 16) {
+		for (uniform int j = 0; j < 16; j += programCount) {
+			float x0 = ap[j + programIndex];
+			float y0 = ap[8 + j + programIndex];
+			float x1 = ap[j +1 + programIndex];
+			float y1 = ap[8 + j + 1 + programIndex];
 			sum += (x0*y1 - x1*y0); 
 		}
 	}
-
-	iter = (npoints %32)/2; 
+	
+	iter = (npoints %16)/2; 
 	uniform int dist = iter+1;
 
 	for (uniform int j = 0; j <iter ; j += programCount) {
 		if (programIndex>=iter)
 			continue;
-		double x0 = ap[j + programIndex];
-		double x1 = ap[j +1 + programIndex];
-		double y0 = ap[dist + j + programIndex];
-		double y1 = ap[dist + j + 1 + programIndex];
+		float x0 = ap[j + programIndex];
+		float x1 = ap[j +1 + programIndex];
+		float y0 = ap[dist + j + programIndex];
+		float y1 = ap[dist + j + 1 + programIndex];
 		//results[j] = x0*y1;
 		//results[j+1] = x1*y0); 
 		sum += (x0*y1-x1*y0); 
@@ -67,22 +67,24 @@ export uniform double ptarray_signed_area_soa(uniform double pa[], const uniform
 
 	return reduce_add(sum) * 0.5;	
 }
+*/
 
-/*
-   export uniform double ptarray_signed_area(uniform struct Point uniform pa[] , const uniform int npoints)
-   {
-   if (! pa || npoints < 3 )
-   return 0.0;
+export uniform float ptarray_signed_area_soa(uniform float pa[] , const uniform int npoints)
+{
+	if (! pa || npoints < 3 )
+		return 0.0;
 
-//uniform double * uniform ap = pa;
-varying double sum = 0.0;
-assert(programCount <= 8);
+	uniform float * uniform ap = pa;
+	varying float sum = 0.0;
+	assert(programCount <= 8);
+	foreach (i = 0 ... npoints) {
+	//for (uniform int i = 0; i <npoints ; i+= programCount) {
+		float x0,y0,x1,y1;
+		//varying int base = 2*i + programIndex;
+		aos_to_soa4(&pa[2*i], &x0, &y0, &x1, &y1);
+		sum += x0*y1 - x1*y0;
+	}
 
-foreach (i = 0 ... npoints) {
-sum += pa[i].x * pa[i+1].y;
-sum -= pa[i].y * pa[i+1].x;
+	return reduce_add(sum) * 0.5;	
 }
 
-return reduce_add(sum) * 0.5;	
-}
- */
