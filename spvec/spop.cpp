@@ -48,12 +48,13 @@ int main(int argc, char** argv) {
     area[0]= ptarray_signed_area_soa(polygon_soa,npoints);
     aTime += get_elapsed_mcycles();
   }
- /* 
+  printf("sequential code is fine.\n");
+ 
   for (int i =0; i<reps; i++) {
     reset_and_start_timer();
     area[1]= ispc::ptarray_signed_area_soa(polygon_soa,npoints);
     bTime += get_elapsed_mcycles();
-  }*/
+  }
   printf("%-20s: [%.2f] M cycles %s, [%.2f] M cycles %s (%.2fx speedup).\n",
       "ST_AREA", aTime, "serial_soa", bTime, "ispc_soa",
       aTime/bTime);
@@ -61,3 +62,4 @@ int main(int argc, char** argv) {
 
   return 0;
 }
+
